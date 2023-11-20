@@ -138,4 +138,3 @@ flask db downgrade
 ## License
 
 TBD
-
