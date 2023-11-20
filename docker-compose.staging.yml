@@ -1,8 +1,7 @@
 version: '3'
-name: nate-web-staging
+name: mus-mission-control-staging
 services:
-  nate-web-db:
-    container_name: nate-web-db-staging
+  db:
     networks:
       - core-net-staging
     environment:
@@ -10,12 +9,11 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     
-  nate-web:
-    container_name: nate-web-staging
+  web:
     networks:
       - core-net-staging
       - core-net
-    image: registry.nate3d.com/nate3d/nate-web:latest
+    image: registry.nate3d.com/mus/mission-control:latest
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - MAINSAIL_URL=${MAINSAIL_URL}
@@ -24,13 +22,12 @@ services:
       - data:/data
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.nate-web-wip.rule=Host(`wip.nate3d.com`)"
-      - "traefik.http.routers.nate-web-wip.tls=true"
-      - "traefik.http.routers.nate-web-wip.entrypoints=websecure"
-      - "traefik.http.routers.nate-web-wip.tls.certresolver=tlsresolver"
+      - "traefik.http.routers.mus-m-c-web-wip.rule=Host(`mc.wip.nate3d.com`)"
+      - "traefik.http.routers.mus-m-c-web-wip.tls=true"
+      - "traefik.http.routers.mus-m-c-web-wip.entrypoints=websecure"
+      - "traefik.http.routers.mus-m-c-web-wip.tls.certresolver=tlsresolver"
 
-  nate-web-mainsail:
-    container_name: nate-web-mainsail-staging
+  mainsail:
     networks:
       - core-net-staging
       - core-net
@@ -38,10 +35,10 @@ services:
       - ${PWD}/data/mainsail-config.json:/usr/share/nginx/html/config.json
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.mainsail-wip.rule=Host(`mainsail.wip.nate3d.com`)"
-      - "traefik.http.routers.mainsail-wip.tls=true"
-      - "traefik.http.routers.mainsail-wip.entrypoints=websecure"
-      - "traefik.http.routers.mainsail-wip.tls.certresolver=tlsresolver"
+      - "traefik.http.routers.mus-m-c-mainsail-wip.rule=Host(`mainsail.mc.wip.nate3d.com`)"
+      - "traefik.http.routers.mus-m-c-mainsail-wip.tls=true"
+      - "traefik.http.routers.mus-m-c-mainsail-wip.entrypoints=websecure"
+      - "traefik.http.routers.mus-m-c-mainsail-wip.tls.certresolver=tlsresolver"
 
 networks:
   core-net-staging:

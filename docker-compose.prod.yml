@@ -1,8 +1,7 @@
 version: '3'
-name: nate-web
+name: mus-mission-control
 services:
-  nate-web-db:
-    container_name: nate-web-db
+  db:
     networks:
       - core-net
     environment:
@@ -10,11 +9,10 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     
-  nate-web:
-    container_name: nate-web
+  web:
     networks:
       - core-net
-    image: registry.nate3d.com/nate3d/nate-web:latest
+    image: registry.nate3d.com/mus/mission-control:latest
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - MAINSAIL_URL=${MAINSAIL_URL}
@@ -23,23 +21,22 @@ services:
       - data:/data
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.nate-web.rule=Host(`nate3d.com`, `www.nate3d.com`)"
-      - "traefik.http.routers.nate-web.tls=true"
-      - "traefik.http.routers.nate-web.entrypoints=websecure"
-      - "traefik.http.routers.nate-web.tls.certresolver=tlsresolver"
+      - "traefik.http.routers.mus-m-c-web.rule=Host(`mc.nate3d.com`)"
+      - "traefik.http.routers.mus-m-c-web.tls=true"
+      - "traefik.http.routers.mus-m-c-web.entrypoints=websecure"
+      - "traefik.http.routers.mus-m-c-web.tls.certresolver=tlsresolver"
 
-  nate-web-mainsail:
-    container_name: nate-web-mainsail
+  mainsail:
     networks:
       - core-net
     volumes:
       - ${PWD}/data/mainsail-config.json:/usr/share/nginx/html/config.json
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.mainsail.rule=Host(`mainsail.nate3d.com`)"
-      - "traefik.http.routers.mainsail.tls=true"
-      - "traefik.http.routers.mainsail.entrypoints=websecure"
-      - "traefik.http.routers.mainsail.tls.certresolver=tlsresolver"
+      - "traefik.http.routers.mus-m-c-mainsail.rule=Host(`mainsail.mc.nate3d.com`)"
+      - "traefik.http.routers.mus-m-c-mainsail.tls=true"
+      - "traefik.http.routers.mus-m-c-mainsail.entrypoints=websecure"
+      - "traefik.http.routers.mus-m-c-mainsail.tls.certresolver=tlsresolver"
 
 networks:
   core-net:

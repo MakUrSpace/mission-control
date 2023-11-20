@@ -17,7 +17,7 @@ steps:
         from_secret: docker_username
       password:
         from_secret: docker_password
-      repo: registry.nate3d.com/nate3d/nate-web
+      repo: registry.nate3d.com/mus/mission-control
       registry: registry.nate3d.com
       tags: latest
       dockerfile: Dockerfile
@@ -30,7 +30,7 @@ type: docker
 name: staging
 
 environment:
-  MAINSAIL_URL: https://mainsail.wip.nate3d.com
+  MAINSAIL_URL: https://mainsail.mc.wip.nate3d.com
 
 trigger:
   event:
@@ -116,7 +116,7 @@ type: docker
 name: prod
 
 environment:
-  MAINSAIL_URL: https://mainsail.nate3d.com
+  MAINSAIL_URL: https://mainsail.mc.nate3d.com
 
 trigger:
   event:
