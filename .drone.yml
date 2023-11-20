@@ -1,0 +1,197 @@
+kind: pipeline
+type: docker
+name: build
+
+trigger:
+  branch:
+    - master
+  event:
+    - push
+    - pull_request
+
+steps:
+  - name: build
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      repo: registry.nate3d.com/nate3d/nate-web
+      registry: registry.nate3d.com
+      tags: latest
+      dockerfile: Dockerfile
+      context: .
+      purge: false
+
+---
+kind: pipeline
+type: docker
+name: staging
+
+environment:
+  MAINSAIL_URL: https://mainsail.wip.nate3d.com
+
+trigger:
+  event:
+    - promote
+  target:
+    - staging
+
+steps:
+  - name: transfer-compose-files-staging
+    image: appleboy/drone-scp
+    settings:
+      host:
+        from_secret: deploy_host
+      username:
+        from_secret: deploy_user
+      key:
+        from_secret: deploy_key
+      port: 22
+      target: /docker-workspace/nate3d/nate-web/staging/
+      source: 
+        - ./docker-compose.yml
+        - ./docker-compose.staging.yml
+      strip_components: 0
+
+  - name: transfer-mainsail-config-staging
+    image: appleboy/drone-scp
+    settings:
+      host:
+        from_secret: deploy_host
+      username:
+        from_secret: deploy_user
+      key:
+        from_secret: deploy_key
+      port: 22
+      target: /docker-workspace/nate3d/nate-web/staging/
+      source: ./data/mainsail-config.json
+      strip_components: 0
+
+  - name: deploy-staging
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: deploy_host
+      username:
+        from_secret: deploy_user
+      key:
+        from_secret: deploy_key
+      port: 22
+      envs:
+        - DOCKER_USERNAME
+        - DOCKER_PASSWORD
+        - DATABASE_URL
+        - MAINSAIL_URL
+        - SECRET_KEY
+        - POSTGRES_DB
+        - POSTGRES_USER
+        - POSTGRES_PASSWORD
+      script:
+        - "echo $DOCKER_PASSWORD | docker login registry.nate3d.com --username $DOCKER_USERNAME --password-stdin"
+        - "cd /docker-workspace/nate3d/nate-web/staging/"
+        - "docker-compose -f docker-compose.yml -f docker-compose.staging.yml down || true"
+        - "docker-compose -f docker-compose.yml -f docker-compose.staging.yml pull"
+        - "docker-compose -f docker-compose.yml -f docker-compose.staging.yml up -d"
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
+      DATABASE_URL:
+        from_secret: database_url
+      SECRET_KEY:
+        from_secret: secret_key
+      POSTGRES_DB:
+        from_secret: postgres_db
+      POSTGRES_USER:
+        from_secret: postgres_user
+      POSTGRES_PASSWORD:
+        from_secret: postgres_password
+
+---
+kind: pipeline
+type: docker
+name: prod
+
+environment:
+  MAINSAIL_URL: https://mainsail.nate3d.com
+
+trigger:
+  event:
+    - promote
+  target:
+    - prod
+
+steps:
+  - name: transfer-compose-files-prod
+    image: appleboy/drone-scp
+    settings:
+      host:
+        from_secret: deploy_host
+      username:
+        from_secret: deploy_user
+      key:
+        from_secret: deploy_key
+      port: 22
+      target: /docker-workspace/nate3d/nate-web/prod/
+      source: 
+        - ./docker-compose.yml
+        - ./docker-compose.prod.yml
+      strip_components: 0
+
+  - name: transfer-mainsail-config-prod
+    image: appleboy/drone-scp
+    settings:
+      host:
+        from_secret: deploy_host
+      username:
+        from_secret: deploy_user
+      key:
+        from_secret: deploy_key
+      port: 22
+      target: /docker-workspace/nate3d/nate-web/prod/
+      source: ./data/mainsail-config.json
+      strip_components: 0
+
+  - name: deploy-prod
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: deploy_host
+      username:
+        from_secret: deploy_user
+      key:
+        from_secret: deploy_key
+      port: 22
+      envs:
+        - DOCKER_USERNAME
+        - DOCKER_PASSWORD
+        - DATABASE_URL
+        - MAINSAIL_URL
+        - SECRET_KEY
+        - POSTGRES_DB
+        - POSTGRES_USER
+        - POSTGRES_PASSWORD
+      script:
+        - "echo $DOCKER_PASSWORD | docker login registry.nate3d.com --username $DOCKER_USERNAME --password-stdin"
+        - "cd /docker-workspace/nate3d/nate-web/prod/"
+        - "docker-compose -f docker-compose.yml -f docker-compose.prod.yml down || true"
+        - "docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull"
+        - "docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d"
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
+      DATABASE_URL:
+        from_secret: database_url
+      SECRET_KEY:
+        from_secret: secret_key
+      POSTGRES_DB:
+        from_secret: postgres_db
+      POSTGRES_USER:
+        from_secret: postgres_user
+      POSTGRES_PASSWORD:
+        from_secret: postgres_password

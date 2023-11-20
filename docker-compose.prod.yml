@@ -1,0 +1,54 @@
+version: '3'
+name: nate-web
+services:
+  nate-web-db:
+    container_name: nate-web-db
+    networks:
+      - core-net
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    
+  nate-web:
+    container_name: nate-web
+    networks:
+      - core-net
+    image: registry.nate3d.com/nate3d/nate-web:latest
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - MAINSAIL_URL=${MAINSAIL_URL}
+      - SECRET_KEY=${SECRET_KEY}
+    volumes:
+      - data:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nate-web.rule=Host(`nate3d.com`, `www.nate3d.com`)"
+      - "traefik.http.routers.nate-web.tls=true"
+      - "traefik.http.routers.nate-web.entrypoints=websecure"
+      - "traefik.http.routers.nate-web.tls.certresolver=tlsresolver"
+
+  nate-web-mainsail:
+    container_name: nate-web-mainsail
+    networks:
+      - core-net
+    volumes:
+      - ${PWD}/data/mainsail-config.json:/usr/share/nginx/html/config.json
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mainsail.rule=Host(`mainsail.nate3d.com`)"
+      - "traefik.http.routers.mainsail.tls=true"
+      - "traefik.http.routers.mainsail.entrypoints=websecure"
+      - "traefik.http.routers.mainsail.tls.certresolver=tlsresolver"
+
+networks:
+  core-net:
+    external: true
+
+volumes:
+  data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/data

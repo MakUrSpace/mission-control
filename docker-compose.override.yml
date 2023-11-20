@@ -1,0 +1,34 @@
+version: '3'
+services:
+  nate-web-db:
+    container_name: nate-web-db
+    image: postgres:latest
+    healthcheck:
+      interval: 1s
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+
+  nate-web:
+    entrypoint: /bin/echo "nate-web disabled; use Flask dev server instead"
+    # container_name: nate-web
+    # ports:
+    #   - "5555:80"
+    # volumes:
+    #   - .:/app
+    #   - ./data:/data
+    # healthcheck:
+    #   interval: 1s
+    # environment:
+    #   - DATABASE_URL=${DATABASE_URL}
+    #   - SECRET_KEY=${SECRET_KEY}
+
+  nate-web-mainsail:
+    container_name: nate-web-mainsail
+    volumes:
+      - ./data/mainsail-config.json:/usr/share/nginx/html/config.json
+    ports:
+      - "5556:80"

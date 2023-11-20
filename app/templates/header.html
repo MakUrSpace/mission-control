@@ -1,0 +1,33 @@
+<nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation" id="main-header">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="{{ url_for('main.index') }}">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" id="logo">
+        </a>
+
+        <a role="button" class="navbar-burger" id="hamburger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div id="navMenu" class="navbar-menu">
+        <div class="navbar-end">
+            <a class="navbar-item" href="{{ url_for('main.index') }}">Home</a>
+            <a class="navbar-item" href="{{ url_for('main.mainsail') }}">Mainsail</a>
+            <a class="navbar-item" href="{{ url_for('main.logout') }}">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // This script toggles the burger menu on mobile devices
+    document.addEventListener('DOMContentLoaded', () => {
+        const burger = document.querySelector('.navbar-burger');
+        const menu = document.querySelector('.navbar-menu');
+        burger.addEventListener('click', () => {
+            burger.classList.toggle('is-active');
+            menu.classList.toggle('is-active');
+        });
+    });
+</script>

@@ -1,0 +1,40 @@
+version: '3'
+services:
+  nate-web-db:
+    image: postgres:latest
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  nate-web:
+    build: .
+    container_name: nate-web
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      nate-web-db:
+        condition: service_healthy
+      nate-web-mainsail:
+        condition: service_healthy
+    restart: unless-stopped
+
+  nate-web-mainsail:
+    image: ghcr.io/mainsail-crew/mainsail
+    container_name: mainsail
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+volumes:
+  pgdata:

@@ -1,0 +1,236 @@
+/* custom.scss */
+@charset "utf-8";
+
+// Variable overrides (https://bulma.io/documentation/customize/variables/)
+$primary: #9b5de5;
+$primary-invert: findColorInvert($primary);
+$info: #f15bb5;
+$success: #00f5d4;
+$warning: #fee440;
+$danger: #ff006e;
+
+$scheme-main: $primary;
+$scheme-main-bis: $primary;
+$scheme-main-ter: $primary;
+
+$light: #c5c5c5;
+$dark: #10002b;
+$black: $dark;
+
+$text: #c1c1c1;
+$text-strong: #fff;
+
+// Custom colors for specific UI elements
+$background: $dark;
+$link: $info;
+$button-color: $dark;
+$button-background: $info;
+
+$family-sans-serif: "Ubuntu", sans-serif;
+$family-monospace: "Ubuntu Mono", monospace;
+$render-mode: optimizeLegibility;
+
+$size-1: 3rem;
+$size-2: 2.5rem;
+$size-3: 2rem;
+$size-4: 1.5rem;
+$size-5: 1.25rem;
+$size-6: 1rem;
+$size-7: 0.75rem;
+
+$weight-light: 300;
+$weight-normal: 400;
+$weight-medium: 500;
+$weight-semibold: 600;
+$weight-bold: 700;
+
+$block-spacing: 1.5rem;
+$gap: 32px;
+
+$easing: ease-out;
+$speed: 86ms;
+
+$radius-small: 2px;
+$radius: 4px;
+$radius-large: 6px;
+$radius-rounded: 9999px;
+
+// Import Bulma's source files
+@import "bulma/utilities/_all";
+@import "bulma/base/_all";
+@import "bulma/elements/_all";
+@import "bulma/form/_all";
+@import "bulma/components/_all";
+@import "bulma/grid/_all";
+@import "bulma/helpers/_all";
+@import "bulma/layout/_all";
+
+// Custom CSS
+
+/* Custom timeline CSS */
+.timeline {
+    position: relative;
+    padding: 0;
+    list-style: none;
+    width: 100%;
+}
+
+.timeline:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 40px;
+    width: 2px;
+    background: $dark-invert;
+}
+
+.timeline-header,
+.timeline-item {
+    position: relative;
+    margin: 10px 0;
+}
+
+.timeline-marker {
+    position: absolute;
+    top: 0;
+    transform: translate(-50%);
+    left: 40px;
+    height: 15px;
+    width: 15px;
+    border: 3px solid $border;
+    border-radius: 50%;
+    background: $code-background;
+}
+
+.timeline-content {
+    padding: 0 20px;
+    background: $code-background;
+    border-radius: 4px;
+    word-wrap: break-word;
+    margin-left: 80px;
+}
+
+.timeline-content .heading {
+    color: $primary-dark;
+}
+
+/* Custom timeline content bullet points */
+.timeline-content ul {
+    list-style: none; // Remove default list styling
+    padding-left: 0; // Remove default padding
+
+    li {
+        position: relative;
+        padding-left: 20px; // Space for custom bullet
+        margin-bottom: 10px; // Space between items
+
+        &:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: $primary;
+            font-size: 1em;
+            top: 0.75em;
+            transform: translateY(-50%);
+        }
+    }
+}
+
+/* Responsive adjustments for timeline content */
+@media (max-width: 768px) {
+    .timeline-content ul {
+        li {
+            padding-left: 15px;
+        }
+    }
+}
+
+
+@media (max-width: 768px) {
+    .timeline:before {
+        left: 20px;
+    }
+
+    .timeline-marker {
+        left: 20px;
+    }
+
+    .timeline-content {
+        margin-left: 60px;
+        padding: 0 15px;
+    }
+}
+
+#animated-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, $background, darken($primary, 25%));
+    animation: GradientAnimate 15s ease infinite;
+    z-index: -1;
+}
+
+#main-header {
+    top: 0;
+    z-index: 10;
+    background: $background;
+}
+
+.hero.is-fullheight {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-main {
+    background-color: transparent;
+    background-image: none;
+    max-width: 100%;
+    margin: auto;
+    padding: 0 1.5rem;
+}
+
+.hero-main h1 {
+    color: $primary-invert;
+    font-size: xx-large;
+}
+
+.hero-main p {
+    color: $primary-invert;
+    font-size: large;
+}
+
+.hero-main h1,
+.hero-main p {
+    color: $primary-invert;
+
+    @media (max-width: 768px) {
+        font-size: medium; // Adjust font size for mobile
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-main h1 {
+        font-size: large; // Smaller font size for mobile
+    }
+
+    .hero-main p {
+        font-size: medium; // Adjust paragraph font size
+    }
+}
+
+
+#hero-main.hero.is-primary.is-bold {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* Ensure that the body and html tags are taking full height as well */
+html,
+body {
+    height: 100%;
+    width: 100%;
+}

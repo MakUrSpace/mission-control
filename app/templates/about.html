@@ -1,0 +1,10 @@
+<section id="about" class="section">
+    <div class="container">
+        <h2 class="title is-2 has-text-centered">{{ site.about.title }}</h2>
+        <div class="content has-text-centered">
+            {% for paragraph in site.about.description.split(';') %}
+                <p>{{ paragraph | safe }}</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
