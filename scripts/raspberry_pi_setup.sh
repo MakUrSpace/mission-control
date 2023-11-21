@@ -29,6 +29,25 @@ create_avahi_service_file() {
 EOF
 }
 
+# Function to create .env file with default environment variables
+create_env_file() {
+    echo "Creating .env file with default environment variables"
+
+    cat > .env <<EOF
+POSTGRES_DB=webdb
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=password
+DATABASE_DOMAIN=db
+SECRET_KEY=supersecretkey
+WEB_DOMAIN=missioncontrol.local
+MAINSAIL_DOMAIN=mainsail.local
+MAINSAIL_PORT=5556
+OCTOPRINT_DOMAIN=octoprint.local
+OCTOPRINT_PORT=5557
+TRAEFIK_DOMAIN=traefik.local
+EOF
+}
+
 # Create Avahi service files
 create_avahi_service_file "missioncontrol" 80
 create_avahi_service_file "mainsail" 80
@@ -37,5 +56,8 @@ create_avahi_service_file "traefik" 80
 
 # Restart Avahi to apply changes
 sudo systemctl restart avahi-daemon
+
+# Create the .env file
+create_env_file
 
 echo "Raspberry Pi setup completed."

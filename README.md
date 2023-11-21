@@ -52,10 +52,14 @@ pip install -r requirements_dev.txt
 POSTGRES_DB=webdb
 POSTGRES_USER=admin
 POSTGRES_PASSWORD=password
-DATABASE_URL=postgresql://admin:password@db/webdb
+DATABASE_DOMAIN=db
 SECRET_KEY=supersecretkey
-MAINSAIL_DOMAIN=mainsail.localhost
-OCTOPRINT_DOMAIN=octoprint.localhost
+WEB_DOMAIN=missioncontrol.local
+MAINSAIL_DOMAIN=mainsail.local
+MAINSAIL_PORT=5556
+OCTOPRINT_DOMAIN=octoprint.local
+OCTOPRINT_PORT=5557
+TRAEFIK_DOMAIN=traefik.local
 ```
 
 ### Running the Project
