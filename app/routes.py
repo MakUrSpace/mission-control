@@ -1,7 +1,6 @@
 """routes.py - Main routes for the application."""
-from flask import Blueprint, Response, render_template, flash, redirect, url_for, current_app, request
+from flask import Blueprint, render_template, flash, redirect, url_for, current_app, request
 from flask_login import login_user, logout_user, login_required, current_user
-import requests
 from sqlalchemy.orm import lazyload
 from .forms import LoginForm
 from .models import User, Site
