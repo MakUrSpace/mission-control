@@ -31,8 +31,8 @@ type: docker
 name: staging
 
 environment:
-  MAINSAIL_URL: https://mainsail.mc.wip.nate3d.com
-  OCTOPRINT_URL: https://octoprint.mc.wip.nate3d.com
+  MAINSAIL_DOMAIN: mainsail.mc.wip.nate3d.com
+  OCTOPRINT_DOMAIN: octoprint.mc.wip.nate3d.com
   
 trigger:
   event:
@@ -84,9 +84,9 @@ steps:
       envs:
         - DOCKER_USERNAME
         - DOCKER_PASSWORD
-        - DATABASE_URL
-        - MAINSAIL_URL
-        - OCTOPRINT_URL
+        - DATABASE_DOMAIN
+        - MAINSAIL_DOMAIN
+        - OCTOPRINT_DOMAIN
         - SECRET_KEY
         - POSTGRES_DB
         - POSTGRES_USER
@@ -102,7 +102,7 @@ steps:
         from_secret: docker_username
       DOCKER_PASSWORD:
         from_secret: docker_password
-      DATABASE_URL:
+      DATABASE_DOMAIN:
         from_secret: database_url
       SECRET_KEY:
         from_secret: secret_key
@@ -119,8 +119,8 @@ type: docker
 name: prod
 
 environment:
-  MAINSAIL_URL: https://mainsail.mc.nate3d.com
-  OCTOPRINT_URL: https://octoprint.mc.nate3d.com
+  MAINSAIL_DOMAIN: mainsail.mc.nate3d.com
+  OCTOPRINT_DOMAIN: octoprint.mc.nate3d.com
 trigger:
   event:
     - promote
@@ -171,9 +171,9 @@ steps:
       envs:
         - DOCKER_USERNAME
         - DOCKER_PASSWORD
-        - DATABASE_URL
-        - MAINSAIL_URL
-        - OCTOPRINT_URL
+        - DATABASE_DOMAIN
+        - MAINSAIL_DOMAIN
+        - OCTOPRINT_DOMAIN
         - SECRET_KEY
         - POSTGRES_DB
         - POSTGRES_USER
@@ -189,7 +189,7 @@ steps:
         from_secret: docker_username
       DOCKER_PASSWORD:
         from_secret: docker_password
-      DATABASE_URL:
+      DATABASE_DOMAIN:
         from_secret: database_url
       SECRET_KEY:
         from_secret: secret_key

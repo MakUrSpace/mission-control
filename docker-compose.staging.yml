@@ -15,15 +15,17 @@ services:
       - core-net
     image: registry.nate3d.com/mus/mission-control:latest
     environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - MAINSAIL_URL=${MAINSAIL_URL}
-      - OCTOPRINT_URL=${OCTOPRINT_URL}
+      - DATABASE_DOMAIN=${DATABASE_DOMAIN}
+      - MAINSAIL_DOMAIN=${MAINSAIL_DOMAIN}
+      - OCTOPRINT_DOMAIN=${OCTOPRINT_DOMAIN}
+      - SQLALCHEMY_DATABASE_URI=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DATABASE_DOMAIN}/${POSTGRES_DB}
+      - WEB_DOMAIN=${WEB_DOMAIN}
       - SECRET_KEY=${SECRET_KEY}
     volumes:
       - data:/data
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.mus-m-c-web-wip.rule=Host(`mc.wip.nate3d.com`)"
+      - "traefik.http.routers.mus-m-c-web-wip.rule=Host(`${WEB_DOMAIN}`)"
       - "traefik.http.routers.mus-m-c-web-wip.tls=true"
       - "traefik.http.routers.mus-m-c-web-wip.entrypoints=websecure"
       - "traefik.http.routers.mus-m-c-web-wip.tls.certresolver=tlsresolver"
@@ -32,11 +34,13 @@ services:
     networks:
       - core-net-staging
       - core-net
+    environment:
+      - MAINSAIL_DOMAIN=${MAINSAIL_DOMAIN}
     volumes:
       - ${PWD}/data/mainsail-config.json:/usr/share/nginx/html/config.json
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.mus-m-c-mainsail-wip.rule=Host(`mainsail.mc.wip.nate3d.com`)"
+      - "traefik.http.routers.mus-m-c-mainsail-wip.rule=Host(`${MAINSAIL_DOMAIN}`)"
       - "traefik.http.routers.mus-m-c-mainsail-wip.tls=true"
       - "traefik.http.routers.mus-m-c-mainsail-wip.entrypoints=websecure"
       - "traefik.http.routers.mus-m-c-mainsail-wip.tls.certresolver=tlsresolver"
@@ -45,9 +49,11 @@ services:
     networks:
       - core-net-staging
       - core-net
+    environment:
+      - OCTOPRINT_DOMAIN=${OCTOPRINT_DOMAIN}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.mus-m-c-octoprint-wip.rule=Host(`octoprint.mc.wip.nate3d.com`)"
+      - "traefik.http.routers.mus-m-c-octoprint-wip.rule=Host(`${OCTOPRINT_DOMAIN}`)"
       - "traefik.http.routers.mus-m-c-octoprint-wip.tls=true"
       - "traefik.http.routers.mus-m-c-octoprint-wip.entrypoints=websecure"
       - "traefik.http.routers.mus-m-c-octoprint-wip.tls.certresolver=tlsresolver"

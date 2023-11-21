@@ -1,4 +1,5 @@
 """__init__.py"""
+from ast import main
 import os
 import sass
 from dotenv import find_dotenv, load_dotenv
@@ -51,13 +52,24 @@ def create_app():
     with open('app/static/css/custom.css', 'w', encoding='utf8') as f:
         f.write(css)
 
+    # Fetching individual components from environment variables
+    db_user = os.environ.get("POSTGRES_USER", "pgadm")
+    db_password = os.environ.get("POSTGRES_PASSWORD", "lolnope")
+    db_name = os.environ.get("POSTGRES_DB", "webdb")
+    db_host = os.environ.get("DATABASE_DOMAIN", "db")
+    db_url = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
+
     # Configure app settings
     app.config["DEBUG"] = os.environ.get("FLASK_ENV") == "development"
     app.config["FLASK_ENV"] = os.environ.get("FLASK_ENV")
     app.config["FLASK_APP"] = os.environ.get("FLASK_APP")
-    app.config["MAINSAIL_URL"] = os.environ.get("MAINSAIL_URL")
-    app.config["OCTOPRINT_URL"] = os.environ.get("OCTOPRINT_URL")
     
+    # Configure domains with ports if the ports are provided
+    mainsail_url = os.environ.get("MAINSAIL_DOMAIN") + ":" + os.environ.get("MAINSAIL_PORT") if os.environ.get("MAINSAIL_PORT") else os.environ.get("MAINSAIL_DOMAIN")
+    app.config["MAINSAIL_URL"] = mainsail_url
+    octoprint_url = os.environ.get("OCTOPRINT_DOMAIN") + ":" + os.environ.get("OCTOPRINT_PORT") if os.environ.get("OCTOPRINT_PORT") else os.environ.get("OCTOPRINT_DOMAIN")
+    app.config["OCTOPRINT_URL"] = octoprint_url
+
     # Configure development settings
     if app.config["DEBUG"]:
         app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -70,7 +82,7 @@ def create_app():
     app.register_blueprint(main_bp)
 
     # Configure database
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_url
     db.init_app(app)
     migrate.init_app(app, db)
 
