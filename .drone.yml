@@ -31,7 +31,8 @@ name: staging
 
 environment:
   MAINSAIL_URL: https://mainsail.mc.wip.nate3d.com
-
+  OCTOPRINT_URL: https://octoprint.mc.wip.nate3d.com
+  
 trigger:
   event:
     - promote
@@ -84,6 +85,7 @@ steps:
         - DOCKER_PASSWORD
         - DATABASE_URL
         - MAINSAIL_URL
+        - OCTOPRINT_URL
         - SECRET_KEY
         - POSTGRES_DB
         - POSTGRES_USER
@@ -117,7 +119,7 @@ name: prod
 
 environment:
   MAINSAIL_URL: https://mainsail.mc.nate3d.com
-
+  OCTOPRINT_URL: https://octoprint.mc.nate3d.com
 trigger:
   event:
     - promote
@@ -170,6 +172,7 @@ steps:
         - DOCKER_PASSWORD
         - DATABASE_URL
         - MAINSAIL_URL
+        - OCTOPRINT_URL
         - SECRET_KEY
         - POSTGRES_DB
         - POSTGRES_USER

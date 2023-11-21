@@ -1,6 +1,7 @@
 """routes.py - Main routes for the application."""
-from flask import Blueprint, render_template, flash, redirect, url_for, current_app, request
+from flask import Blueprint, Response, render_template, flash, redirect, url_for, current_app, request
 from flask_login import login_user, logout_user, login_required, current_user
+import requests
 from sqlalchemy.orm import lazyload
 from .forms import LoginForm
 from .models import User, Site
@@ -13,14 +14,6 @@ bp = Blueprint('main', __name__)
 def index():
     """Index page"""
     site = Site.query.options(lazyload(Site.timeline)).first()
-    # Debug printing of the site
-    print("DEBUGGING SITE")
-    print("site", site)
-    print("site.timeline", site.timeline.title)
-    print("site.timeline.sections", site.timeline.sections)
-    print("site.timeline.sections[0]", site.timeline.sections[0].title)
-    print("site.timeline.sections[0].subsections", site.timeline.sections[0].subsections)
-    
     return render_template('index.html', site=site)
 
 @bp.route('/mainsail', methods=['GET', 'POST'])
@@ -29,6 +22,13 @@ def mainsail():
     """Mainsail page"""
     mainsail_url = current_app.config.get('MAINSAIL_URL')
     return render_template('mainsail.html', mainsail_url=mainsail_url)
+
+@bp.route('/octoprint', methods=['GET', 'POST'])
+@login_required
+def octoprint():
+    """Octoprint page"""
+    octoprint_url = current_app.config.get('OCTOPRINT_URL')
+    return render_template('octoprint_redirect.html', octoprint_url=octoprint_url)
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():

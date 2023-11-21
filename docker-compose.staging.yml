@@ -17,6 +17,7 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - MAINSAIL_URL=${MAINSAIL_URL}
+      - OCTOPRINT_URL=${OCTOPRINT_URL}
       - SECRET_KEY=${SECRET_KEY}
     volumes:
       - data:/data
@@ -39,6 +40,17 @@ services:
       - "traefik.http.routers.mus-m-c-mainsail-wip.tls=true"
       - "traefik.http.routers.mus-m-c-mainsail-wip.entrypoints=websecure"
       - "traefik.http.routers.mus-m-c-mainsail-wip.tls.certresolver=tlsresolver"
+
+  octoprint:
+    networks:
+      - core-net-staging
+      - core-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mus-m-c-octoprint-wip.rule=Host(`octoprint.mc.wip.nate3d.com`)"
+      - "traefik.http.routers.mus-m-c-octoprint-wip.tls=true"
+      - "traefik.http.routers.mus-m-c-octoprint-wip.entrypoints=websecure"
+      - "traefik.http.routers.mus-m-c-octoprint-wip.tls.certresolver=tlsresolver"
 
 networks:
   core-net-staging:

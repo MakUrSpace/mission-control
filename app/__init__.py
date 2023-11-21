@@ -56,7 +56,8 @@ def create_app():
     app.config["FLASK_ENV"] = os.environ.get("FLASK_ENV")
     app.config["FLASK_APP"] = os.environ.get("FLASK_APP")
     app.config["MAINSAIL_URL"] = os.environ.get("MAINSAIL_URL")
-
+    app.config["OCTOPRINT_URL"] = os.environ.get("OCTOPRINT_URL")
+    
     # Configure development settings
     if app.config["DEBUG"]:
         app.config["TEMPLATES_AUTO_RELOAD"] = True

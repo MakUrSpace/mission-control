@@ -55,6 +55,7 @@ POSTGRES_PASSWORD=password
 DATABASE_URL=postgresql://admin:password@db/webdb
 SECRET_KEY=supersecretkey
 MAINSAIL_URL=http://localhost:5556
+OCTOPRINT_URL=http://localhost:5557
 ```
 
 ### Running the Project
