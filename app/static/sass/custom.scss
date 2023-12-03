@@ -11,17 +11,14 @@
 @import "bulma/helpers/_all";
 @import "bulma/layout/_all";
 
-// Variable overrides (https://bulma.io/documentation/customize/variables/)
+// Variables
+// ======================
 $primary: #9b5de5;
 $primary-invert: findColorInvert($primary);
 $info: #f15bb5;
 $success: #00f5d4;
 $warning: #fee440;
 $danger: #ff006e;
-
-$scheme-main: $primary;
-$scheme-main-bis: $primary;
-$scheme-main-ter: $primary;
 
 $light: #c5c5c5;
 $dark: #10002b;
@@ -30,15 +27,16 @@ $black: $dark;
 $text: #c1c1c1;
 $text-strong: #fff;
 
-// Custom colors for specific UI elements
+// Custom colors for UI elements
 $background: $dark;
 $link: $info;
 $button-color: $dark;
 $button-background: $info;
 
+// Typography
+// ======================
 $family-sans-serif: "Ubuntu", sans-serif;
 $family-monospace: "Ubuntu Mono", monospace;
-$render-mode: optimizeLegibility;
 
 $size-1: 3rem;
 $size-2: 2.5rem;
@@ -54,20 +52,69 @@ $weight-medium: 500;
 $weight-semibold: 600;
 $weight-bold: 700;
 
+// Layout and Spacing
+// ======================
 $block-spacing: 1.5rem;
 $gap: 32px;
 
+// Animation
+// ======================
 $easing: ease-out;
 $speed: 86ms;
 
+// Borders and Radius
+// ======================
 $radius-small: 2px;
 $radius: 4px;
 $radius-large: 6px;
 $radius-rounded: 9999px;
 
-// Custom CSS
+// Custom Styles
+// ======================
+#main-header {
+    z-index: 10;
+    background: $background;
+}
 
-/* Custom timeline CSS */
+#animated-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, $background, darken($primary, 25%));
+    animation: GradientAnimate 15s ease infinite;
+    z-index: -1;
+}
+
+#hero-main {
+    background-color: transparent;
+    background-image: none;
+}
+
+// Custom Navbar Styles
+// ======================
+
+.navbar-item, .navbar-link {
+    color: $primary;
+
+    &:hover {
+        color: $primary-invert;
+    }
+}
+
+.navbar-burger {
+    span {
+        background-color: $primary;
+
+        &:hover {
+            background-color: $primary-invert;
+        }
+    }
+}
+
+// Timeline Styles
+// ======================
 .timeline {
     position: relative;
     padding: 0;
@@ -85,8 +132,7 @@ $radius-rounded: 9999px;
     background: $dark-invert;
 }
 
-.timeline-header,
-.timeline-item {
+.timeline-header, .timeline-item {
     position: relative;
     margin: 10px 0;
 }
@@ -94,59 +140,46 @@ $radius-rounded: 9999px;
 .timeline-marker {
     position: absolute;
     top: 0;
-    transform: translate(-50%);
     left: 40px;
+    transform: translate(-50%);
     height: 15px;
     width: 15px;
     border: 3px solid $border;
     border-radius: 50%;
-    background: $code-background;
+    background: $primary-dark;
 }
 
 .timeline-content {
-    padding: 0 20px;
-    background: $code-background;
+    padding: 10px 25px;
+    background: $background;
     border-radius: 4px;
     word-wrap: break-word;
     margin-left: 80px;
-}
 
-.timeline-content .heading {
-    color: $primary-dark;
-}
+    ul {
+        list-style: none; // Remove default list styling
+        padding-left: 0; // Remove default padding
 
-/* Custom timeline content bullet points */
-.timeline-content ul {
-    list-style: none; // Remove default list styling
-    padding-left: 0; // Remove default padding
-
-    li {
-        position: relative;
-        padding-left: 20px; // Space for custom bullet
-        margin-bottom: 10px; // Space between items
-
-        &:before {
-            content: '•';
-            position: absolute;
-            left: 0;
-            color: $primary;
-            font-size: 1em;
-            top: 0.75em;
-            transform: translateY(-50%);
-        }
-    }
-}
-
-/* Responsive adjustments for timeline content */
-@media (max-width: 768px) {
-    .timeline-content ul {
         li {
-            padding-left: 15px;
+            position: relative;
+            padding-left: 20px; // Space for custom bullet
+            margin-bottom: 10px; // Space between items
+
+            &:before {
+                content: '•'; // Custom bullet
+                position: absolute;
+                left: 0;
+                color: $primary;
+                font-size: 1em;
+                top: 0.75em;
+                transform: translateY(-50%);
+            }
         }
     }
 }
 
-
+// Responsive Adjustments
+// ======================
 @media (max-width: 768px) {
     .timeline:before {
         left: 20px;
@@ -160,25 +193,18 @@ $radius-rounded: 9999px;
         margin-left: 60px;
         padding: 0 15px;
     }
+
+    .timeline-content ul li {
+        padding-left: 15px;
+    }
+
+    .hero-main h1, .hero-main p {
+        font-size: medium;
+    }
 }
 
-#animated-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(45deg, $background, darken($primary, 25%));
-    animation: GradientAnimate 15s ease infinite;
-    z-index: -1;
-}
-
-#main-header {
-    top: 0;
-    z-index: 10;
-    background: $background;
-}
-
+// Hero Styles
+// ======================
 .hero.is-fullheight {
     display: flex;
     justify-content: center;
@@ -193,23 +219,8 @@ $radius-rounded: 9999px;
     padding: 0 1.5rem;
 }
 
-.hero-main h1 {
+.hero-main h1, .hero-main p {
     color: $primary-invert;
-    font-size: xx-large;
-}
-
-.hero-main p {
-    color: $primary-invert;
-    font-size: large;
-}
-
-.hero-main h1,
-.hero-main p {
-    color: $primary-invert;
-
-    @media (max-width: 768px) {
-        font-size: medium; // Adjust font size for mobile
-    }
 }
 
 @media (max-width: 768px) {
@@ -222,15 +233,26 @@ $radius-rounded: 9999px;
     }
 }
 
-
-#hero-main.hero.is-primary.is-bold {
-    background-color: transparent;
-    background-image: none;
-}
-
-/* Ensure that the body and html tags are taking full height as well */
-html,
-body {
+// General Styles
+// ======================
+html, body {
     height: 100%;
     width: 100%;
+    color: $text;
+}
+
+div {
+    color: $text;
+}
+
+.title {
+    color: $text;
+}
+
+.subtitle {
+    color: $text;
+}
+
+.box, .card {
+    background-color: $background;
 }

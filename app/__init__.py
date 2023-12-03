@@ -52,6 +52,7 @@ def create_app():
     
     # Compile SASS to CSS if not development
     if app.config["DEBUG"]:
+        print("Compiling SASS to CSS...")
         sass = importlib.import_module('sass')
         os.makedirs('app/static/css', exist_ok=True)
         css = sass.compile(filename='app/static/sass/custom.scss', output_style='compressed')

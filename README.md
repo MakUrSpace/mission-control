@@ -4,7 +4,7 @@
 This project serves as a template for quickly launching a Flask web application.
 It includes a PostgreSQL database, a basic single page application (SPA)
 frontend, and a Mainsail instance for 3D printer management. It is designed to
-be deployed via Docker Compose. The existing docker-compose setup is intended for
+be deployed via Docker Compose. The existing docker compose setup is intended for
 development and production environments, but will need to be modified for
 deployment to your production server.
 
@@ -36,20 +36,20 @@ What things you need to install the software:
 3. Create a virtual environment:
 
    ```sh
-   python3 -m venv venv
+   python3 -m venv .venv
    ```
 
 4. Activate the virtual environment:
    - On macOS/Linux:
 
      ```sh
-     source venv/bin/activate
+     source .venv/bin/activate
      ```
 
    - On Windows:
 
      ```sh
-     .\venv\Scripts\Activate
+     .venv\Scripts\Activate
      ```
 
 5. Install the required packages:
@@ -72,7 +72,6 @@ What things you need to install the software:
    MAINSAIL_PORT=5556
    OCTOPRINT_DOMAIN=octoprint.local
    OCTOPRINT_PORT=5557
-   TRAEFIK_DOMAIN=traefik.local
    ```
 
 ### Running the Project
@@ -83,13 +82,13 @@ of Flask and Docker Compose.
 First, you will need to start the database and Mainsail containers:
 
 ```sh
-docker-compose build
-docker-compose up -d # to run in detached mode
-docker-compose down
-docker-compose down -v # to remove volumes
+docker compose build
+docker compose up -d # to run in detached mode
+docker compose down
+docker compose down -v # to remove volumes
 
-docker-compose logs -f # to view logs
-docker-compose up --build -d # to rebuild and run in detached mode
+docker compose logs -f # to view logs
+docker compose up --build -d # to rebuild and run in detached mode
 ```
 
 Then, you will need to set the Flask environment variables and run the Flask application:
@@ -139,26 +138,26 @@ Your app should now be running on [http://localhost:5000](http://localhost:5000)
 
 ### Deploying the Project
 
-1. Use docker-compose to build and run the containers:
+1. Use docker compose to build and run the containers:
 
    ```sh
-   docker-compose -f docker-compose.yml -f docker-compose.embed.yml build
-   docker-compose -f docker-compose.yml -f docker-compose.embed.yml up -d
+   docker compose -f docker-compose.yml -f docker-compose.embed.yml build
+   docker compose -f docker-compose.yml -f docker-compose.embed.yml up -d
    ```
 
 2. Use docker-compose to stop the containers:
 
    ```sh
-   docker-compose -f docker-compose.yml -f docker-compose.embed.yml down
+   docker compose -f docker-compose.yml -f docker-compose.embed.yml down
 
    # To remove volumes:
-   docker-compose -f docker-compose.yml -f docker-compose.embed.yml down -v
+   docker compose -f docker-compose.yml -f docker-compose.embed.yml down -v
    ```
 
-3. Use docker-compose to view logs:
+3. Use docker compose to view logs:
 
    ```sh
-   docker-compose -f docker-compose.yml -f docker-compose.embed.yml logs -f
+   docker compose -f docker-compose.yml -f docker-compose.embed.yml logs -f
    ```
 
 ## CI/CD Process
