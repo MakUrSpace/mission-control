@@ -26,6 +26,7 @@ services:
         condition: service_healthy
       octoprint:
         condition: service_healthy
+        required: false
     restart: unless-stopped
 
   mainsail:
@@ -43,7 +44,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:80"]
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 6
     volumes:
       - octoprint_data:/octoprint
     restart: unless-stopped

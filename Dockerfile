@@ -17,7 +17,9 @@ COPY ./scripts /app/scripts
 COPY ./requirements.txt /app/requirements.txt
 
 # Install the required packages
+RUN pip install --upgrade pip wheel
 RUN pip install --no-cache-dir --trusted-host pypi.python.org -r requirements.txt
+
 # Expose the port the app runs on
 EXPOSE 80
 
