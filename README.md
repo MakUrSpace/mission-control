@@ -88,6 +88,58 @@ flask run --reload # to reload on file changes
 
 Your app should now be running on [http://localhost:5000](http://localhost:5000).
 
+## Deployment (Raspberry Pi)
+
+### Prerequisites
+
+- [Raspberry Pi OS](https://www.raspberrypi.org/software/)
+- [Docker](https://docs.docker.com/engine/install/debian/)
+
+### Setting Up the Raspberry Pi
+
+1. Install the required packages:
+```sh
+sudo apt-get update
+sudo apt-get install -y git python3 python3-pip
+```
+
+2. Clone the repository to your local machine:
+```sh
+git clone git@github.com:MakUrSpace/mission-control.git
+```
+
+3. Run the setup script. This will setup the .env file and setup mDNS for mission-control:
+```sh
+cd mission-control
+./scripts/raspberry_pi_setup.sh
+```
+
+4. Reboot the Raspberry Pi:
+```sh
+sudo reboot
+```
+
+### Deploying the Project
+
+1. Use docker-compose to build and run the containers:
+```sh
+docker-compose -f docker-compose.yml -f docker-compose.embed.yml build
+docker-compose -f docker-compose.yml -f docker-compose.embed.yml up -d
+```
+
+2. Use docker-compose to stop the containers:
+```sh
+docker-compose -f docker-compose.yml -f docker-compose.embed.yml down
+
+# To remove volumes:
+docker-compose -f docker-compose.yml -f docker-compose.embed.yml down -v
+```
+
+3. Use docker-compose to view logs:
+```sh
+docker-compose -f docker-compose.yml -f docker-compose.embed.yml logs -f
+```
+
 ## CI/CD Process
 
 Continuous Integration and Continuous Deployment (CI/CD) is set up to streamline the process of integrating changes from multiple contributors and deploying to production. It is currently hosted via Nate3D's Gitea server and backed by a Drone.io CI/CD server. The CI/CD process is as follows:

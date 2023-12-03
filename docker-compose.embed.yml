@@ -50,8 +50,8 @@ services:
       - OCTOPRINT_DOMAIN=${OCTOPRINT_DOMAIN}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.mus-m-c-octoprint-wip.rule=Host(`${OCTOPRINT_DOMAIN}`)"
-      - "traefik.http.routers.mus-m-c-octoprint-wip.entrypoints=web"
+      - "traefik.http.routers.mus-m-c-octoprint.rule=Host(`${OCTOPRINT_DOMAIN}`)"
+      - "traefik.http.routers.mus-m-c-octoprint.entrypoints=web"
 
   traefik:
     image: traefik:latest

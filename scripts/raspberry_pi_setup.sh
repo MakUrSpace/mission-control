@@ -1,32 +1,38 @@
 #!/bin/bash
 
-# Update and install Avahi
-sudo apt-get update
-sudo apt-get install -y avahi-daemon
+# Check if Avahi is installed
+if ! dpkg -s avahi-daemon avahi-utils >/dev/null 2>&1; then
+    echo "Installing Avahi..."
+    sudo apt-get update
+    sudo apt-get install -y avahi-daemon avahi-utils
+else
+    echo "Avahi already installed."
+fi
 
 # Enable and start Avahi service
 sudo systemctl enable avahi-daemon
 sudo systemctl start avahi-daemon
 
-# Function to create Avahi service file
-create_avahi_service_file() {
-    local service_name=$1
-    local port=$2
-    local file_path="/etc/avahi/services/${service_name}.service"
+# Function to create alias hostname script
+create_alias_script() {
+    echo "Creating alias hostname script"
 
-    echo "Creating Avahi service file for ${service_name}"
+    cat > publish_alias.sh <<EOF
+#!/bin/bash
+IP_ADDRESS=\$(hostname -I | cut -d' ' -f1)
 
-    sudo bash -c "cat > ${file_path}" <<EOF
-<?xml version="1.0" standalone='no'?>
-<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
-<service-group>
-  <name replace-wildcards="yes">${service_name} on %h</name>
-  <service>
-    <type>_http._tcp</type>
-    <port>${port}</port>
-  </service>
-</service-group>
+if [ -z "\$IP_ADDRESS" ]; then
+    echo "Error: IP address not found."
+    exit 1
+fi
+
+avahi-publish -a mainsail.local -R \$IP_ADDRESS &
+avahi-publish -a missioncontrol.local -R \$IP_ADDRESS &
+avahi-publish -a octoprint.local -R \$IP_ADDRESS &
+avahi-publish -a traefik.local -R \$IP_ADDRESS &
 EOF
+
+    chmod +x publish_alias.sh
 }
 
 # Function to create .env file with default environment variables
@@ -34,6 +40,7 @@ create_env_file() {
     echo "Creating .env file with default environment variables"
 
     cat > .env <<EOF
+# Environment variables for docker-compose
 POSTGRES_DB=webdb
 POSTGRES_USER=admin
 POSTGRES_PASSWORD=password
@@ -41,23 +48,18 @@ DATABASE_DOMAIN=db
 SECRET_KEY=supersecretkey
 WEB_DOMAIN=missioncontrol.local
 MAINSAIL_DOMAIN=mainsail.local
-MAINSAIL_PORT=5556
 OCTOPRINT_DOMAIN=octoprint.local
-OCTOPRINT_PORT=5557
 TRAEFIK_DOMAIN=traefik.local
 EOF
 }
 
-# Create Avahi service files
-create_avahi_service_file "missioncontrol" 80
-create_avahi_service_file "mainsail" 80
-create_avahi_service_file "octoprint" 80
-create_avahi_service_file "traefik" 80
-
-# Restart Avahi to apply changes
-sudo systemctl restart avahi-daemon
-
 # Create the .env file
 create_env_file
+
+# Create and setup the alias hostname script
+create_alias_script
+
+# Add the alias hostname script to crontab for startup execution
+(crontab -l 2>/dev/null; echo "@reboot $(pwd)/publish_alias.sh") | crontab -
 
 echo "Raspberry Pi setup completed."
