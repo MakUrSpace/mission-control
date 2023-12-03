@@ -25,7 +25,6 @@ services:
       - SECRET_KEY=${SECRET_KEY}
     volumes:
       - data:/data
-    restart: no # TODO: REMOVE ME DEBUG ONLY
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.mus-m-c-web.rule=Host(`${WEB_DOMAIN}`)"

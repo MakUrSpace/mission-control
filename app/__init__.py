@@ -66,9 +66,14 @@ def create_app():
     db_url = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
 
     # Configure domains with ports if the ports are provided
-    mainsail_url = os.environ.get("MAINSAIL_DOMAIN") + ":" + os.environ.get("MAINSAIL_PORT") if os.environ.get("MAINSAIL_PORT") else os.environ.get("MAINSAIL_DOMAIN")
-    app.config["MAINSAIL_URL"] = mainsail_url
-    octoprint_url = os.environ.get("OCTOPRINT_DOMAIN") + ":" + os.environ.get("OCTOPRINT_PORT") if os.environ.get("OCTOPRINT_PORT") else os.environ.get("OCTOPRINT_DOMAIN")
+    mainsail_domain = os.environ.get("MAINSAIL_DOMAIN")
+    mainsail_port = os.environ.get("MAINSAIL_PORT")
+    mainsail_url = f"http://{mainsail_domain}" if not mainsail_port else f"http://{mainsail_domain}:{mainsail_port}"
+    app.config["MAINSAIL_URL"] = mainsail_url    
+
+    octoprint_domain = os.environ.get("OCTOPRINT_DOMAIN")
+    octoprint_port = os.environ.get("OCTOPRINT_PORT")
+    octoprint_url = f"http://{octoprint_domain}" if not octoprint_port else f"http://{octoprint_domain}:{octoprint_port}"
     app.config["OCTOPRINT_URL"] = octoprint_url
 
     # Configure development settings
