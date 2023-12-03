@@ -1,6 +1,16 @@
 /* custom.scss */
 @charset "utf-8";
 
+// Import Bulma's source files
+@import "bulma/utilities/_all";
+@import "bulma/base/_all";
+@import "bulma/elements/_all";
+@import "bulma/form/_all";
+@import "bulma/components/_all";
+@import "bulma/grid/_all";
+@import "bulma/helpers/_all";
+@import "bulma/layout/_all";
+
 // Variable overrides (https://bulma.io/documentation/customize/variables/)
 $primary: #9b5de5;
 $primary-invert: findColorInvert($primary);
@@ -54,16 +64,6 @@ $radius-small: 2px;
 $radius: 4px;
 $radius-large: 6px;
 $radius-rounded: 9999px;
-
-// Import Bulma's source files
-@import "bulma/utilities/_all";
-@import "bulma/base/_all";
-@import "bulma/elements/_all";
-@import "bulma/form/_all";
-@import "bulma/components/_all";
-@import "bulma/grid/_all";
-@import "bulma/helpers/_all";
-@import "bulma/layout/_all";
 
 // Custom CSS
 

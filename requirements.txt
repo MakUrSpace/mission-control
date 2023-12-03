@@ -7,5 +7,4 @@ flask-login
 flask-wtf
 wtforms
 psycopg2-binary
-libsass
 python-dotenv

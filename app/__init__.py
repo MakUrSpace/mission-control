@@ -1,7 +1,6 @@
 """__init__.py"""
-from ast import main
+import importlib
 import os
-import sass
 from dotenv import find_dotenv, load_dotenv
 from flask import Flask
 from flask_login import LoginManager
@@ -45,12 +44,19 @@ def format_datetime(value, date_format="%b %Y"):
 def create_app():
     """Create and configure an instance of the Flask application."""
     app = Flask(__name__)
-
-    # Compile SASS to CSS
-    os.makedirs('app/static/css', exist_ok=True)
-    css = sass.compile(filename='app/static/sass/custom.scss', output_style='compressed')
-    with open('app/static/css/custom.css', 'w', encoding='utf8') as f:
-        f.write(css)
+    
+    # Configure app settings
+    app.config["DEBUG"] = os.environ.get("FLASK_ENV") == "development"
+    app.config["FLASK_ENV"] = os.environ.get("FLASK_ENV")
+    app.config["FLASK_APP"] = os.environ.get("FLASK_APP")
+    
+    # Compile SASS to CSS if not development
+    if app.config["DEBUG"]:
+        sass = importlib.import_module('sass')
+        os.makedirs('app/static/css', exist_ok=True)
+        css = sass.compile(filename='app/static/sass/custom.scss', output_style='compressed')
+        with open('app/static/css/custom.css', 'w', encoding='utf8') as f:
+            f.write(css)
 
     # Fetching individual components from environment variables
     db_user = os.environ.get("POSTGRES_USER", "pgadm")
@@ -59,11 +65,6 @@ def create_app():
     db_host = os.environ.get("DATABASE_DOMAIN", "db")
     db_url = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
 
-    # Configure app settings
-    app.config["DEBUG"] = os.environ.get("FLASK_ENV") == "development"
-    app.config["FLASK_ENV"] = os.environ.get("FLASK_ENV")
-    app.config["FLASK_APP"] = os.environ.get("FLASK_APP")
-    
     # Configure domains with ports if the ports are provided
     mainsail_url = os.environ.get("MAINSAIL_DOMAIN") + ":" + os.environ.get("MAINSAIL_PORT") if os.environ.get("MAINSAIL_PORT") else os.environ.get("MAINSAIL_DOMAIN")
     app.config["MAINSAIL_URL"] = mainsail_url
