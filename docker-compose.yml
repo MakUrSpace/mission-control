@@ -22,33 +22,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      mainsail:
-        condition: service_healthy
-      octoprint:
-        condition: service_healthy
-        required: false
-    restart: unless-stopped
-
-  mainsail:
-    image: ghcr.io/mainsail-crew/mainsail
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    restart: unless-stopped
-
-  octoprint:
-    image: octoprint/octoprint
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
-      interval: 10s
-      timeout: 5s
-      retries: 6
-    volumes:
-      - octoprint_data:/octoprint
     restart: unless-stopped
 
 volumes:
-  pgdata:
-  octoprint_data:
+  pgdata: null

@@ -4,7 +4,8 @@
             <img src="{{ url_for('static', filename='img/mus_logo.png') }}" alt="Logo" id="logo">
         </a>
 
-        <a role="button" class="navbar-burger" id="hamburger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+        <a role="button" class="navbar-burger" id="hamburger" aria-label="menu" aria-expanded="false"
+            data-target="navMenu">
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
@@ -14,12 +15,13 @@
     <div id="navMenu" class="navbar-menu">
         <div class="navbar-start">
             <a class="navbar-item" href="{{ url_for('main.index') }}">Home</a>
-            <a class="navbar-item" href="{{ url_for('main.mainsail') }}">Mainsail</a>
-            <a class="navbar-item" href="{{ url_for('main.octoprint') }}">OctoPrint</a>
         </div>
         <div class="navbar-end">
-            <a class="navbar-item" href="{{ url_for('main.login') }}">Login</a>
+            {% if current_user.is_authenticated %}
             <a class="navbar-item" href="{{ url_for('main.logout') }}">Logout</a>
+            {% else %}
+            <a class="navbar-item" href="{{ url_for('main.login') }}">Login</a>
+            {% endif %}
         </div>
     </div>
 </nav>

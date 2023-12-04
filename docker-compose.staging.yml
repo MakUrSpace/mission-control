@@ -34,34 +34,6 @@ services:
       - "traefik.http.routers.mus-m-c-web-wip.entrypoints=websecure"
       - "traefik.http.routers.mus-m-c-web-wip.tls.certresolver=tlsresolver"
 
-  mainsail:
-    networks:
-      - core-net-staging
-      - core-net
-    environment:
-      - MAINSAIL_DOMAIN=${MAINSAIL_DOMAIN}
-    volumes:
-      - ${PWD}/data/mainsail-config.json:/usr/share/nginx/html/config.json
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mus-m-c-mainsail-wip.rule=Host(`${MAINSAIL_DOMAIN}`)"
-      - "traefik.http.routers.mus-m-c-mainsail-wip.tls=true"
-      - "traefik.http.routers.mus-m-c-mainsail-wip.entrypoints=websecure"
-      - "traefik.http.routers.mus-m-c-mainsail-wip.tls.certresolver=tlsresolver"
-
-  octoprint:
-    networks:
-      - core-net-staging
-      - core-net
-    environment:
-      - OCTOPRINT_DOMAIN=${OCTOPRINT_DOMAIN}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mus-m-c-octoprint-wip.rule=Host(`${OCTOPRINT_DOMAIN}`)"
-      - "traefik.http.routers.mus-m-c-octoprint-wip.tls=true"
-      - "traefik.http.routers.mus-m-c-octoprint-wip.entrypoints=websecure"
-      - "traefik.http.routers.mus-m-c-octoprint-wip.tls.certresolver=tlsresolver"
-
 networks:
   core-net-staging:
     external: true

@@ -25,12 +25,24 @@ services:
       - SECRET_KEY=${SECRET_KEY}
     volumes:
       - data:/data
+    depends_on:
+      mainsail:
+        condition: service_healthy
+      octoprint:
+        condition: service_healthy
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.mus-m-c-web.rule=Host(`${WEB_DOMAIN}`)"
       - "traefik.http.routers.mus-m-c-web.entrypoints=web"
 
   mainsail:
+    image: ghcr.io/mainsail-crew/mainsail
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
     networks:
       - mus-net
     environment:
@@ -43,6 +55,15 @@ services:
       - "traefik.http.routers.mus-m-c-mainsail.entrypoints=web"
 
   octoprint:
+    image: octoprint/octoprint
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    volumes:
+      - octoprint_data:/octoprint
+    restart: unless-stopped
     networks:
       - mus-net
     environment:
@@ -85,6 +106,7 @@ services:
 volumes:
   letsencrypt: null
   config: null
+  octoprint_data: null
   data:
     driver: local
     driver_opts:

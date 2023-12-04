@@ -14,17 +14,3 @@ services:
   web:
     entrypoint: /bin/echo "`web` disabled; use Flask dev server instead (flask run --reload)"
     restart: no
-
-  mainsail:
-    volumes:
-      - ./data/mainsail-config.json:/usr/share/nginx/html/config.json
-    ports:
-      - "5556:80"
-
-  octoprint:
-    ports:
-      - "5557:5000"
-    # Webcam support
-    # devices:
-    #   - "/dev/video0:/dev/video0"
-
