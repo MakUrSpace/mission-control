@@ -5,6 +5,7 @@ name: build
 trigger:
   branch:
     - master
+    - mus-public
   event:
     - push
     - pull_request
@@ -33,6 +34,7 @@ name: staging
 environment:
   MAINSAIL_DOMAIN: mainsail.mc.wip.nate3d.com
   OCTOPRINT_DOMAIN: octoprint.mc.wip.nate3d.com
+  WEB_DOMAIN: mc.wip.nate3d.com
   
 trigger:
   event:
@@ -121,6 +123,7 @@ name: prod
 environment:
   MAINSAIL_DOMAIN: mainsail.mc.nate3d.com
   OCTOPRINT_DOMAIN: octoprint.mc.nate3d.com
+  WEB_DOMAIN: mc.nate3d.com
 trigger:
   event:
     - promote
@@ -174,6 +177,7 @@ steps:
         - DATABASE_DOMAIN
         - MAINSAIL_DOMAIN
         - OCTOPRINT_DOMAIN
+        - WEB_DOMAIN
         - SECRET_KEY
         - POSTGRES_DB
         - POSTGRES_USER
