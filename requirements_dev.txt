@@ -1,3 +1,2 @@
 eralchemy2
 libsass
-flask-assets

@@ -66,7 +66,7 @@ def create_app():
         bundle = flask_assets.Bundle
 
         assets = environment(app)
-        assets.debug = True
+        assets.debug = app.config["DEBUG"]
 
         scss_bundle = bundle(
             "sass/custom.scss",
