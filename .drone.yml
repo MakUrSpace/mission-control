@@ -95,6 +95,7 @@ steps:
         - POSTGRES_DB
         - POSTGRES_USER
         - POSTGRES_PASSWORD
+        - ADMIN_PASSWORD
       script:
         - "echo $DOCKER_PASSWORD | docker login registry.nate3d.com --username $DOCKER_USERNAME --password-stdin"
         - "cd /docker-workspace/nate3d/nate-web/staging/"
@@ -114,6 +115,8 @@ steps:
         from_secret: postgres_user
       POSTGRES_PASSWORD:
         from_secret: postgres_password
+      ADMIN_PASSWORD:
+        from_secret: admin_password
 
 ---
 kind: pipeline
@@ -184,6 +187,7 @@ steps:
         - POSTGRES_DB
         - POSTGRES_USER
         - POSTGRES_PASSWORD
+        - ADMIN_PASSWORD
       script:
         - "echo $DOCKER_PASSWORD | docker login registry.nate3d.com --username $DOCKER_USERNAME --password-stdin"
         - "cd /docker-workspace/nate3d/nate-web/prod/"
@@ -203,3 +207,5 @@ steps:
         from_secret: postgres_user
       POSTGRES_PASSWORD:
         from_secret: postgres_password
+      ADMIN_PASSWORD:
+        from_secret: admin_password

@@ -15,7 +15,13 @@ from app.models import (
     About
 )
 
+# Create app context
+# NOTE: This must be done before reading environment variables
 app = create_app()
+
+# Read environment variables
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD") or "admin"
+
 with app.app_context():
     # Clear existing data
     Project.query.delete()
@@ -25,11 +31,12 @@ with app.app_context():
     Timeline.query.delete()
     User.query.delete()
     Contact.query.delete()
+    About.query.delete()
 
     # Add new User
     user = User(
         username="admin",
-        password="admin",
+        password=ADMIN_PASSWORD,
         is_admin=True,
     )
 
