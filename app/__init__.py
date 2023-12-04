@@ -4,6 +4,7 @@ import os
 from dotenv import find_dotenv, load_dotenv
 from flask import Flask
 from flask_login import LoginManager
+from flask_assets import Environment, Bundle
 from .admin import admin
 from .models import db, migrate, User
 from .routes import bp as main_bp
@@ -62,28 +63,33 @@ def create_app():
         app.config["TEMPLATES_AUTO_RELOAD"] = True
         app.config["SQLALCHEMY_ECHO"] = False
 
-    try:
-        print("Registering SASS bundle...")
-        app.config["LIBSASS_AVAILABLE"] = importlib.util.find_spec("sass") is not None
-        print(f"Is Libsass available? {app.config['LIBSASS_AVAILABLE']}")
-        flask_assets = importlib.import_module("flask_assets")
+    print("Registering Flask Assets...")
+    assets = Environment(app)
+    assets.debug = app.config["DEBUG"]
 
-        environment = flask_assets.Environment
-        bundle = flask_assets.Bundle
-
-        assets = environment(app)
-        assets.debug = app.config["DEBUG"]
-
-        scss_bundle = bundle(
+    # Register SCSS bundles (SASS to CSS)
+    # NOTE: libsass is not available on all platforms so we fallback to the provided custom.css
+    app.config["LIBSASS_AVAILABLE"] = importlib.util.find_spec("sass") is not None
+    if app.config["LIBSASS_AVAILABLE"]:
+        scss_bundle = Bundle(
             "sass/custom.scss",
             filters="libsass",
             output="css/custom.css",
         )
         assets.register("scss_all", scss_bundle)
-        assets.init_app(app)
-        print("Registered SASS bundle.")
-    except ImportError:
-        print("WARNING: libsass not installed. Skipping SASS compilation.")
+
+    # Register JS bundles
+    js_bundle = Bundle(
+        "js/animated-bg.js",
+        "js/main.js",
+        filters="jsmin",
+        output="js/custom.min.js",
+    )
+    assets.register("js_all", js_bundle)
+
+    # Register Flask-Assets
+    assets.init_app(app)
+    print("Registered Flask Assets.")
 
     # Fetching individual components from environment variables
     if "SQLALCHEMY_DATABASE_URI" not in os.environ:

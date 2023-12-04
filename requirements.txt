@@ -9,3 +9,4 @@ flask-assets
 wtforms
 psycopg2-binary
 python-dotenv
+jsmin

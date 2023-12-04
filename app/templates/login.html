@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html>
+
+<html class="has-navbar-fixed-top">
 
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bulma CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
     <!-- Google Fonts -->
@@ -63,6 +66,10 @@
             document.querySelector('.modal').classList.remove('is-active');
         });
     </script>
+    <!-- Bundled JS and Scripts -->
+    {% assets "js_all" %}
+        <script src="{{ ASSET_URL }}"></script>
+    {% endassets %}
 </body>
 
 </html>
