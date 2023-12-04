@@ -35,6 +35,7 @@ environment:
   MAINSAIL_DOMAIN: mainsail.mc.wip.nate3d.com
   OCTOPRINT_DOMAIN: octoprint.mc.wip.nate3d.com
   WEB_DOMAIN: mc.wip.nate3d.com
+  DATABASE_DOMAIN: db-staging
   
 trigger:
   event:
@@ -88,6 +89,8 @@ steps:
         - DOCKER_PASSWORD
         - MAINSAIL_DOMAIN
         - OCTOPRINT_DOMAIN
+        - WEB_DOMAIN
+        - DATABASE_DOMAIN
         - SECRET_KEY
         - POSTGRES_DB
         - POSTGRES_USER
@@ -121,6 +124,8 @@ environment:
   MAINSAIL_DOMAIN: mainsail.mc.nate3d.com
   OCTOPRINT_DOMAIN: octoprint.mc.nate3d.com
   WEB_DOMAIN: mc.nate3d.com
+  DATABASE_DOMAIN: db-prod
+
 trigger:
   event:
     - promote
@@ -174,6 +179,7 @@ steps:
         - MAINSAIL_DOMAIN
         - OCTOPRINT_DOMAIN
         - WEB_DOMAIN
+        - DATABASE_DOMAIN
         - SECRET_KEY
         - POSTGRES_DB
         - POSTGRES_USER
