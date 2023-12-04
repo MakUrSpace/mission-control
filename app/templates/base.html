@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html class="has-navbar-fixed-top">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ site.title | default('MakUrSpace-Title') }}</title>
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,500,700&display=swap">
+    <!-- Animate-on-scroll -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <!-- Custom Style -->
+    {% if config.LIBSASS_AVAILABLE %}
+        {% assets "scss_all" %}
+            <link rel="stylesheet" href="{{ ASSET_URL }}">
+        {% endassets %}
+    {% else %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    {% endif %}
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <canvas id="animated-bg"></canvas>
+
+    <!-- Header Section -->
+    {% include 'header.html' %}
+
+    <!-- Page Specific Content -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- Bundled JS and Scripts -->
+    {% assets "js_all" %}
+        <script src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+    <script>AOS.init()</script>
+    <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+    <script>
+        kofiWidgetOverlay.draw('makurspace', {
+            'type': 'floating-chat',
+            'floating-chat.donateButton.text': 'Support us!',
+            'floating-chat.donateButton.background-color': '#A8DADC',
+            'floating-chat.donateButton.text-color': '#1D3557'
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

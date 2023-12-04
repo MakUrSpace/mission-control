@@ -27,6 +27,7 @@ services:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     volumes:
       - data:/data
+      - /mnt/MakUrSpace:/MakUrSpace
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.mus-m-c-web-wip.rule=Host(`${WEB_DOMAIN}`)"

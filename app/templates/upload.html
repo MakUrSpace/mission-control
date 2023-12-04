@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section id="file-upload" class="section">
+    <div class="container is-fluid">
+        <div class="box has-text-centered">
+            <h2 class="title is-2 has-text-weight-bold" style="color: #F1FAEE;">Upload Files</h2>
+            <form action="{{ url_for('main.upload_file') }}" method="post" enctype="multipart/form-data">
+                <div class="file has-name is-boxed is-info is-large mx-auto" style="display: flex; justify-content: center;">
+                    <label class="file-label">
+                        <input class="file-input" type="file" name="file[]" multiple>
+                        <span class="file-cta">
+                            <span class="file-icon">
+                                <i class="fas fa-upload"></i>
+                            </span>
+                            <span class="file-label">
+                                Choose files...
+                            </span>
+                        </span>
+                        <span class="file-name" id="file-list">
+                            No file selected
+                        </span>
+                    </label>
+                </div>
+                <div class="field mt-5">
+                    <div class="control">
+                        <button class="button is-primary is-large button-upload" type="submit">
+                            <span class="icon is-small">
+                                <i class="fas fa-file-upload"></i>
+                            </span>
+                            <span>Upload</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const fileInput = document.querySelector('.file-input');
+        const fileList = document.getElementById('file-list');
+
+        fileInput.addEventListener('change', () => {
+            let files = fileInput.files;
+            let fileNames = [];
+
+            if (files.length === 0) {
+                fileList.textContent = 'No file selected';
+            } else {
+                for (let file of files) {
+                    fileNames.push(file.name);
+                }
+                fileList.textContent = fileNames.join(', ');
+            }
+        });
+    });
+</script>
+{% endblock %}

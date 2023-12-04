@@ -1,4 +1,5 @@
 """routes.py - Main routes for the application."""
+import os
 from flask import (
     Blueprint,
     render_template,
@@ -52,6 +53,22 @@ def logout():
     return redirect(url_for("main.index"))
 
 
+@bp.route('/upload', methods=['GET', 'POST'])
+@login_required
+def upload_file():
+    site = Site.query.first()
+    if request.method == 'POST':
+        files = request.files.getlist("file[]")
+        for file in files:
+            if file:
+                # Save each file
+                file.save(os.path.join('/MakUrSpace/web-uploads', file.filename))
+        return redirect(url_for('main.upload_file'))
+    return render_template('upload.html', site=site)
+
+
+# Catch all other routes and redirect to the index
+# NOTE: Must be last!
 @bp.route("/<path:unused_path>")
 def catch_all(unused_path):
     return redirect(url_for("main.index"))
