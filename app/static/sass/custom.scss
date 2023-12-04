@@ -1,31 +1,21 @@
 /* custom.scss */
 @charset "utf-8";
 
-// Import Bulma's source files
-@import "bulma/utilities/_all";
-@import "bulma/base/_all";
-@import "bulma/elements/_all";
-@import "bulma/form/_all";
-@import "bulma/components/_all";
-@import "bulma/grid/_all";
-@import "bulma/helpers/_all";
-@import "bulma/layout/_all";
-
 // Variables
 // ======================
-$primary: #9b5de5;
-$primary-invert: findColorInvert($primary);
-$info: #f15bb5;
-$success: #00f5d4;
-$warning: #fee440;
-$danger: #ff006e;
+$primary: #063092;
+$primary-invert: #E63946;
+$info: #F1FAEE;
+$success: #A8DADC;
+$warning: #F4A261;
+$danger: #E76F51;
 
-$light: #c5c5c5;
-$dark: #10002b;
+$light: #A8DADC;
+$dark: #1D3557;
 $black: $dark;
 
-$text: #c1c1c1;
-$text-strong: #fff;
+$text: #F1FAEE;
+$text-strong: #E63946;
 
 // Custom colors for UI elements
 $background: $dark;
@@ -69,6 +59,25 @@ $radius: 4px;
 $radius-large: 6px;
 $radius-rounded: 9999px;
 
+// Navbar
+// ======================
+$navbar-height: 3rem;
+$navbar-background-color: $background;
+$navbar-item-color: $primary-invert;
+$navbar-item-hover-color: $primary;
+$navbar-item-hover-background-color: $light;
+
+// Import Bulma
+// ======================
+@import "bulma/utilities/_all";
+@import "bulma/base/_all";
+@import "bulma/elements/_all";
+@import "bulma/form/_all";
+@import "bulma/components/_all";
+@import "bulma/grid/_all";
+@import "bulma/helpers/_all";
+@import "bulma/layout/_all";
+
 // Custom Styles
 // ======================
 #main-header {
@@ -92,25 +101,24 @@ $radius-rounded: 9999px;
     background-image: none;
 }
 
-// Custom Navbar Styles
-// ======================
-
-.navbar-item, .navbar-link {
-    color: $primary;
-
-    &:hover {
-        color: $primary-invert;
-    }
+#logo {
+    width: 37px;
+    height: 28px;
+    object-fit: cover;
+    display: block;
+    overflow: hidden;
 }
 
-.navbar-burger {
-    span {
-        background-color: $primary;
-
-        &:hover {
-            background-color: $primary-invert;
-        }
-    }
+#hero-logo {
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    border: 3px solid silver;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.6);
+    margin-bottom: 2rem;
+    z-index: 1;
+    position: relative;
+    object-fit: cover;
 }
 
 // Timeline Styles

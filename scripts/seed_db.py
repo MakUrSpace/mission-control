@@ -45,15 +45,13 @@ with app.app_context():
         title="Mission Control",
         subtitle="A MakUrSpace Project",
         url="https://mc.nate3d.com",
-        logo="static/img/logo.png",
+        logo="img/logo.png",
     )
 
     # Add new Contact
     contact = Contact(
-        name="Nate Brandeburg",
-        email="me@nate3d.com",
-        linkedin="https://www.linkedin.com/in/nate-brandeburg/",
-        github="https://github.com/nate3D"
+        name="MakUrSpace LLC",
+        email="hello@makurspace.com"
     )
 
     # Assign Contact to Site
@@ -99,7 +97,7 @@ with app.app_context():
         title="Nate3D.com",
         description="The template for this project!",
     )
-    
+
     # Assign timeline to site
     site.timeline = timeline
     
