@@ -86,7 +86,6 @@ steps:
       envs:
         - DOCKER_USERNAME
         - DOCKER_PASSWORD
-        - DATABASE_DOMAIN
         - MAINSAIL_DOMAIN
         - OCTOPRINT_DOMAIN
         - SECRET_KEY
@@ -104,8 +103,6 @@ steps:
         from_secret: docker_username
       DOCKER_PASSWORD:
         from_secret: docker_password
-      DATABASE_DOMAIN:
-        from_secret: database_url
       SECRET_KEY:
         from_secret: secret_key
       POSTGRES_DB:
@@ -174,7 +171,6 @@ steps:
       envs:
         - DOCKER_USERNAME
         - DOCKER_PASSWORD
-        - DATABASE_DOMAIN
         - MAINSAIL_DOMAIN
         - OCTOPRINT_DOMAIN
         - WEB_DOMAIN
@@ -193,8 +189,6 @@ steps:
         from_secret: docker_username
       DOCKER_PASSWORD:
         from_secret: docker_password
-      DATABASE_DOMAIN:
-        from_secret: database_url
       SECRET_KEY:
         from_secret: secret_key
       POSTGRES_DB:
