@@ -18,6 +18,14 @@
         </div>
         <div class="navbar-end">
             {% if current_user.is_authenticated %}
+                <!-- Dropdown for Admin Models -->
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">Admin</a>
+                    <div class="navbar-dropdown">
+                        {% for model in admin_models %}
+                            <a class="navbar-item" href="{{ url_for(model.lower() + '.index_view') }}">{{ model }}</a>                        {% endfor %}
+                    </div>
+                </div>
                 <a class="navbar-item" href="{{ url_for('main.upload_file') }}">Upload</a>
             {% endif %}
             <hr class="navbar-divider">

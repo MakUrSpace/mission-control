@@ -11,9 +11,18 @@ from flask import (
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.orm import lazyload
 from .forms import LoginForm
-from .models import User, Site
+from .models import User, Site, BaseModel
 
 bp = Blueprint("main", __name__)
+
+
+@bp.context_processor
+def inject_admin_models():
+    if current_user.is_authenticated and current_user.is_admin:
+        admin_models = [model.__name__ for model in BaseModel.__subclasses__()]
+        return {'admin_models': admin_models}
+    return {'admin_models': []}
+
 
 
 @bp.route("/", methods=["GET", "POST"])
