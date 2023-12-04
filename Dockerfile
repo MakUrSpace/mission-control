@@ -20,6 +20,9 @@ COPY ./requirements.txt /app/requirements.txt
 RUN pip install --upgrade pip wheel
 RUN pip install --no-cache-dir --trusted-host pypi.python.org -r requirements.txt
 
+# Attempt to install libsass
+RUN pip install libsass || echo "Warning: libsass could not be installed"
+
 # Expose the port the app runs on
 EXPOSE 80
 

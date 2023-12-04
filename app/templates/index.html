@@ -15,7 +15,13 @@
     <!-- Favicon -->
     <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
     <!-- Custom Style -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">    
+    {% if config.LIBSASS_AVAILABLE %}
+        {% assets "scss_all" %}
+            <link rel="stylesheet" href="{{ ASSET_URL }}">
+        {% endassets %}
+    {% else %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    {% endif %}
 </head>
 
 <body>
@@ -33,7 +39,7 @@
 
     <!-- Timeline Section -->
     {% with sections=site.timeline.sections %}
-        {% include 'timeline.html' %}
+    {% include 'timeline.html' %}
     {% endwith %}
 
     <!-- Projects Section -->

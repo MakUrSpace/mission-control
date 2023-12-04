@@ -9,11 +9,11 @@ from .models import db, migrate, User
 from .routes import bp as main_bp
 
 # Initialize default environment variables
-os.environ.setdefault('FLASK_ENV', 'production')
-os.environ.setdefault('FLASK_APP', 'app')
+os.environ.setdefault("FLASK_ENV", "production")
+os.environ.setdefault("FLASK_APP", "app")
 
 # Initialize dotenv settings
-if os.environ.get('FLASK_ENV') == 'development':
+if os.environ.get("FLASK_ENV") == "development":
     load_dotenv(find_dotenv())
 
 # Initialize Flask-Login
@@ -44,21 +44,41 @@ def format_datetime(value, date_format="%b %Y"):
 def create_app():
     """Create and configure an instance of the Flask application."""
     app = Flask(__name__)
-    
+
     # Configure app settings
     app.config["DEBUG"] = os.environ.get("FLASK_ENV") == "development"
     app.config["FLASK_ENV"] = os.environ.get("FLASK_ENV")
     app.config["FLASK_APP"] = os.environ.get("FLASK_APP")
-    
-    # Compile SASS to CSS if not development
-    if app.config["DEBUG"]:
-        print("Compiling SASS to CSS...")
-        sass = importlib.import_module('sass')
-        os.makedirs('app/static/css', exist_ok=True)
-        css = sass.compile(filename='app/static/sass/custom.scss', output_style='compressed')
-        with open('app/static/css/custom.css', 'w', encoding='utf8') as f:
-            f.write(css)
 
+    if app.config["DEBUG"]:
+        # Configure logging
+        logging = importlib.import_module("logging")
+        logging.basicConfig(level=logging.DEBUG)
+        app.logger.setLevel(logging.DEBUG)
+
+    try:
+        print("Registering SASS bundle...")
+        app.config["LIBSASS_AVAILABLE"] = importlib.util.find_spec("sass") is not None
+        print(f"Is Libsass available? {app.config['LIBSASS_AVAILABLE']}")
+        flask_assets = importlib.import_module("flask_assets")
+
+        environment = flask_assets.Environment
+        bundle = flask_assets.Bundle
+
+        assets = environment(app)
+        assets.debug = True
+
+        scss_bundle = bundle(
+            "sass/custom.scss",
+            filters="libsass",
+            output="css/custom.css",
+        )
+        assets.register("scss_all", scss_bundle)
+        assets.init_app(app)
+        print("Registered SASS bundle.")
+    except ImportError:
+        print("WARNING: libsass not installed. Skipping SASS compilation.")
+                
     # Fetching individual components from environment variables
     if "SQLALCHEMY_DATABASE_URI" not in os.environ:
         db_user = os.environ.get("POSTGRES_USER", "pgadm")
@@ -68,17 +88,27 @@ def create_app():
         db_url = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
         app.config["SQLALCHEMY_DATABASE_URI"] = db_url
     else:
-        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("SQLALCHEMY_DATABASE_URI")
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+            "SQLALCHEMY_DATABASE_URI"
+        )
 
     # Configure domains with ports if the ports are provided
     mainsail_domain = os.environ.get("MAINSAIL_DOMAIN")
     mainsail_port = os.environ.get("MAINSAIL_PORT")
-    mainsail_url = f"http://{mainsail_domain}" if not mainsail_port else f"http://{mainsail_domain}:{mainsail_port}"
-    app.config["MAINSAIL_URL"] = mainsail_url    
+    mainsail_url = (
+        f"http://{mainsail_domain}"
+        if not mainsail_port
+        else f"http://{mainsail_domain}:{mainsail_port}"
+    )
+    app.config["MAINSAIL_URL"] = mainsail_url
 
     octoprint_domain = os.environ.get("OCTOPRINT_DOMAIN")
     octoprint_port = os.environ.get("OCTOPRINT_PORT")
-    octoprint_url = f"http://{octoprint_domain}" if not octoprint_port else f"http://{octoprint_domain}:{octoprint_port}"
+    octoprint_url = (
+        f"http://{octoprint_domain}"
+        if not octoprint_port
+        else f"http://{octoprint_domain}:{octoprint_port}"
+    )
     app.config["OCTOPRINT_URL"] = octoprint_url
 
     # Configure development settings

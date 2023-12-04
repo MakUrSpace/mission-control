@@ -43,7 +43,7 @@ function drawSpiral(spiral) {
         ctx.lineTo(x, y);
     }
 
-    ctx.strokeStyle = `rgba(156, 39, 176, ${1 - spiral.lifetime / spiral.maxLifetime})`;
+    ctx.strokeStyle = `rgba(230, 57, 70, ${1 - spiral.lifetime / spiral.maxLifetime})`;
     ctx.stroke();
     ctx.restore();
 }
