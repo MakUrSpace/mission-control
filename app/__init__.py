@@ -60,11 +60,15 @@ def create_app():
             f.write(css)
 
     # Fetching individual components from environment variables
-    db_user = os.environ.get("POSTGRES_USER", "pgadm")
-    db_password = os.environ.get("POSTGRES_PASSWORD", "lolnope")
-    db_name = os.environ.get("POSTGRES_DB", "webdb")
-    db_host = os.environ.get("DATABASE_DOMAIN", "db")
-    db_url = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
+    if "SQLALCHEMY_DATABASE_URI" not in os.environ:
+        db_user = os.environ.get("POSTGRES_USER", "pgadm")
+        db_password = os.environ.get("POSTGRES_PASSWORD", "lolnope")
+        db_name = os.environ.get("POSTGRES_DB", "webdb")
+        db_host = os.environ.get("DATABASE_DOMAIN", "db")
+        db_url = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
+        app.config["SQLALCHEMY_DATABASE_URI"] = db_url
+    else:
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("SQLALCHEMY_DATABASE_URI")
 
     # Configure domains with ports if the ports are provided
     mainsail_domain = os.environ.get("MAINSAIL_DOMAIN")
@@ -89,7 +93,6 @@ def create_app():
     app.register_blueprint(main_bp)
 
     # Configure database
-    app.config["SQLALCHEMY_DATABASE_URI"] = db_url
     db.init_app(app)
     migrate.init_app(app, db)
 
