@@ -19,8 +19,6 @@ services:
     image: registry.nate3d.com/mus/mission-control:latest
     environment:
       - DATABASE_DOMAIN=${DATABASE_DOMAIN}
-      - MAINSAIL_DOMAIN=${MAINSAIL_DOMAIN}
-      - OCTOPRINT_DOMAIN=${OCTOPRINT_DOMAIN}
       - SQLALCHEMY_DATABASE_URI=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DATABASE_DOMAIN}/${POSTGRES_DB}
       - WEB_DOMAIN=${WEB_DOMAIN}
       - SECRET_KEY=${SECRET_KEY}

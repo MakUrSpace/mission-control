@@ -4,7 +4,6 @@ name: build
 
 trigger:
   branch:
-    - master
     - mus-public
   event:
     - push
