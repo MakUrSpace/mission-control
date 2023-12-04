@@ -56,6 +56,7 @@ WEB_DOMAIN=missioncontrol.local
 MAINSAIL_DOMAIN=mainsail.local
 OCTOPRINT_DOMAIN=octoprint.local
 TRAEFIK_DOMAIN=traefik.local
+ADMIN_PASSWORD=changeme!
 EOF
 }
 

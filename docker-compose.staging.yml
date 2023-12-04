@@ -24,6 +24,7 @@ services:
       - SQLALCHEMY_DATABASE_URI=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DATABASE_DOMAIN}/${POSTGRES_DB}
       - WEB_DOMAIN=${WEB_DOMAIN}
       - SECRET_KEY=${SECRET_KEY}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     volumes:
       - data:/data
     labels:
