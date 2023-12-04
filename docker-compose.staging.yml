@@ -3,7 +3,10 @@ name: mus-mission-control-staging
 services:
   db:
     networks:
-      - core-net-staging
+      core-net-staging:
+        aliases:
+          - db-staging
+
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}

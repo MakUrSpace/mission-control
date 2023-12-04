@@ -3,7 +3,9 @@ name: mus-mission-control
 services:
   db:
     networks:
-      - core-net
+      core-net:
+        aliases:
+          - db-prod
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
