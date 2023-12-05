@@ -3,8 +3,8 @@
 
 // Variables
 // ======================
-$primary: #063092;
-$primary-invert: #E63946;
+$primary: #7b380b;
+$primary-invert: #A8DADC;
 $info: #F1FAEE;
 $success: #A8DADC;
 $warning: #F4A261;
@@ -263,4 +263,10 @@ div {
 
 .box, .card {
     background-color: $background;
+}
+
+.button-upload {
+    background-color: $light;
+    color: $dark;
+    text-align: center;
 }

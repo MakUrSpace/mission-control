@@ -4,7 +4,6 @@ name: build
 
 trigger:
   branch:
-    - master
     - mus-public
   event:
     - push
@@ -32,8 +31,6 @@ type: docker
 name: staging
 
 environment:
-  MAINSAIL_DOMAIN: mainsail.mc.wip.nate3d.com
-  OCTOPRINT_DOMAIN: octoprint.mc.wip.nate3d.com
   WEB_DOMAIN: mc.wip.nate3d.com
   DATABASE_DOMAIN: db-staging
   
@@ -87,8 +84,6 @@ steps:
       envs:
         - DOCKER_USERNAME
         - DOCKER_PASSWORD
-        - MAINSAIL_DOMAIN
-        - OCTOPRINT_DOMAIN
         - WEB_DOMAIN
         - DATABASE_DOMAIN
         - SECRET_KEY
@@ -124,8 +119,6 @@ type: docker
 name: prod
 
 environment:
-  MAINSAIL_DOMAIN: mainsail.mc.nate3d.com
-  OCTOPRINT_DOMAIN: octoprint.mc.nate3d.com
   WEB_DOMAIN: mc.nate3d.com
   DATABASE_DOMAIN: db-prod
 
@@ -179,8 +172,6 @@ steps:
       envs:
         - DOCKER_USERNAME
         - DOCKER_PASSWORD
-        - MAINSAIL_DOMAIN
-        - OCTOPRINT_DOMAIN
         - WEB_DOMAIN
         - DATABASE_DOMAIN
         - SECRET_KEY

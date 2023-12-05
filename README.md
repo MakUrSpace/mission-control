@@ -46,11 +46,17 @@ What things you need to install the software:
      source .venv/bin/activate
      ```
 
-   - On Windows:
+   - On Windows (PowerShell):
 
-     ```sh
-     .venv\Scripts\Activate
-     ```
+      ```powershell
+      .venv\Scripts\Activate.ps1
+      ```
+
+   - On Windows (cmd):
+
+      ```cmd
+      .venv\Scripts\activate
+      ```
 
 5. Install the required packages:
 
@@ -59,20 +65,34 @@ What things you need to install the software:
    pip install -r requirements_dev.txt
    ```
 
-6. Create a `.env` file in the root directory and add the following environment variables:
+6. Create a `.env` file in the workspace root directory and add the
+following environment variables. 
+
+   > **Note:** The `.env` file is ignored by git and should not be committed. 
+   > These values are for development purposes only and may be edited freely.
 
    ```sh
-   POSTGRES_DB=webdb
-   POSTGRES_USER=admin
-   POSTGRES_PASSWORD=password
-   DATABASE_DOMAIN=db
-   SECRET_KEY=supersecretkey
-   WEB_DOMAIN=missioncontrol.local
-   MAINSAIL_DOMAIN=mainsail.local
-   MAINSAIL_PORT=5556
-   OCTOPRINT_DOMAIN=octoprint.local
-   OCTOPRINT_PORT=5557
+   FLASK_APP=app/__init__.py # Flask application entry point
+   POSTGRES_DB=webdb # Postgres database name
+   POSTGRES_USER=admin # Postgres username
+   POSTGRES_PASSWORD=password # Postgres password
+   DATABASE_DOMAIN=localhost # Postgres domain
+   SECRET_KEY=supersecretkey # Flask property for Cross-Site Request Forgery (CSRF) Protection, session management, etc.
+   WEB_DOMAIN=localhost # Flask web app FQDN
+   MAINSAIL_DOMAIN=localhost # Mainsail FQDN
+   MAINSAIL_PORT=5556 # Not used when running with docker-compose.embed.yml
+   OCTOPRINT_DOMAIN=localhost # Octoprint FQDN
+   OCTOPRINT_PORT=5557 # Not used when running with docker-compose.embed.yml
+   ADMIN_PASSWORD=admin # Admin password for the web app
    ```
+
+   > **Additional Notes:**
+   >- The `SECRET_KEY` value should be a random string of characters.
+   >- The `DATABASE_DOMAIN` will be localhost when running locally, but will be the container name when running in Docker (or network alias).
+   >- The `WEB_DOMAIN` will be localhost when running locally, but will be __missioncontrol.local__ name when running with docker-compose.embed.yml.
+   >- The `MAINSAIL_DOMAIN` will be localhost when running locally, but will be __mainsail.local__ name when running with docker-compose.embed.yml.
+   >- The `OCTOPRINT_DOMAIN` will be localhost when running locally, but will be __octoprint.local__ name when running with docker-compose.embed.yml.
+   >- The `*_PORT` values are the ports that the containers will be exposed on. These values are only used when running locally.
 
 ### Running the Project
 
@@ -82,19 +102,43 @@ of Flask and Docker Compose.
 First, you will need to start the database and Mainsail containers:
 
 ```sh
-docker compose build
-docker compose up -d # to run in detached mode
-docker compose down
-docker compose down -v # to remove volumes
-
-docker compose logs -f # to view logs
-docker compose up --build -d # to rebuild and run in detached mode
+docker compose up --build -d
 ```
+
+>_Some useful docker compose commands:_
+   >    ```sh
+   >    docker compose build # to build the containers
+   >    docker compose up -d # to run the built containers in detached mode
+   >    docker compose down # to stop the containers
+   >    docker compose down -v # to stop the containers and remove volumes
+   >
+   >    docker compose logs -f # to follow the logs
+   >    docker compose up --build -d # to rebuild and run in detached mode
+   >    ```
+   >   **Note:** Docker compose automatically applies the docker-compose.override.yml file if it exists. This is equivalent to running `docker compose -f docker-compose.yml -f docker-compose.override.yml up -d`.
 
 Then, you will need to set the Flask environment variables and run the Flask application:
 
+Mac/Linux:
+
 ```sh
-export FLASK_ENV=development  # or set FLASK_ENV=development on Windows
+export FLASK_ENV=development
+flask run
+flask run --reload # to reload on file changes
+```
+
+Windows(PowerShell):
+
+```powershell
+$env:FLASK_ENV="development"
+flask run
+flask run --reload # to reload on file changes
+```
+
+Windows(cmd):
+
+```cmd
+set FLASK_ENV=development
 flask run
 flask run --reload # to reload on file changes
 ```
