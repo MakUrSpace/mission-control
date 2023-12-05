@@ -1,32 +1,7 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
 
-<html class="has-navbar-fixed-top">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bulma CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
-    <!-- Google Fonts -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,500,700&display=swap">
-    <!-- Animate-on-scroll -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css">
-    <!-- Favicon -->
-    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
-    <!-- Custom Style -->
-    {% if config.LIBSASS_AVAILABLE %}
-        {% assets "scss_all" %}
-            <link rel="stylesheet" href="{{ ASSET_URL }}">
-        {% endassets %}
-    {% else %}
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
-    {% endif %}
-</head>
-
+{% block content %}
 <body id="login-section">
-    <!-- Animated Background -->
-    <canvas id="animated-bg"></canvas>
-
     <!-- Login Modal -->
     <div class="modal is-active">
         <div class="modal-background"></div> <!-- This will overlay your animated background -->
@@ -35,7 +10,9 @@
             <div class="box">
                 <form id="login-form" action="{{ url_for('main.login') }}" method="post" class="section">
                     {{ form.hidden_tag() }}
-                    <input type="hidden" name="next" value="{{ request.args.get('next') }}">
+                    {% if request.args.get('next') %}
+                        <input type="hidden" name="next" value="{{ request.args.get('next') }}">
+                    {% endif %}                    
                     <div class="field">
                         <label class="label">{{ form.username.label }}</label>
                         <div class="control">
@@ -66,10 +43,5 @@
             document.querySelector('.modal').classList.remove('is-active');
         });
     </script>
-    <!-- Bundled JS and Scripts -->
-    {% assets "js_all" %}
-        <script src="{{ ASSET_URL }}"></script>
-    {% endassets %}
 </body>
-
-</html>
+{% endblock %}

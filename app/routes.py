@@ -25,6 +25,13 @@ def inject_admin_models():
     return {'admin_models': []}
 
 
+@bp.context_processor
+def inject_domains():
+    return {
+        'mainsail_domain': os.environ.get('MAINSAIL_DOMAIN'),
+        'octoprint_domain': os.environ.get('OCTOPRINT_DOMAIN')
+    }
+
 
 @bp.route("/", methods=["GET", "POST"])
 @bp.route("/index", methods=["GET", "POST"])
@@ -42,6 +49,7 @@ def mainsail():
     mainsail_url = current_app.config.get('MAINSAIL_URL')
     return render_template('mainsail.html', mainsail_url=mainsail_url)
 
+
 @bp.route('/octoprint', methods=['GET', 'POST'])
 @login_required
 def octoprint():
@@ -50,13 +58,12 @@ def octoprint():
     return render_template('octoprint_redirect.html', octoprint_url=octoprint_url)
 
 
-
 @bp.route("/login", methods=["GET", "POST"])
 def login():
     """Login the current user."""
     if current_user.is_authenticated:
-        next_page = request.form.get("next") or request.args.get("next")
-        return redirect(next_page or url_for("main.index"))
+        next_page = request.args.get('next')
+        return redirect(next_page) if next_page else redirect(url_for("main.index"))
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -64,7 +71,7 @@ def login():
         if user and user.check_password(form.password.data):
             login_user(user, remember=True)
             next_page = request.form.get("next") or request.args.get("next")
-            return redirect(next_page or url_for("main.index"))
+            return redirect(next_page) if next_page else redirect(url_for("main.index"))
         flash("Invalid username or password.")
 
     return render_template("login.html", form=form)
