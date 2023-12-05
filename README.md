@@ -214,14 +214,14 @@ Drone.io CI/CD server. The CI/CD process is as follows:
 ### Continuous Integration
 
 - `.drone.yml` defines the CI pipeline.
-- Pushes or merges to master automatically trigger the CI pipeline.
+- Pushes or merges to __release/public__ automatically trigger the CI pipeline.
 - The CI pipeline runs the docker-compose file to build the application and
 deploy the image to a private Docker registry.
 
 ### Continuous Deployment
 
 - `.drone.yml` defines the CD pipeline.
-- After building successfully, changes in the master branch are automatically
+- After building successfully, changes in the __releaes/public__ branch are automatically
 deployed to the production server.
 
 ## Contributing

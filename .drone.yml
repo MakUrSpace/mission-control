@@ -4,7 +4,7 @@ name: build
 
 trigger:
   branch:
-    - mus-public
+    - release/public
   event:
     - push
     - pull_request
