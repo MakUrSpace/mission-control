@@ -160,3 +160,6 @@ cython_debug/
 #.idea/
 
 .webassets-cache/
+
+# Generated file for rraspberry pi setup
+publish_alias.sh
