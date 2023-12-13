@@ -1,8 +1,8 @@
 # Use an official Python runtime as a base image
-FROM python:3.9-slim
+FROM python:bookworm
 
 # Install curl
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y curl libpq-dev gcc && rm -rf /var/lib/apt/lists/*
 
 # Set the environment variables
 ENV FLASK_APP=app/__init__.py

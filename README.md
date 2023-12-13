@@ -8,6 +8,27 @@ be deployed via Docker Compose. The existing docker compose setup is intended fo
 development and production environments, but will need to be modified for
 deployment to your production server.
 
+## Table of Contents
+- [MakUrSpace Mission Control](#makurspace-mission-control)
+  - [Table of Contents](#table-of-contents)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Setting Up the Development Environment](#setting-up-the-development-environment)
+      - [Using VSCode and Python Virtual Environments](#using-vscode-and-python-virtual-environments)
+    - [Running the Project](#running-the-project)
+  - [Deployment (Raspberry Pi)](#deployment-raspberry-pi)
+    - [Prerequisites](#prerequisites-1)
+    - [Setting Up the Raspberry Pi](#setting-up-the-raspberry-pi)
+    - [Deploying the Project](#deploying-the-project)
+  - [CI/CD Process](#cicd-process)
+    - [Continuous Integration](#continuous-integration)
+    - [Continuous Deployment](#continuous-deployment)
+  - [Contributing](#contributing)
+    - [Updating Database Migrations](#updating-database-migrations)
+    - [Using Migrations](#using-migrations)
+  - [License](#license)
+
+
 ## Getting Started
 
 These instructions will get your copy of the project up and running on your
@@ -171,7 +192,7 @@ Your app should now be running on [http://localhost:5000](http://localhost:5000)
 
    ```sh
    cd mission-control
-   ./scripts/raspberry_pi_setup.sh
+   sudo ./scripts/raspberry_pi_setup.sh
    ```
 
 4. Reboot the Raspberry Pi:
