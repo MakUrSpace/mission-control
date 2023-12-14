@@ -12,7 +12,7 @@ services:
   web:
     networks:
       - mus-net
-    build: .
+    build: ..
     environment:
       - DATABASE_DOMAIN=${DATABASE_DOMAIN}
       - MAINSAIL_DOMAIN=${MAINSAIL_DOMAIN}

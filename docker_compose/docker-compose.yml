@@ -13,7 +13,7 @@ services:
     restart: unless-stopped
 
   web:
-    build: .
+    build: ..
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:80"]
       interval: 10s

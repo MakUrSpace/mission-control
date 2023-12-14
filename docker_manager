@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# Set the compose files
+COMPOSE_DIR="docker_compose"
+COMPOSE_FILES="-f $COMPOSE_DIR/docker-compose.yml -f $COMPOSE_DIR/docker-compose.embed.yml"
+ENV_FILE=".env"
+
+# Function to start the Docker containers
+start_containers() {
+    echo "Starting Docker containers..."
+    docker compose --env-file $ENV_FILE $COMPOSE_FILES up --build -d
+    echo "Containers started."
+}
+
+# Function to stop the Docker containers
+stop_containers() {
+    echo "Stopping Docker containers..."
+    docker compose --env-file $ENV_FILE $COMPOSE_FILES down
+    echo "Containers stopped."
+}
+
+# Function to destroy the Docker containers
+destroy_containers() {
+    echo "Destroying Docker containers..."
+    docker compose --env-file $ENV_FILE $COMPOSE_FILES down --rmi all --volumes
+    echo "Containers destroyed."
+}
+
+# Function to show the status of the Docker containers
+status_containers() {
+    docker compose --env-file $ENV_FILE $COMPOSE_FILES ps
+}
+
+# Function to show docker logs
+logs_containers() {
+    docker compose --env-file $ENV_FILE $COMPOSE_FILES logs -f
+}
+
+# Function to show usage
+usage() {
+    echo "Usage: $0 {start|stop|destroy|status|logs}"
+    exit 1
+}
+
+# Main script
+case "$1" in
+    start)
+        start_containers
+        ;;
+    stop)
+        stop_containers
+        ;;
+    status)
+        status_containers
+        ;;
+    destroy)
+        destroy_containers
+        ;;
+    logs)
+        logs_containers
+        ;;
+    *)
+        usage
+        ;;
+esac

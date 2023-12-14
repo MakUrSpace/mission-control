@@ -171,7 +171,8 @@ Your app should now be running on [http://localhost:5000](http://localhost:5000)
 ### Prerequisites
 
 - [Raspberry Pi OS](https://www.raspberrypi.org/software/)
-- [Docker](https://docs.docker.com/engine/install/debian/)
+- [Docker (Raspberry Pi arm64)](https://docs.docker.com/engine/install/debian/)
+- [Docker (Raspberry Pi armhf)](https://docs.docker.com/engine/install/raspberry-pi-os/)
 
 ### Setting Up the Raspberry Pi
 
@@ -201,29 +202,13 @@ Your app should now be running on [http://localhost:5000](http://localhost:5000)
    sudo reboot
    ```
 
-### Deploying the Project
+### Building and Running the Project
 
-1. Use docker compose to build and run the containers:
+A convenience script is provided to build and run the project:
 
-   ```sh
-   docker compose -f docker-compose.yml -f docker-compose.embed.yml build
-   docker compose -f docker-compose.yml -f docker-compose.embed.yml up -d
-   ```
-
-2. Use docker-compose to stop the containers:
-
-   ```sh
-   docker compose -f docker-compose.yml -f docker-compose.embed.yml down
-
-   # To remove volumes:
-   docker compose -f docker-compose.yml -f docker-compose.embed.yml down -v
-   ```
-
-3. Use docker compose to view logs:
-
-   ```sh
-   docker compose -f docker-compose.yml -f docker-compose.embed.yml logs -f
-   ```
+```sh
+Usage: ./docker_manager {start|stop|destroy|status|logs} 
+```
 
 ## CI/CD Process
 

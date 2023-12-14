@@ -53,8 +53,8 @@ steps:
       port: 22
       target: /docker-workspace/nate3d/nate-web/staging/
       source: 
-        - ./docker-compose.yml
-        - ./docker-compose.staging.yml
+        - ./docker_compose/docker-compose.yml
+        - ./docker_compose/docker-compose.staging.yml
       strip_components: 0
 
   - name: transfer-mainsail-config-staging
@@ -141,8 +141,8 @@ steps:
       port: 22
       target: /docker-workspace/nate3d/nate-web/prod/
       source: 
-        - ./docker-compose.yml
-        - ./docker-compose.prod.yml
+        - ./docker_compose/docker-compose.yml
+        - ./docker_compose/docker-compose.prod.yml
       strip_components: 0
 
   - name: transfer-mainsail-config-prod
