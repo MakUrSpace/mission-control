@@ -1,11 +1,14 @@
 #!/bin/bash
 
+# Constants
+CURRENT_USER=${SUDO_USER:-$(whoami)}
+
 # Logging functions
 info() {
     echo -e "\033[32m[INFO]\033[0m $1"
 }
 
-warning() {
+warn() {
     echo -e "\033[33m[WARNING]\033[0m $1"
 }
 
@@ -231,6 +234,9 @@ OCTOPRINT_DOMAIN=octoprint.local
 TRAEFIK_DOMAIN=traefik.local
 ADMIN_PASSWORD=changeme!
 EOF
+
+    chown $CURRENT_USER:$CURRENT_USER .env
+
     echo -e "\033[1;33m.env file created/overwritten.\033[0m"
     echo -e "\033[1;32mIMPORTANT:\033[0m Please modify the following variables to unique values of your choosing:"
     echo -e "\033[1;34mPOSTGRES_USER\033[0m"
@@ -241,8 +247,6 @@ EOF
 
 # Function to add the current user to the docker group
 add_user_to_docker_group() {
-    CURRENT_USER=${SUDO_USER:-$(whoami)}
-
     # Check if the docker group exists
     if getent group docker >/dev/null; then
         info "Docker group exists."
@@ -287,6 +291,8 @@ setup_venv() {
     else
         info ".venv already exists."
     fi
+
+    chown -R $CURRENT_USER:$CURRENT_USER .venv
 
     # Check if the virtual environment is already active
     if [ -z "$VIRTUAL_ENV" ]; then
