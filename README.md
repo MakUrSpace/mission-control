@@ -21,6 +21,8 @@ deployment to your production server.
     - [Prerequisites](#prerequisites-1)
     - [Setting Up the Raspberry Pi](#setting-up-the-raspberry-pi)
     - [Building and Running the Project](#building-and-running-the-project)
+    - [Accessing Your MissionControl Toolkit](#accessing-your-missioncontrol-toolkit)
+    - [Installing Dev Dependencies on Raspberry Pi](#installing-dev-dependencies-on-raspberry-pi)
   - [CI/CD Process](#cicd-process)
     - [Continuous Integration](#continuous-integration)
     - [Continuous Deployment](#continuous-deployment)
@@ -234,6 +236,10 @@ Your app should now be running on [http://localhost:5000](http://localhost:5000)
    ```
 
    >**It is safe to run the setup script multiple times**
+   >The script will attempt to install the Python packages defined in
+   >`requirements.txt`. The dev packages are not installed, see
+   >[Installing Dev Dependencies on Raspberry Pi](#installing-dev-dependencies-on-raspberry-pi)
+   for details.
 
 3. Reboot the Raspberry Pi(optional, but recommended):
 
@@ -273,6 +279,19 @@ following **_MakUrSpace_ Mission Control** services:
     MissionControl pairs this with the power of mDNS to provide a seamless
     experience for your makerspace.
     >This is **your** Mission Control central switchboard.
+
+### Installing Dev Dependencies on Raspberry Pi
+
+The Raspberry Pi setup script does not install the dev dependencies
+defined in `requirements_dev.txt`. This is because the dev
+dependencies require additional packages to build. Follow the
+commands below to install the dev dependencies:
+
+```sh
+sudo apt-get update
+sudo apt-get install build-essential python3-dev graphviz-dev
+pip install -r requirements_dev.txt
+```
 
 ## CI/CD Process
 
