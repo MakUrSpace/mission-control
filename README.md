@@ -9,6 +9,7 @@ development and production environments, but will need to be modified for
 deployment to your production server.
 
 ## Table of Contents
+
 - [MakUrSpace Mission Control](#makurspace-mission-control)
   - [Table of Contents](#table-of-contents)
   - [Getting Started](#getting-started)
@@ -19,7 +20,7 @@ deployment to your production server.
   - [Deployment (Raspberry Pi)](#deployment-raspberry-pi)
     - [Prerequisites](#prerequisites-1)
     - [Setting Up the Raspberry Pi](#setting-up-the-raspberry-pi)
-    - [Deploying the Project](#deploying-the-project)
+    - [Building and Running the Project](#building-and-running-the-project)
   - [CI/CD Process](#cicd-process)
     - [Continuous Integration](#continuous-integration)
     - [Continuous Deployment](#continuous-deployment)
@@ -87,33 +88,65 @@ What things you need to install the software:
    ```
 
 6. Create a `.env` file in the workspace root directory and add the
-following environment variables. 
+following environment variables.
 
-   > **Note:** The `.env` file is ignored by git and should not be committed. 
+   > **Note:** The `.env` file is ignored by git and should not be committed.
    > These values are for development purposes only and may be edited freely.
 
    ```sh
-   FLASK_APP=app/__init__.py # Flask application entry point
-   POSTGRES_DB=webdb # Postgres database name
-   POSTGRES_USER=admin # Postgres username
-   POSTGRES_PASSWORD=password # Postgres password
-   DATABASE_DOMAIN=localhost # Postgres domain
-   SECRET_KEY=supersecretkey # Flask property for Cross-Site Request Forgery (CSRF) Protection, session management, etc.
-   WEB_DOMAIN=localhost # Flask web app FQDN
-   MAINSAIL_DOMAIN=localhost # Mainsail FQDN
-   MAINSAIL_PORT=5556 # Not used when running with docker-compose.embed.yml
-   OCTOPRINT_DOMAIN=localhost # Octoprint FQDN
-   OCTOPRINT_PORT=5557 # Not used when running with docker-compose.embed.yml
-   ADMIN_PASSWORD=admin # Admin password for the web app
+   # Flask application entry point
+   FLASK_APP=app/__init__.py
+
+   # Postgres database name
+   POSTGRES_DB=webdb
+
+   # Postgres username
+   POSTGRES_USER=admin
+
+   # Postgres password
+   POSTGRES_PASSWORD=password
+
+   # Postgres domain
+   DATABASE_DOMAIN=localhost
+
+   # Flask property for Cross-Site Request Forgery (CSRF) 
+   # Protection, session management, etc.
+   SECRET_KEY=supersecretkey
+
+   # Flask web app FQDN
+   WEB_DOMAIN=localhost
+
+   # Mainsail FQDN
+   MAINSAIL_DOMAIN=localhost
+
+   # Not used when running with docker-compose.embed.yml
+   MAINSAIL_PORT=5556
+
+   # Octoprint FQDN
+   OCTOPRINT_DOMAIN=localhost
+
+   # Not used when running with docker-compose.embed.yml
+   OCTOPRINT_PORT=5557
+
+   # Traefik FQDN (not used when running locally; see Raspberry Pi setup)
+   TRAEFIK_DOMAIN=localhost
+
+   # Admin password for the web app
+   ADMIN_PASSWORD=admin
    ```
 
    > **Additional Notes:**
    >- The `SECRET_KEY` value should be a random string of characters.
-   >- The `DATABASE_DOMAIN` will be localhost when running locally, but will be the container name when running in Docker (or network alias).
-   >- The `WEB_DOMAIN` will be localhost when running locally, but will be __missioncontrol.local__ name when running with docker-compose.embed.yml.
-   >- The `MAINSAIL_DOMAIN` will be localhost when running locally, but will be __mainsail.local__ name when running with docker-compose.embed.yml.
-   >- The `OCTOPRINT_DOMAIN` will be localhost when running locally, but will be __octoprint.local__ name when running with docker-compose.embed.yml.
-   >- The `*_PORT` values are the ports that the containers will be exposed on. These values are only used when running locally.
+   >- The `DATABASE_DOMAIN` will be localhost when running locally, but will be
+   > the container name when running in Docker (or network alias).
+   >- The `WEB_DOMAIN` will be localhost when running locally, but will be
+   > **missioncontrol.local** name when running with docker-compose.embed.yml.
+   >- The `MAINSAIL_DOMAIN` will be localhost when running locally, but will be
+   > **mainsail.local** name when running with docker-compose.embed.yml.
+   >- The `OCTOPRINT_DOMAIN` will be localhost when running locally, but will be
+   > **octoprint.local** name when running with docker-compose.embed.yml.
+   >- The `*_PORT` values are the ports that the containers will be exposed on.
+   > These values are only used when running locally.
 
 ### Running the Project
 
@@ -127,6 +160,7 @@ docker compose up --build -d
 ```
 
 >_Some useful docker compose commands:_
+>
    >    ```sh
    >    docker compose build # to build the containers
    >    docker compose up -d # to run the built containers in detached mode
@@ -136,7 +170,11 @@ docker compose up --build -d
    >    docker compose logs -f # to follow the logs
    >    docker compose up --build -d # to rebuild and run in detached mode
    >    ```
-   >   **Note:** Docker compose automatically applies the docker-compose.override.yml file if it exists. This is equivalent to running `docker compose -f docker-compose.yml -f docker-compose.override.yml up -d`.
+   >
+   > **Note:** Docker compose automatically applies the
+   > docker-compose.override.yml file if it exists. This is equivalent to
+   > running `docker compose -f docker-compose.yml
+   > -f docker-compose.override.yml up -d`.
 
 Then, you will need to set the Flask environment variables and run the Flask application:
 
@@ -170,33 +208,34 @@ Your app should now be running on [http://localhost:5000](http://localhost:5000)
 
 ### Prerequisites
 
+   > **Note:** The following instructions are for a Raspberry Pi running
+   > Raspberry Pi OS.
+   >
+   > **Docker will be installed by running the `raspberry_pi_setup.sh` script.
+   > Links below are for reference only.**
+
 - [Raspberry Pi OS](https://www.raspberrypi.org/software/)
 - [Docker (Raspberry Pi arm64)](https://docs.docker.com/engine/install/debian/)
 - [Docker (Raspberry Pi armhf)](https://docs.docker.com/engine/install/raspberry-pi-os/)
 
 ### Setting Up the Raspberry Pi
 
-1. Install the required packages:
-
-   ```sh
-   sudo apt-get update
-   sudo apt-get install -y git python3 python3-pip
-   ```
-
-2. Clone the repository to your local machine:
+1. Clone the repository to your local machine:
 
    ```sh
    git clone git@github.com:MakUrSpace/mission-control.git
    ```
 
-3. Run the setup script. This will setup the .env file and setup mDNS for mission-control:
+2. Run the setup script. It must be run with sudo:
 
    ```sh
    cd mission-control
    sudo ./scripts/raspberry_pi_setup.sh
    ```
 
-4. Reboot the Raspberry Pi:
+   >**It is safe to run the setup script multiple times**
+
+3. Reboot the Raspberry Pi(optional, but recommended):
 
    ```sh
    sudo reboot
@@ -209,6 +248,31 @@ A convenience script is provided to build and run the project:
 ```sh
 Usage: ./docker_manager {start|stop|destroy|status|logs} 
 ```
+
+### Accessing Your MissionControl Toolkit
+
+Once the project is running, you can access the
+following **_MakUrSpace_ Mission Control** services:
+
+- [MissionControl Web App](http://missioncontrol.local)
+  - MissionControl Web App is a single page application (SPA) that provides
+    access to the other services. It is built with Flask and simple HTML/SCSS.
+    >This is **your** maker dashboard.
+- [Mainsail](http://mainsail.local)
+  - Mainsail is a modern, responsive web interface for klipper open-source 3D
+    printer firmware. Read more about it [here](https://docs.mainsail.xyz/)
+    >This is **your** 3D printer dashboard for your Klipper-powered 3D makerspace.
+- [Octoprint](http://octoprint.local)
+  - Octoprint is an extremely powerful application for managing 3D printers with
+    a responsive and extensive web app.
+    Read more about it [here](https://octoprint.org/)
+    >This is **your** 3D printer dashboard for your Marlin-powered 3D makerspace.
+- [Traefik Dashboard](http://traefik.local)
+  - Traefik is a reverse proxy that routes traffic to the appropriate service
+    based on the domain name.
+    MissionControl pairs this with the power of mDNS to provide a seamless
+    experience for your makerspace.
+    >This is **your** Mission Control central switchboard.
 
 ## CI/CD Process
 
