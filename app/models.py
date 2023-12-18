@@ -220,5 +220,21 @@ class Service(BaseModel):
     name = db.Column(db.String(50), nullable=False)
     description = db.Column(db.Text, nullable=False)
     logo = db.Column(db.String(250), nullable=False)
+    environment_vars = db.relationship(
+        "EnvironmentVar", backref="service", lazy=True)
     site_id = db.Column(
         db.Integer, db.ForeignKey("site.id", name="fk_site_id"), nullable=False)
+
+class EnvironmentVar(BaseModel):
+    """EnvironmentVar model.
+
+    Args:
+        BaseModel: Custom base model to provide additional standardized functionality.
+    """
+
+    __tablename__ = "environment_var"
+    key = db.Column(db.String(50), nullable=False)
+    value = db.Column(db.String(50), nullable=False)
+    service_id = db.Column(
+        db.Integer, db.ForeignKey("service.id", name="fk_service_id"), nullable=False)
+    

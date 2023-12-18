@@ -13,7 +13,8 @@ from app.models import (
     Contact,
     User,
     About,
-    Service
+    Service,
+    EnvironmentVar
 )
 
 # Create app context
@@ -25,15 +26,8 @@ ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD") or "admin"
 
 with app.app_context():
     # Clear existing data
-    Project.query.delete()
-    Site.query.delete()
-    TimelineSubsection.query.delete()
-    TimelineSection.query.delete()
-    Timeline.query.delete()
-    User.query.delete()
-    Contact.query.delete()
-    About.query.delete()
-    Service.query.delete()
+    db.drop_all()
+    db.create_all()
 
     # Add new User
     user = User(
@@ -67,14 +61,34 @@ with app.app_context():
         description="Octoprint is a web interface for managing 3D printers.",
         logo="img/services/octoprint.png",
     )
+    octoprint.environment_vars = [
+        EnvironmentVar(
+            key="OCTOPRINT_DOMAIN",
+            value="localhost",
+        ),
+        EnvironmentVar(
+            key="OCTOPRINT_PORT",
+            value="5557",
+        )
+    ]
     site.services.append(octoprint)
-    
+
     # Add Mainsail service
     mainsail = Service(
         name="Mainsail",
         description="Mainsail is a web interface for managing 3D printers.",
         logo="img/services/mainsail.png",
     )
+    mainsail.environment_vars = [
+        EnvironmentVar(
+            key="MAINSAIL_DOMAIN",
+            value="localhost",
+        ),
+        EnvironmentVar(
+            key="MAINSAIL_PORT",
+            value="5556",
+        )
+    ]
     site.services.append(mainsail)
 
     # New Idea? service
@@ -84,7 +98,7 @@ with app.app_context():
         logo="img/services/idea.png",
     )
     site.services.append(new_idea)
-    
+
     db.session.add(site)
     db.session.add(user)
     db.session.commit()  # Commit to get the ID for the site

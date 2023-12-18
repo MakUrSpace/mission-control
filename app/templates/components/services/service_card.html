@@ -28,7 +28,21 @@
             <button class="delete" aria-label="close" onclick="document.querySelector('#modal-{{ service.id }}').classList.toggle('is-active');"></button>
         </header>
         <section class="modal-card-body">
-            <!-- Controls for start/stop/restart here -->
+            <form id="form-{{ service.id }}" onsubmit="return updateEnvironmentVars('{{ service.id }}')">
+                {% for env_var in service.environment_vars %}
+                    <div class="field">
+                        <label class="label">{{ env_var.key }}</label>
+                        <div class="control">
+                            <input class="input" type="text" name="{{ env_var.key }}" value="{{ env_var.value }}">
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="field">
+                    <div class="control">
+                        <button type="submit" class="button is-link">Save Changes</button>
+                    </div>
+                </div>
+            </form>
         </section>
         <footer class="modal-card-foot">
             <button class="button is-success" onclick="startService('{{ service.name }}')">Start</button>

@@ -6,13 +6,15 @@ from flask import (
     flash,
     redirect,
     url_for,
+    jsonify,
     request,
     current_app
 )
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.orm import lazyload
+from app import db
 from .forms import LoginForm
-from .models import User, Site, BaseModel
+from .models import User, Site, BaseModel, Service, EnvironmentVar
 
 bp = Blueprint("main", __name__)
 
@@ -39,6 +41,9 @@ def inject_domains():
 def index():
     """Index page"""
     site = Site.query.options(lazyload(Site.timeline)).first()
+    print(site.services)
+    for service in site.services:
+        print(service.environment_vars)
     return render_template("index.html", site=site)
 
 
@@ -98,6 +103,22 @@ def upload_file():
                 file.save(os.path.join('/MakUrSpace/web-uploads', file.filename))
         return redirect(url_for('main.upload_file'))
     return render_template('upload.html', site=site)
+
+
+@bp.route('/update-environment-vars/<int:service_id>', methods=['POST'])
+def update_environment_vars(service_id):
+    service = Service.query.get(service_id)
+    if service:
+        for key in request.form:
+            env_var = next((ev for ev in service.environment_vars if ev.key == key), None)
+            if env_var:
+                env_var.value = request.form[key]
+        db.session.commit()
+        return jsonify({'message': 'Environment variables updated successfully'})
+    else:
+        # Handle case where service is not found
+        pass
+    return redirect(url_for('main.index'))
 
 
 # Catch all other routes and redirect to the index

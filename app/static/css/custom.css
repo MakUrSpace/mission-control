@@ -7826,6 +7826,20 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
   position: relative;
   object-fit: cover; }
 
+#toast-notification {
+  z-index: 2000;
+  position: fixed;
+  /* or absolute */
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #0B0C10;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out; }
+
+#toast-notification.is-active {
+  opacity: 1; }
+
 .timeline {
   position: relative;
   padding: 0;

@@ -12,6 +12,7 @@ $danger: #E76F51;
 
 $light: #A8DADC;
 $dark: #1D3557;
+$darker: #0B0C10;
 $black: $dark;
 
 $text: #F1FAEE;
@@ -122,6 +123,21 @@ $navbar-dropdown-item-hover-background-color: $light;
     z-index: 1;
     position: relative;
     object-fit: cover;
+}
+
+#toast-notification {
+    z-index: 2000; 
+    position: fixed; /* or absolute */
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: $darker;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+#toast-notification.is-active {
+    opacity: 1;
 }
 
 // Timeline Styles
