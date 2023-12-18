@@ -1,4 +1,3 @@
-@charset "UTF-8";
 /* custom.scss */
 /* Bulma Utilities */
 .pagination-previous,
@@ -7840,68 +7839,7 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
 #toast-notification.is-active {
   opacity: 1; }
 
-.timeline {
-  position: relative;
-  padding: 0;
-  list-style: none;
-  width: 100%; }
-
-.timeline:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 40px;
-  width: 2px;
-  background: #fff; }
-
-.timeline-header, .timeline-item {
-  position: relative;
-  margin: 10px 0; }
-
-.timeline-marker {
-  position: absolute;
-  top: 0;
-  left: 40px;
-  transform: translate(-50%);
-  height: 15px;
-  width: 15px;
-  border: 3px solid #dbdbdb;
-  border-radius: 50%;
-  background: #eb711e; }
-
-.timeline-content {
-  padding: 10px 25px;
-  background: #1D3557;
-  border-radius: 4px;
-  word-wrap: break-word;
-  margin-left: 80px; }
-  .timeline-content ul {
-    list-style: none;
-    padding-left: 0; }
-    .timeline-content ul li {
-      position: relative;
-      padding-left: 20px;
-      margin-bottom: 10px; }
-      .timeline-content ul li:before {
-        content: '•';
-        position: absolute;
-        left: 0;
-        color: #7b380b;
-        font-size: 1em;
-        top: 0.75em;
-        transform: translateY(-50%); }
-
 @media (max-width: 768px) {
-  .timeline:before {
-    left: 20px; }
-  .timeline-marker {
-    left: 20px; }
-  .timeline-content {
-    margin-left: 60px;
-    padding: 0 15px; }
-  .timeline-content ul li {
-    padding-left: 15px; }
   .hero-main h1, .hero-main p {
     font-size: medium; } }
 

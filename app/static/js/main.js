@@ -7,24 +7,30 @@ if (window.location.hash === '#home' || window.location.hash === '#index') {
 // ##########################################
 // #            Services Section            #
 // ##########################################
-function startService(serviceName) {
-    fetch(`/api/start/${serviceName}`, { method: 'POST' })
+function startService(serviceId) {
+    fetch(`/service/${serviceId}/start`, { method: 'POST' })
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => 
+            showToast(data.message)
+        )
         .catch(error => console.error('Error:', error));
 }
 
-function stopService(serviceName) {
-    fetch(`/api/stop/${serviceName}`, { method: 'POST' })
+function stopService(serviceId) {
+    fetch(`/service/${serviceId}/stop`, { method: 'POST' })
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => 
+            showToast(data.message)
+        )
         .catch(error => console.error('Error:', error));
 }
 
-function restartService(serviceName) {
-    fetch(`/api/restart/${serviceName}`, { method: 'POST' })
+function restartService(serviceId) {
+    fetch(`/service/${serviceId}/restart`, { method: 'POST' })
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => 
+            showToast(data.message)
+        )
         .catch(error => console.error('Error:', error));
 }
 
@@ -36,9 +42,7 @@ function updateEnvironmentVars(serviceId) {
     })
     .then(response => response.json())
     .then(data => {
-        // Show toast notification
         showToast(data.message);
-        // Close modal if needed
     })
     .catch(error => console.error('Error:', error));
     return false; // Prevent default form submission

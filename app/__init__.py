@@ -8,6 +8,7 @@ from flask_assets import Environment, Bundle
 from .admin import admin
 from .models import db, migrate, User
 from .routes import bp as main_bp
+from .docker_service_manager import DockerServiceManager
 
 # Initialize dotenv settings
 if os.environ.get("FLASK_ENV") == "development":
@@ -149,5 +150,8 @@ def create_app():
     # Initialize Flask-Login
     login_manager.init_app(app)
     admin.init_app(app)
+
+    # Register custom services with Flask context
+    app.docker_manager = DockerServiceManager()
 
     return app

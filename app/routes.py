@@ -14,7 +14,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy.orm import lazyload
 from app import db
 from .forms import LoginForm
-from .models import User, Site, BaseModel, Service, EnvironmentVar
+from .models import User, Site, BaseModel, Service
 
 bp = Blueprint("main", __name__)
 
@@ -40,7 +40,7 @@ def inject_domains():
 @bp.route("/home", methods=["GET", "POST"])
 def index():
     """Index page"""
-    site = Site.query.options(lazyload(Site.timeline)).first()
+    site = Site.query.first()
     print(site.services)
     for service in site.services:
         print(service.environment_vars)
@@ -109,16 +109,57 @@ def upload_file():
 def update_environment_vars(service_id):
     service = Service.query.get(service_id)
     if service:
-        for key in request.form:
+        old_env_values = {ev.key: ev.value for ev in service.environment_vars}
+        # Update environment variables and sync DockerPort host_port
+        for key, value in request.form.items():
             env_var = next((ev for ev in service.environment_vars if ev.key == key), None)
             if env_var:
-                env_var.value = request.form[key]
+                env_var.value = value
+
+            # If the environment variable ends with '_PORT', update the DockerPort
+            if key.endswith('_PORT'):
+                try:
+                    new_port_value = int(value)
+                    old_port_value = int(old_env_values.get(key, 0))
+
+                    # Find the corresponding DockerPort and update its host_port
+                    for docker_port in service.docker_ports:
+                        if docker_port.host_port == int(old_port_value):
+                            docker_port.host_port = new_port_value
+                except ValueError:
+                    # Handle the case where the new port value is not a valid integer
+                    return jsonify({'message': 'Invalid port value'}), 400
+
         db.session.commit()
         return jsonify({'message': 'Environment variables updated successfully'})
-    else:
-        # Handle case where service is not found
-        pass
-    return redirect(url_for('main.index'))
+    return jsonify({'message': f'Service not found for service_id={service_id}'}), 404
+
+
+@bp.route('/service/<int:service_id>/start', methods=['POST'])
+def service_start(service_id):
+    service = Service.query.get(service_id)
+    if service:
+        service.start()
+        return jsonify({'message': f'{service.name} started successfully'})
+    return jsonify({'message': f'Service not found for service_id={service_id}'}), 404
+
+
+@bp.route('/service/<int:service_id>/stop', methods=['POST'])
+def service_stop(service_id):
+    service = Service.query.get(service_id)
+    if service:
+        service.stop()
+        return jsonify({'message': f'{service.name} stopped successfully'})
+    return jsonify({'message': f'Service not found for service_id={service_id}'}), 404
+
+
+@bp.route('/service/<int:service_id>/restart', methods=['POST'])
+def service_restart(service_id):
+    service = Service.query.get(service_id)
+    if service:
+        service.restart()
+        return jsonify({'message': f'${service.name} restarted successfully'})
+    return jsonify({'message': f'Service not found for service_id={service_id}'}), 404
 
 
 # Catch all other routes and redirect to the index

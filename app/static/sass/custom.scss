@@ -140,91 +140,10 @@ $navbar-dropdown-item-hover-background-color: $light;
     opacity: 1;
 }
 
-// Timeline Styles
-// ======================
-.timeline {
-    position: relative;
-    padding: 0;
-    list-style: none;
-    width: 100%;
-}
-
-.timeline:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 40px;
-    width: 2px;
-    background: $dark-invert;
-}
-
-.timeline-header, .timeline-item {
-    position: relative;
-    margin: 10px 0;
-}
-
-.timeline-marker {
-    position: absolute;
-    top: 0;
-    left: 40px;
-    transform: translate(-50%);
-    height: 15px;
-    width: 15px;
-    border: 3px solid $border;
-    border-radius: 50%;
-    background: $primary-dark;
-}
-
-.timeline-content {
-    padding: 10px 25px;
-    background: $background;
-    border-radius: 4px;
-    word-wrap: break-word;
-    margin-left: 80px;
-
-    ul {
-        list-style: none; // Remove default list styling
-        padding-left: 0; // Remove default padding
-
-        li {
-            position: relative;
-            padding-left: 20px; // Space for custom bullet
-            margin-bottom: 10px; // Space between items
-
-            &:before {
-                content: '•'; // Custom bullet
-                position: absolute;
-                left: 0;
-                color: $primary;
-                font-size: 1em;
-                top: 0.75em;
-                transform: translateY(-50%);
-            }
-        }
-    }
-}
 
 // Responsive Adjustments
 // ======================
 @media (max-width: 768px) {
-    .timeline:before {
-        left: 20px;
-    }
-
-    .timeline-marker {
-        left: 20px;
-    }
-
-    .timeline-content {
-        margin-left: 60px;
-        padding: 0 15px;
-    }
-
-    .timeline-content ul li {
-        padding-left: 15px;
-    }
-
     .hero-main h1, .hero-main p {
         font-size: medium;
     }

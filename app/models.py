@@ -1,6 +1,7 @@
 """models.py"""
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import current_app
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
@@ -20,77 +21,6 @@ class BaseModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     last_modified = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
-
-
-class Timeline(BaseModel):
-    """Timeline model.
-
-    Args:
-        BaseModel: Custom base model to provide additional standardized functionality.
-    """
-
-    __tablename__ = "timeline"
-    title = db.Column(db.String(50), nullable=False)
-    sections = db.relationship(
-        "TimelineSection",
-        backref="timeline",
-        lazy=True,
-        order_by="asc(TimelineSection.id)",
-    )
-
-
-class TimelineSection(BaseModel):
-    """TimelineSection model.
-
-    Args:
-        BaseModel: Custom base model to provide additional standardized functionality.
-    """
-
-    __tablename__ = "timeline_section"
-    title = db.Column(db.String(50), nullable=False)
-    timeline_id = db.Column(
-        db.Integer, db.ForeignKey("timeline.id", name="fk_timeline_id"), nullable=False
-    )
-    subsections = db.relationship(
-        "TimelineSubsection",
-        backref="timeline_section",
-        lazy=True,
-        order_by="desc(TimelineSubsection.start_date)",
-    )
-
-
-class TimelineSubsection(BaseModel):
-    """TimelineSubsection model.
-
-    Args:
-        BaseModel: Custom base model to provide additional standardized functionality.
-    """
-
-    __tablename__ = "timeline_subsection"
-    title = db.Column(db.String(50), nullable=True)
-    start_date = db.Column(db.Date, nullable=False)
-    end_date = db.Column(db.Date, nullable=True)
-    details = db.Column(db.Text, nullable=True)
-    timelinesection_id = db.Column(
-        db.Integer,
-        db.ForeignKey("timeline_section.id", name="fk_timelinesection_id"),
-        nullable=False,
-    )
-
-
-class Project(BaseModel):
-    """Project model.
-
-    Args:
-        BaseModel: Custom base model to provide additional standardized functionality.
-    """
-
-    __tablename__ = "project"
-    title = db.Column(db.String(50), nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    site_id = db.Column(
-        db.Integer, db.ForeignKey("site.id", name="fk_site_id"), nullable=False
     )
 
 
@@ -124,24 +54,12 @@ class Site(BaseModel):
     contact = db.relationship(
         "Contact", backref="site", lazy=True, foreign_keys=[contact_id]
     )
-    timeline_id = db.Column(
-        db.Integer,
-        db.ForeignKey("timeline.id", name="fk_timeline_id"),
-        unique=True,
-        nullable=True,
-    )
-    timeline = db.relationship(
-        "Timeline",
-        backref=db.backref("site", uselist=False),
-        lazy=True,
-        foreign_keys=[timeline_id],
-    )
-    projects = db.relationship("Project", backref="site", lazy=True)
     about_id = db.Column(
         db.Integer, db.ForeignKey("about.id", name="fk_about_id"), nullable=True
     )
     about = db.relationship("About", backref="site", lazy=True, uselist=False)
     services = db.relationship("Service", backref="site", lazy=True)
+
 
 class Contact(BaseModel):
     """Contact model.
@@ -209,6 +127,7 @@ class User(UserMixin, BaseModel):
     def get_id(self):
         return self.id
 
+
 class Service(BaseModel):
     """Service model.
 
@@ -220,10 +139,59 @@ class Service(BaseModel):
     name = db.Column(db.String(50), nullable=False)
     description = db.Column(db.Text, nullable=False)
     logo = db.Column(db.String(250), nullable=False)
-    environment_vars = db.relationship(
-        "EnvironmentVar", backref="service", lazy=True)
+    is_running = db.Column(db.Boolean, default=False)
+    docker_container_id = db.Column(db.String(250), nullable=True)
+    docker_image = db.Column(db.String(250), nullable=False)
+    docker_volumes = db.relationship("DockerVolume", backref="service", lazy=True)
+    docker_ports = db.relationship("DockerPort", backref="service", lazy=True)
+    docker_healthcheck = db.relationship(
+        "DockerHealthcheck", backref="service", lazy=True, uselist=False
+    )
+    environment_vars = db.relationship("EnvironmentVar", backref="service", lazy=True)
     site_id = db.Column(
-        db.Integer, db.ForeignKey("site.id", name="fk_site_id"), nullable=False)
+        db.Integer, db.ForeignKey("site.id", name="fk_site_id"), nullable=False
+    )
+
+    def get_container(self):
+        if self.docker_container_id:
+            return current_app.docker_manager.get_container(self.docker_container_id)
+
+    def start(self):
+        """Start the service."""
+        if self.is_running:
+            print("Service is already running.")
+            return True
+
+        container = current_app.docker_manager.start_service(self)
+        if container:
+            self.docker_container_id = container.id
+            self.is_running = True
+            db.session.commit()
+            return True
+        return False
+
+    def stop(self):
+        """Stop the service."""
+        if not self.is_running:
+            print("Service is not running.")
+            return False
+
+        if current_app.docker_manager.stop_service(self):
+            self.docker_container_id = None
+            self.is_running = False
+            db.session.commit()
+            return True
+        return False
+
+    def restart(self):
+        """Restart the service."""
+        container = current_app.docker_manager.restart_service(self)
+        if container:
+            self.docker_container_id = container.id
+            self.is_running = True
+            db.session.commit()
+            return True
+        return False
 
 class EnvironmentVar(BaseModel):
     """EnvironmentVar model.
@@ -236,5 +204,52 @@ class EnvironmentVar(BaseModel):
     key = db.Column(db.String(50), nullable=False)
     value = db.Column(db.String(50), nullable=False)
     service_id = db.Column(
-        db.Integer, db.ForeignKey("service.id", name="fk_service_id"), nullable=False)
-    
+        db.Integer, db.ForeignKey("service.id", name="fk_service_id"), nullable=False
+    )
+
+
+class DockerVolume(BaseModel):
+    """Volume model.
+
+    Args:
+        BaseModel: Custom base model to provide additional standardized functionality.
+    """
+
+    __tablename__ = "docker_volume"
+    volume_mapping = db.Column(db.String(250), nullable=False)
+    service_id = db.Column(
+        db.Integer, db.ForeignKey("service.id", name="fk_service_id"), nullable=False
+    )
+
+
+class DockerPort(BaseModel):
+    """Port model.
+
+    Args:
+        BaseModel: Custom base model to provide additional standardized functionality.
+    """
+
+    __tablename__ = "docker_port"
+    container_port = db.Column(db.Integer, nullable=False)
+    host_port = db.Column(db.Integer, nullable=False)
+    service_id = db.Column(
+        db.Integer, db.ForeignKey("service.id", name="fk_service_id"), nullable=False
+    )
+
+
+class DockerHealthcheck(BaseModel):
+    """Healthcheck model.
+
+    Args:
+        BaseModel: Custom base model to provide additional standardized functionality.
+    """
+
+    __tablename__ = "docker_healthcheck"
+    test = db.Column(db.String(250), nullable=False)
+    interval = db.Column(db.Integer, nullable=False)
+    timeout = db.Column(db.Integer, nullable=False)
+    retries = db.Column(db.Integer, nullable=False)
+    start_period = db.Column(db.Integer, nullable=False)
+    service_id = db.Column(
+        db.Integer, db.ForeignKey("service.id", name="fk_service_id"), nullable=True
+    )

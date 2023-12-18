@@ -5,10 +5,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from datetime import date
 from app import db, create_app
 from app.models import (
-    Timeline,
-    TimelineSection,
-    TimelineSubsection,
-    Project,
+    DockerHealthcheck,
+    DockerPort,
+    DockerVolume,
     Site,
     Contact,
     User,
@@ -60,7 +59,22 @@ with app.app_context():
         name="Octoprint",
         description="Octoprint is a web interface for managing 3D printers.",
         logo="img/services/octoprint.png",
+        docker_image="octoprint/octoprint:latest",
+        docker_ports=[
+            DockerPort(container_port=5000, host_port=5557),
+        ],
+        docker_volumes=[
+            DockerVolume(volume_mapping="octoprint_volume:/octoprint"),
+        ],
+        docker_healthcheck=DockerHealthcheck(
+            test="curl --fail http://localhost:80 || exit 1",
+            interval=30,
+            timeout=10,
+            retries=3,
+            start_period=15,
+        )
     )
+
     octoprint.environment_vars = [
         EnvironmentVar(
             key="OCTOPRINT_DOMAIN",
@@ -78,6 +92,20 @@ with app.app_context():
         name="Mainsail",
         description="Mainsail is a web interface for managing 3D printers.",
         logo="img/services/mainsail.png",
+        docker_image="ghcr.io/mainsail-crew/mainsail:latest",
+        docker_ports=[
+            DockerPort(container_port=80, host_port=5556),
+        ],
+        docker_volumes=[
+            DockerVolume(volume_mapping="mainsail_volume:/usr/share/nginx/html"),
+        ],
+        docker_healthcheck=DockerHealthcheck(
+            test="curl --fail http://localhost:80 || exit 1",
+            interval=30,
+            timeout=10,
+            retries=3,
+            start_period=15,
+        )
     )
     mainsail.environment_vars = [
         EnvironmentVar(
@@ -96,6 +124,10 @@ with app.app_context():
         name="New Idea?",
         description="Have an idea for a new service? Let us know!",
         logo="img/services/idea.png",
+        docker_image="",
+        docker_ports=[],
+        docker_volumes=[],
+        docker_healthcheck=None
     )
     site.services.append(new_idea)
 
@@ -111,38 +143,5 @@ with app.app_context():
     db.session.add(about)
     site.about = about
 
-    # Add new Timeline
-    timeline = Timeline(title="Timeline")
-    db.session.add(timeline)
-    db.session.commit()  # Commit to get the ID for the timeline
-
-    mission_control = TimelineSection(title="Mission Control", timeline_id=timeline.id)
-    core_functionality = TimelineSubsection(
-        title="Core Functionality",
-        start_date=date(2023, 9, 1),
-        end_date=None,
-        details="Customizable web app;Database-driven content;User authentication;Admin dashboard;REST API",
-        timeline_section=mission_control,
-    )
-    first_expansion = TimelineSubsection(
-        title="First Expansion",
-        start_date=date(2023, 11, 1),
-        end_date=None,
-        details="Mainsail integration;Octoprint integration;3D printer management;3D printer monitoring;3D printer control",
-        timeline_section=mission_control,
-    )
-    db.session.add(mission_control)
-
-    # Add new Project
-    nate_web_project = Project(
-        title="Nate3D.com",
-        description="The template for this project!",
-    )
-
-    # Assign timeline to site
-    site.timeline = timeline
-    
-    # Assign projects to site
-    site.projects.append(nate_web_project)
-
+    # Commit all changes
     db.session.commit()
