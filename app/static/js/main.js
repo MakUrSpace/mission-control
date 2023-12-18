@@ -7,6 +7,10 @@ if (window.location.hash === '#home' || window.location.hash === '#index') {
 // ##########################################
 // #            Services Section            #
 // ##########################################
+function launchService(url) {
+    window.open(url, '_blank');
+}
+
 function startService(serviceId, btn) {
     toggleButtonsDisabled(serviceId, true);
     btn.querySelector('.spinner').classList.remove('hidden');
@@ -19,6 +23,7 @@ function startService(serviceId, btn) {
         .finally(() => {
             btn.querySelector('.spinner').classList.add('hidden');
             toggleButtonsDisabled(serviceId, false);
+            checkServiceStatusAndUpdateButton(serviceId);
         });
 }
 
@@ -34,6 +39,7 @@ function stopService(serviceId, btn) {
         .finally(() => {
             btn.querySelector('.spinner').classList.add('hidden');
             toggleButtonsDisabled(serviceId, false);
+            checkServiceStatusAndUpdateButton(serviceId);
         });
 }
 
@@ -49,7 +55,26 @@ function restartService(serviceId, btn) {
         .finally(() => {
             btn.querySelector('.spinner').classList.add('hidden');
             toggleButtonsDisabled(serviceId, false);
+            checkServiceStatusAndUpdateButton(serviceId);
         });
+}
+
+function updateButtonState(serviceId, is_running) {
+    const launchButton = document.getElementById('launchButton-' + serviceId);
+    if (is_running) {
+        launchButton.disabled = false;
+    } else {
+        launchButton.disabled = true;
+    }
+}
+
+function checkServiceStatusAndUpdateButton(serviceId) {
+    fetch(`/service/${serviceId}/is_running`, { method: 'GET' })
+    .then(response => response.json())
+    .then(data => {
+        updateButtonState(serviceId, data.is_running);
+    })
+    .catch(error => console.error('Error:', error));
 }
 
 function updateEnvironmentVars(serviceId) {

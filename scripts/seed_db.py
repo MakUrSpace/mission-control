@@ -99,7 +99,7 @@ with app.app_context():
             DockerPort(container_port=80, host_port=5556),
         ],
         docker_volumes=[
-            DockerVolume(volume_mapping="mainsail_volume:/usr/share/nginx/html"),
+            DockerVolume(volume_mapping="data/mainsail/config.json:/usr/share/nginx/html/config.json"),
         ],
         docker_healthcheck=DockerHealthcheck(
             test="curl --fail http://localhost:80 || exit 1",
@@ -153,18 +153,6 @@ with app.app_context():
         )
     ]
     site.services.append(cncjs)
-
-    # New Idea? service
-    new_idea = Service(
-        name="New Idea?",
-        description="Have an idea for a new service? Let us know!",
-        logo="img/services/idea.png",
-        docker_image="",
-        docker_ports=[],
-        docker_volumes=[],
-        docker_healthcheck=None
-    )
-    site.services.append(new_idea)
 
     db.session.add(site)
     db.session.add(user)

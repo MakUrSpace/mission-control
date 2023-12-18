@@ -153,6 +153,23 @@ class Service(BaseModel):
         db.Integer, db.ForeignKey("site.id", name="fk_site_id"), nullable=False
     )
 
+    @property
+    def url(self):
+        # Get the domain and port from the service environment variables
+        domain = None
+        port = None
+        for domain_var in self.environment_vars:
+            if domain_var.key.endswith('_DOMAIN'):
+                domain = domain_var.value
+            elif domain_var.key.endswith('_PORT'):
+                port = domain_var.value
+
+        if domain and port:
+            return f'http://{domain}:{port}'
+        if domain:
+            return f'http://{domain}'
+        return None
+
     def get_container(self):
         if self.docker_container_id:
             return current_app.docker_manager.get_container(self.docker_container_id)

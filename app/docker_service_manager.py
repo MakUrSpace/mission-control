@@ -1,5 +1,6 @@
 """Module to manage docker containers."""
 import docker
+import os
 
 class DockerServiceManager:
     """Class to manage docker containers"""
@@ -31,7 +32,7 @@ class DockerServiceManager:
 
             container = self.client.containers.run(
                 image=service.docker_image,
-                volumes=[volume.volume_mapping for volume in service.docker_volumes],
+                volumes=get_volume_mappings(service),
                 ports={f"{port.container_port}/tcp": port.host_port
                        for port in service.docker_ports},
                 healthcheck=healthcheck,
@@ -64,3 +65,13 @@ class DockerServiceManager:
             container.restart()
             return container
         return None
+
+##### Static methods #####
+@staticmethod
+def get_volume_mappings(service):
+    volume_mappings = {}
+    for volume in service.docker_volumes:
+        host_path, container_path = volume.volume_mapping.split(':')
+        absolute_host_path = os.path.abspath(host_path)
+        volume_mappings[absolute_host_path] = {'bind': container_path, 'mode': 'rw'}
+    return volume_mappings

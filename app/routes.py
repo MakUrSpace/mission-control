@@ -11,7 +11,6 @@ from flask import (
     current_app
 )
 from flask_login import login_user, logout_user, login_required, current_user
-from sqlalchemy.orm import lazyload
 from app import db
 from .forms import LoginForm
 from .models import User, Site, BaseModel, Service
@@ -41,9 +40,6 @@ def inject_domains():
 def index():
     """Index page"""
     site = Site.query.first()
-    print(site.services)
-    for service in site.services:
-        print(service.environment_vars)
     return render_template("index.html", site=site)
 
 
@@ -160,6 +156,18 @@ def service_restart(service_id):
         service.restart()
         return jsonify({'message': f'{service.name} restarted successfully'})
     return jsonify({'message': f'Service not found for service_id={service_id}'}), 404
+
+@bp.route('/service/<int:service_id>/is_running', methods=['GET'])
+def is_service_running(service_id):
+    service = Service.query.get(service_id)
+    if service:
+        return jsonify({
+            'is_running': service.is_running,
+            'url': service.url
+        })
+    else:
+        return jsonify({'error': 'Service not found'}), 404
+
 
 
 # Catch all other routes and redirect to the index

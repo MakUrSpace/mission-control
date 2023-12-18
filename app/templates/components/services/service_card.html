@@ -13,7 +13,16 @@
                 </div>
             </div>
             <div class="content">
-                <a class="button is-primary" onclick="document.querySelector('#modal-{{ service.id }}').classList.toggle('is-active');">Manage</a>            
+                <!-- Launch Button -->
+                <button id="launchButton-{{ service.id }}" class="button is-link" onclick="launchService('{{ service.url }}')" disabled>Launch</button>
+            
+                <!-- Documentation Link -->
+                {% if service.documentation_url %}
+                    <a class="button is-link" href="{{ service.documentation_url }}" target="_blank">Docs</a>
+                {% endif %}
+            
+                <!-- Manage Button (For toggling modal) -->
+                <button class="button is-primary" onclick="document.querySelector('#modal-{{ service.id }}').classList.toggle('is-active');">Manage</button>
             </div>
         </div>
     </div>
