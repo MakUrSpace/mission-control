@@ -1,0 +1,7 @@
+<div class="container">
+    <div class="columns is-multiline">
+        {% for service in site.services %}
+            {% include 'components/services/service_card.html' with context %}
+        {% endfor %}
+    </div>
+</div>

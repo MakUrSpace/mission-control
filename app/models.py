@@ -141,7 +141,7 @@ class Site(BaseModel):
         db.Integer, db.ForeignKey("about.id", name="fk_about_id"), nullable=True
     )
     about = db.relationship("About", backref="site", lazy=True, uselist=False)
-
+    services = db.relationship("Service", backref="site", lazy=True)
 
 class Contact(BaseModel):
     """Contact model.
@@ -208,3 +208,17 @@ class User(UserMixin, BaseModel):
 
     def get_id(self):
         return self.id
+
+class Service(BaseModel):
+    """Service model.
+
+    Args:
+        BaseModel: Custom base model to provide additional standardized functionality.
+    """
+
+    __tablename__ = "service"
+    name = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    logo = db.Column(db.String(250), nullable=False)
+    site_id = db.Column(
+        db.Integer, db.ForeignKey("site.id", name="fk_site_id"), nullable=False)

@@ -1,0 +1,39 @@
+<div class="column is-one-third">
+    <div class="card">
+        <div class="card-image">
+            <figure class="image is-4by3">
+                <img src="{{ url_for('static', filename=service.logo) }}" alt="{{ service.name }} Logo">
+            </figure>
+        </div>
+        <div class="card-content">
+            <div class="media">
+                <div class="media-content">
+                    <p class="title is-4">{{ service.name }}</p>
+                    <p class="subtitle is-6">{{ service.description }}</p>
+                </div>
+            </div>
+            <div class="content">
+                <a class="button is-primary" onclick="document.querySelector('#modal-{{ service.id }}').classList.toggle('is-active');">Manage</a>            
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Service Control Modal -->
+<div class="modal" id="modal-{{ service.id }}">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">{{ service.name }} Control</p>
+            <button class="delete" aria-label="close" onclick="document.querySelector('#modal-{{ service.id }}').classList.toggle('is-active');"></button>
+        </header>
+        <section class="modal-card-body">
+            <!-- Controls for start/stop/restart here -->
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-success" onclick="startService('{{ service.name }}')">Start</button>
+            <button class="button is-warning" onclick="stopService('{{ service.name }}')">Stop</button>
+            <button class="button is-danger" onclick="restartService('{{ service.name }}')">Restart</button>
+        </footer>
+    </div>
+</div>

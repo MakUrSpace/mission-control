@@ -12,7 +12,8 @@ from app.models import (
     Site,
     Contact,
     User,
-    About
+    About,
+    Service
 )
 
 # Create app context
@@ -32,6 +33,7 @@ with app.app_context():
     User.query.delete()
     Contact.query.delete()
     About.query.delete()
+    Service.query.delete()
 
     # Add new User
     user = User(
@@ -58,6 +60,31 @@ with app.app_context():
     site.contact = contact
     # Assign Contact to User
     user.contact = contact
+
+    # Add Octoprint service
+    octoprint = Service(
+        name="Octoprint",
+        description="Octoprint is a web interface for managing 3D printers.",
+        logo="img/services/octoprint.png",
+    )
+    site.services.append(octoprint)
+    
+    # Add Mainsail service
+    mainsail = Service(
+        name="Mainsail",
+        description="Mainsail is a web interface for managing 3D printers.",
+        logo="img/services/mainsail.png",
+    )
+    site.services.append(mainsail)
+
+    # New Idea? service
+    new_idea = Service(
+        name="New Idea?",
+        description="Have an idea for a new service? Let us know!",
+        logo="img/services/idea.png",
+    )
+    site.services.append(new_idea)
+    
     db.session.add(site)
     db.session.add(user)
     db.session.commit()  # Commit to get the ID for the site

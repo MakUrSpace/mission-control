@@ -4,16 +4,11 @@
     <!-- Hero Section -->
     {% include 'components/hero.html' %}
 
-    <!-- About Me Section -->
+    <!-- About Section -->
     {% include 'components/about.html' %}
 
-    <!-- Timeline Section -->
-    {% with sections=site.timeline.sections %}
-        {% include 'components/timeline.html' %}
-    {% endwith %}
-
-    <!-- Projects Section -->
-    {% include 'components/projects.html' %}
+    <!-- Services Section -->
+    {% include 'components/services/service.html' with context %}
 
     <!-- Contact Section -->
     {% include 'components/contact.html' %}
