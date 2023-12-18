@@ -1,8 +1,8 @@
 """Seed the database with some initial data."""
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from datetime import date
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from app import db, create_app
 from app.models import (
     DockerHealthcheck,
@@ -13,7 +13,7 @@ from app.models import (
     User,
     About,
     Service,
-    EnvironmentVar
+    EnvironmentVar,
 )
 
 # Create app context
@@ -44,10 +44,7 @@ with app.app_context():
     )
 
     # Add new Contact
-    contact = Contact(
-        name="MakUrSpace LLC",
-        email="hello@makurspace.com"
-    )
+    contact = Contact(name="MakUrSpace LLC", email="hello@makurspace.com")
 
     # Assign Contact to Site
     site.contact = contact
@@ -62,7 +59,9 @@ with app.app_context():
         documentation_url="https://docs.octoprint.org/en/master/",
         docker_image="octoprint/octoprint:latest",
         docker_ports=[
-            DockerPort(container_port=5000, host_port=5557),
+            DockerPort(
+                container_port=5000, host_port=os.environ.get("OCTOPRINT_PORT", 5557)
+            ),
         ],
         docker_volumes=[
             DockerVolume(volume_mapping="octoprint_volume:/octoprint"),
@@ -73,7 +72,7 @@ with app.app_context():
             timeout=10,
             retries=3,
             start_period=15,
-        )
+        ),
     )
 
     octoprint.environment_vars = [
@@ -84,7 +83,7 @@ with app.app_context():
         EnvironmentVar(
             key="OCTOPRINT_PORT",
             value="5557",
-        )
+        ),
     ]
     site.services.append(octoprint)
 
@@ -96,10 +95,14 @@ with app.app_context():
         documentation_url="https://docs.mainsail.xyz/",
         docker_image="ghcr.io/mainsail-crew/mainsail:latest",
         docker_ports=[
-            DockerPort(container_port=80, host_port=5556),
+            DockerPort(
+                container_port=80, host_port=os.environ.get("MAINSAIL_PORT", 5556)
+            ),
         ],
         docker_volumes=[
-            DockerVolume(volume_mapping="data/mainsail/config.json:/usr/share/nginx/html/config.json"),
+            DockerVolume(
+                volume_mapping="data/mainsail/config.json:/usr/share/nginx/html/config.json"
+            ),
         ],
         docker_healthcheck=DockerHealthcheck(
             test="curl --fail http://localhost:80 || exit 1",
@@ -107,7 +110,7 @@ with app.app_context():
             timeout=10,
             retries=3,
             start_period=15,
-        )
+        ),
     )
     mainsail.environment_vars = [
         EnvironmentVar(
@@ -117,19 +120,24 @@ with app.app_context():
         EnvironmentVar(
             key="MAINSAIL_PORT",
             value="5556",
-        )
+        ),
     ]
     site.services.append(mainsail)
-    
+
     # Add CNCJS service
     cncjs = Service(
         name="CNCJS",
-        description="A full-featured web interface for CNC controllers running Grbl, Marlin, Smoothieware, or TinyG.",
+        description=(
+            "A full-featured web interface for CNC controllers "
+            "running Grbl, Marlin, Smoothieware, or TinyG."
+        ),
         logo="img/services/cncjs.png",
         documentation_url="https://github.com/cncjs/cncjs/wiki/",
         docker_image="cncjs/cncjs:latest",
         docker_ports=[
-            DockerPort(container_port=8000, host_port=5555),
+            DockerPort(
+                container_port=8000, host_port=os.environ.get("CNCJS_PORT", 5555)
+            ),
         ],
         docker_volumes=[
             DockerVolume(volume_mapping="cncjs_volume:/cncjs"),
@@ -140,7 +148,7 @@ with app.app_context():
             timeout=10,
             retries=3,
             start_period=15,
-        )
+        ),
     )
     cncjs.environment_vars = [
         EnvironmentVar(
@@ -150,7 +158,7 @@ with app.app_context():
         EnvironmentVar(
             key="CNCJS_PORT",
             value="5555",
-        )
+        ),
     ]
     site.services.append(cncjs)
 
@@ -161,7 +169,10 @@ with app.app_context():
     # Add new About section
     about = About(
         title="Welcome to Mission Control",
-        description="Welcome to the demo for Mission Control.;This is a project intended to be shared and used to grow maker communities."
+        description=(
+            "Welcome to the demo for Mission Control.;"
+            "This is a project intended to be shared and used to grow maker communities."
+        ),
     )
     db.session.add(about)
     site.about = about

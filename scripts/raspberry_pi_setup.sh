@@ -137,6 +137,7 @@ avahi-publish -a mainsail.local -R $IP_ADDRESS >/dev/null 2>&1 &
 avahi-publish -a missioncontrol.local -R $IP_ADDRESS >/dev/null 2>&1 &
 avahi-publish -a octoprint.local -R $IP_ADDRESS >/dev/null 2>&1 &
 avahi-publish -a traefik.local -R $IP_ADDRESS >/dev/null 2>&1 &
+avahi-publish -a cncjs.local -R $IP_ADDRESS >/dev/null 2>&1 &
 EOF
 
     chmod +x "${ALIAS_SCRIPT_PATH}"

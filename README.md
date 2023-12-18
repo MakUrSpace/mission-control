@@ -1,41 +1,51 @@
 
-# MakUrSpace Mission Control
+# 1. MakUrSpace Mission Control
 
-This project serves as a template for quickly launching a Flask web application.
-It includes a PostgreSQL database, a basic single page application (SPA)
-frontend, and a Mainsail instance for 3D printer management. It is designed to
-be deployed via Docker Compose. The existing docker compose setup is intended for
-development and production environments, but will need to be modified for
-deployment to your production server.
+Mission Control is the gateway to YOUR makerspace.
 
-## Table of Contents
+It provides a single point of access to all of your makerspace tools and services. It is intended to be run on a Raspberry Pi and is designed to be easy to set up and use. Developers can also run it locally on their development machine and take advantage of `flask run --reload` to automatically reload the application on file changes.
 
-- [MakUrSpace Mission Control](#makurspace-mission-control)
-  - [Table of Contents](#table-of-contents)
-  - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Setting Up the Development Environment](#setting-up-the-development-environment)
-      - [Using VSCode and Python Virtual Environments](#using-vscode-and-python-virtual-environments)
-    - [Running the Project](#running-the-project)
-  - [Deployment (Raspberry Pi)](#deployment-raspberry-pi)
-    - [Prerequisites](#prerequisites-1)
-    - [Setting Up the Raspberry Pi](#setting-up-the-raspberry-pi)
-    - [Building and Running the Project](#building-and-running-the-project)
-  - [CI/CD Process](#cicd-process)
-    - [Continuous Integration](#continuous-integration)
-    - [Continuous Deployment](#continuous-deployment)
-  - [Contributing](#contributing)
-    - [Updating Database Migrations](#updating-database-migrations)
-    - [Using Migrations](#using-migrations)
-  - [License](#license)
+Mission Control is built with Flask and Docker Compose. It is designed to be modular and extensible. It is currently configured to work with the following services:
+
+- [Mainsail](https://docs.mainsail.xyz/)
+- [Octoprint](https://octoprint.org/)
+- [CNCJS](https://cnc.js.org/)
+- [Traefik](https://doc.traefik.io/traefik/)
+- [Postgres](https://www.postgresql.org/)
+
+> Want to see another service here? Open an issue and let us know!
+
+## 1.1. Table of Contents
+
+- [1. MakUrSpace Mission Control](#1-makurspace-mission-control)
+  - [1.1. Table of Contents](#11-table-of-contents)
+  - [1.2. Getting Started](#12-getting-started)
+    - [1.2.1. Prerequisites](#121-prerequisites)
+    - [1.2.2. Setting Up the Development Environment](#122-setting-up-the-development-environment)
+      - [1.2.2.1. Using VSCode and Python Virtual Environments](#1221-using-vscode-and-python-virtual-environments)
+    - [1.2.3. Running the Project](#123-running-the-project)
+    - [1.2.4. Upgrading Project](#124-upgrading-project)
+  - [1.3. Deployment (Raspberry Pi)](#13-deployment-raspberry-pi)
+    - [1.3.1. Prerequisites](#131-prerequisites)
+    - [1.3.2. Setting Up the Raspberry Pi](#132-setting-up-the-raspberry-pi)
+    - [1.3.3. Building and Running the Project](#133-building-and-running-the-project)
+    - [1.3.4. Accessing Your MissionControl Toolkit](#134-accessing-your-missioncontrol-toolkit)
+    - [1.3.5. Upgrading Project](#135-upgrading-project)
+  - [1.4. CI/CD Process](#14-cicd-process)
+    - [1.4.1. Continuous Integration](#141-continuous-integration)
+    - [1.4.2. Continuous Deployment](#142-continuous-deployment)
+  - [1.5. Contributing](#15-contributing)
+    - [1.5.1. Updating Database Migrations](#151-updating-database-migrations)
+    - [1.5.2. Using Migrations](#152-using-migrations)
+  - [1.6. License](#16-license)
 
 
-## Getting Started
+## 1.2. Getting Started
 
 These instructions will get your copy of the project up and running on your
 local machine for development and testing purposes.
 
-### Prerequisites
+### 1.2.1. Prerequisites
 
 What things you need to install the software:
 
@@ -43,9 +53,9 @@ What things you need to install the software:
 - [VSCode](https://code.visualstudio.com/download)
 - [Git](https://git-scm.com/downloads)
 
-### Setting Up the Development Environment
+### 1.2.2. Setting Up the Development Environment
 
-#### Using VSCode and Python Virtual Environments
+#### 1.2.2.1. Using VSCode and Python Virtual Environments
 
 1. Clone the repository to your local machine:
 
@@ -119,14 +129,20 @@ following environment variables.
    # Mainsail FQDN
    MAINSAIL_DOMAIN=localhost
 
-   # Not used when running with docker-compose.embed.yml
+   # Mainsail port
    MAINSAIL_PORT=5556
 
    # Octoprint FQDN
    OCTOPRINT_DOMAIN=localhost
 
-   # Not used when running with docker-compose.embed.yml
+   # Octoprint port
    OCTOPRINT_PORT=5557
+
+   # CNCJS FQDN
+   CNCJS_DOMAIN=localhost
+
+   # CNCJS port
+   CNCJS_PORT=5558
 
    # Traefik FQDN (not used when running locally; see Raspberry Pi setup)
    TRAEFIK_DOMAIN=localhost
@@ -145,10 +161,12 @@ following environment variables.
    > **mainsail.local** name when running with docker-compose.embed.yml.
    >- The `OCTOPRINT_DOMAIN` will be localhost when running locally, but will be
    > **octoprint.local** name when running with docker-compose.embed.yml.
+   >- The `CNCJS_DOMAIN` will be localhost when running locally, but will be
+   > **cncjs.local** name when running with docker-compose.embed.yml.
    >- The `*_PORT` values are the ports that the containers will be exposed on.
-   > These values are only used when running locally.
+   > **These ports are only used when running locally.**
 
-### Running the Project
+### 1.2.3. Running the Project
 
 To run the project on your local development machine, you will use a mix
 of Flask and Docker Compose.
@@ -204,9 +222,55 @@ flask run --reload # to reload on file changes
 
 Your app should now be running on [http://localhost:5000](http://localhost:5000).
 
-## Deployment (Raspberry Pi)
+### 1.2.4. Upgrading Project
 
-### Prerequisites
+To upgrade the project to the latest version:
+
+1. Pull the latest changes from the repository:
+
+   ```sh
+   git pull
+   ```
+
+2. Stop the running containers and destroy the volumes:
+
+   ```sh
+   docker compose down -v
+   ```
+   >**Note:** This will destroy the database and all data stored in it.
+
+3. Check the `.env` file for any new environment variables and add them.
+4. Rebuild and run the containers:
+
+   ```sh
+   docker compose up --build -d
+   ```
+
+5. Apply any database migrations:
+
+   ```sh
+   flask db upgrade
+   ```
+
+6. Re-seed the database:
+
+   ```sh
+   python3 scripts/seed_db.py
+   ```
+
+7. Run the Flask application:
+
+   ```sh
+   export FLASK_ENV=development
+   flask run
+   ```
+
+You should now be able to access the application at
+[http://localhost:5000](http://localhost:5000).
+
+## 1.3. Deployment (Raspberry Pi)
+
+### 1.3.1. Prerequisites
 
    > **Note:** The following instructions are for a Raspberry Pi running
    > Raspberry Pi OS.
@@ -218,7 +282,7 @@ Your app should now be running on [http://localhost:5000](http://localhost:5000)
 - [Docker (Raspberry Pi arm64)](https://docs.docker.com/engine/install/debian/)
 - [Docker (Raspberry Pi armhf)](https://docs.docker.com/engine/install/raspberry-pi-os/)
 
-### Setting Up the Raspberry Pi
+### 1.3.2. Setting Up the Raspberry Pi
 
 1. Clone the repository to your local machine:
 
@@ -241,7 +305,7 @@ Your app should now be running on [http://localhost:5000](http://localhost:5000)
    sudo reboot
    ```
 
-### Building and Running the Project
+### 1.3.3. Building and Running the Project
 
 A convenience script is provided to build and run the project:
 
@@ -249,7 +313,7 @@ A convenience script is provided to build and run the project:
 Usage: ./docker_manager {start|stop|destroy|status|logs} 
 ```
 
-### Accessing Your MissionControl Toolkit
+### 1.3.4. Accessing Your MissionControl Toolkit
 
 Once the project is running, you can access the
 following **_MakUrSpace_ Mission Control** services:
@@ -274,32 +338,65 @@ following **_MakUrSpace_ Mission Control** services:
     experience for your makerspace.
     >This is **your** Mission Control central switchboard.
 
-## CI/CD Process
+### 1.3.5. Upgrading Project
+
+To upgrade the project to the latest version:
+
+1. Pull the latest changes from the repository:
+
+   ```sh
+   git pull
+   ```
+
+2. Stop the running app and destroy the app volumes:
+
+   ```sh
+   ./docker_manager destroy
+   ```
+   >**Note:** This will destroy the database and all data stored in it.
+
+3. Re-run the setup script with headless+force mode:
+
+   ```sh
+   sudo ./scripts/raspberry_pi_setup.sh --headless -f
+   ```
+
+4. Rebuild and run the app:
+
+   ```sh
+   ./docker_manager start
+   ```
+
+You should now be able to access the application at
+[http://missioncontrol.local](http://missioncontrol.local).
+
+
+## 1.4. CI/CD Process
 
 Continuous Integration and Continuous Deployment (CI/CD) is set up to streamline
 the process of integrating changes from multiple contributors and deploying to
 production. It is currently hosted via Nate3D's Gitea server and backed by a
 Drone.io CI/CD server. The CI/CD process is as follows:
 
-### Continuous Integration
+### 1.4.1. Continuous Integration
 
 - `.drone.yml` defines the CI pipeline.
 - Pushes or merges to master automatically trigger the CI pipeline.
 - The CI pipeline runs the docker-compose file to build the application and
 deploy the image to a private Docker registry.
 
-### Continuous Deployment
+### 1.4.2. Continuous Deployment
 
 - `.drone.yml` defines the CD pipeline.
 - After building successfully, changes in the master branch are automatically
 deployed to the production server.
 
-## Contributing
+## 1.5. Contributing
 
 Contributions are what make the open-source community an amazing place to learn,
 inspire, and create. Any contributions you make are **greatly appreciated**.
 
-### Updating Database Migrations
+### 1.5.1. Updating Database Migrations
 
 When contributing changes to the database models:
 
@@ -319,7 +416,7 @@ When contributing changes to the database models:
 
 4. Commit the migration file along with your model changes.
 
-### Using Migrations
+### 1.5.2. Using Migrations
 
 To apply migrations to your local database:
 
@@ -333,6 +430,6 @@ To rollback a migration:
 flask db downgrade
 ```
 
-## License
+## 1.6. License
 
 TBD
