@@ -139,6 +139,7 @@ class Service(BaseModel):
     name = db.Column(db.String(50), nullable=False)
     description = db.Column(db.Text, nullable=False)
     logo = db.Column(db.String(250), nullable=False)
+    documentation_url = db.Column(db.String(250), nullable=True)
     is_running = db.Column(db.Boolean, default=False)
     docker_container_id = db.Column(db.String(250), nullable=True)
     docker_image = db.Column(db.String(250), nullable=False)

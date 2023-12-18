@@ -59,6 +59,7 @@ with app.app_context():
         name="Octoprint",
         description="Octoprint is a web interface for managing 3D printers.",
         logo="img/services/octoprint.png",
+        documentation_url="https://docs.octoprint.org/en/master/",
         docker_image="octoprint/octoprint:latest",
         docker_ports=[
             DockerPort(container_port=5000, host_port=5557),
@@ -92,6 +93,7 @@ with app.app_context():
         name="Mainsail",
         description="Mainsail is a web interface for managing 3D printers.",
         logo="img/services/mainsail.png",
+        documentation_url="https://docs.mainsail.xyz/",
         docker_image="ghcr.io/mainsail-crew/mainsail:latest",
         docker_ports=[
             DockerPort(container_port=80, host_port=5556),
@@ -118,6 +120,39 @@ with app.app_context():
         )
     ]
     site.services.append(mainsail)
+    
+    # Add CNCJS service
+    cncjs = Service(
+        name="CNCJS",
+        description="A full-featured web interface for CNC controllers running Grbl, Marlin, Smoothieware, or TinyG.",
+        logo="img/services/cncjs.png",
+        documentation_url="https://github.com/cncjs/cncjs/wiki/",
+        docker_image="cncjs/cncjs:latest",
+        docker_ports=[
+            DockerPort(container_port=8000, host_port=5555),
+        ],
+        docker_volumes=[
+            DockerVolume(volume_mapping="cncjs_volume:/cncjs"),
+        ],
+        docker_healthcheck=DockerHealthcheck(
+            test="curl --fail http://localhost:8000 || exit 1",
+            interval=30,
+            timeout=10,
+            retries=3,
+            start_period=15,
+        )
+    )
+    cncjs.environment_vars = [
+        EnvironmentVar(
+            key="CNCJS_DOMAIN",
+            value="localhost",
+        ),
+        EnvironmentVar(
+            key="CNCJS_PORT",
+            value="5555",
+        )
+    ]
+    site.services.append(cncjs)
 
     # New Idea? service
     new_idea = Service(
