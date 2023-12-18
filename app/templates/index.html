@@ -2,19 +2,19 @@
 
 {% block content %}
     <!-- Hero Section -->
-    {% include 'hero.html' %}
+    {% include 'components/hero.html' %}
 
     <!-- About Me Section -->
-    {% include 'about.html' %}
+    {% include 'components/about.html' %}
 
     <!-- Timeline Section -->
     {% with sections=site.timeline.sections %}
-        {% include 'timeline.html' %}
+        {% include 'components/timeline.html' %}
     {% endwith %}
 
     <!-- Projects Section -->
-    {% include 'projects.html' %}
+    {% include 'components/projects.html' %}
 
     <!-- Contact Section -->
-    {% include 'contact.html' %}
+    {% include 'components/contact.html' %}
 {% endblock %}
