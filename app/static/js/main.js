@@ -7,31 +7,49 @@ if (window.location.hash === '#home' || window.location.hash === '#index') {
 // ##########################################
 // #            Services Section            #
 // ##########################################
-function startService(serviceId) {
+function startService(serviceId, btn) {
+    toggleButtonsDisabled(serviceId, true);
+    btn.querySelector('.spinner').classList.remove('hidden');
     fetch(`/service/${serviceId}/start`, { method: 'POST' })
         .then(response => response.json())
         .then(data => 
             showToast(data.message)
         )
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error:', error))
+        .finally(() => {
+            btn.querySelector('.spinner').classList.add('hidden');
+            toggleButtonsDisabled(serviceId, false);
+        });
 }
 
-function stopService(serviceId) {
+function stopService(serviceId, btn) {
+    toggleButtonsDisabled(serviceId, true);
+    btn.querySelector('.spinner').classList.remove('hidden');
     fetch(`/service/${serviceId}/stop`, { method: 'POST' })
         .then(response => response.json())
         .then(data => 
             showToast(data.message)
         )
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error:', error))
+        .finally(() => {
+            btn.querySelector('.spinner').classList.add('hidden');
+            toggleButtonsDisabled(serviceId, false);
+        });
 }
 
-function restartService(serviceId) {
+function restartService(serviceId, btn) {
+    toggleButtonsDisabled(serviceId, true);
+    btn.querySelector('.spinner').classList.remove('hidden');
     fetch(`/service/${serviceId}/restart`, { method: 'POST' })
         .then(response => response.json())
         .then(data => 
             showToast(data.message)
         )
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error:', error))
+        .finally(() => {
+            btn.querySelector('.spinner').classList.add('hidden');
+            toggleButtonsDisabled(serviceId, false);
+        });
 }
 
 function updateEnvironmentVars(serviceId) {
@@ -48,6 +66,33 @@ function updateEnvironmentVars(serviceId) {
     return false; // Prevent default form submission
 }
 
+// ##########################################
+// #             Modal Section              #
+// ##########################################
+function toggleButtonsDisabled(serviceId, disabled) {
+    const modal = document.querySelector('#modal-' + serviceId);
+    const buttons = modal.querySelectorAll('button');
+    buttons.forEach(button => {
+        button.disabled = disabled;
+    });
+}
+
+function toggleModal(serviceId) {
+    var modal = document.querySelector('#modal-' + serviceId);
+    if (modal) {
+        modal.classList.toggle('is-active');
+    }
+}
+
+document.querySelectorAll('.modal-card').forEach(function(modalCard) {
+    modalCard.addEventListener('click', function(event) {
+        event.stopPropagation();  // Prevents the modal background click handler from being called
+    });
+});
+
+// ##########################################
+// #             Toast Section              #
+// ##########################################
 function showToast(message) {
     const toast = document.getElementById('toast-notification');
     const messageElement = document.getElementById('toast-message');

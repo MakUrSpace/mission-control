@@ -158,7 +158,7 @@ def service_restart(service_id):
     service = Service.query.get(service_id)
     if service:
         service.restart()
-        return jsonify({'message': f'${service.name} restarted successfully'})
+        return jsonify({'message': f'{service.name} restarted successfully'})
     return jsonify({'message': f'Service not found for service_id={service_id}'}), 404
 
 
