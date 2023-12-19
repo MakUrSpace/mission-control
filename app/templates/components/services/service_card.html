@@ -18,7 +18,7 @@
     </div>
     <div class="card-footer">
         <!-- Launch Button -->
-        <a id="launchButton-{{ service.id }}" href="#" class="card-footer-item has-text-white" data-url="{{ service.url }}" onclick="launchService('{{ service.url }}'); return false;">Launch</a>
+        <a id="launchButton-{{ service.id }}" href="#" class="card-footer-item is-disabled" data-url="{{ service.url }}" onclick="launchService('{{ service.url }}'); return false;">Launch</a>
         
         <!-- Manage Button (For toggling modal) -->
         <a href="#" class="card-footer-item has-text-white" onclick="document.querySelector('#modal-{{ service.id }}').classList.toggle('is-active'); return false;">Manage</a>

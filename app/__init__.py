@@ -1,12 +1,13 @@
 """__init__.py"""
 import importlib
 import os
+import threading
 from dotenv import find_dotenv, load_dotenv
 from flask import Flask
 from flask_login import LoginManager
 from flask_assets import Environment, Bundle
 from .admin import admin
-from .models import db, migrate, User
+from .models import Service, db, migrate, User
 from .routes import bp as main_bp
 from .docker_service_manager import DockerServiceManager
 
@@ -92,32 +93,6 @@ def create_app():
     assets.init_app(app)
     print("Registered Flask Assets.")
 
-    print("Setting up 3rd party services...")
-    # Configure 3rd party services
-    # Configure domains with ports if the ports are provided
-    mainsail_domain = os.environ.get("MAINSAIL_DOMAIN")
-    mainsail_port = os.environ.get("MAINSAIL_PORT")
-    mainsail_url = (
-        f"http://{mainsail_domain}"
-        if not mainsail_port
-        else f"http://{mainsail_domain}:{mainsail_port}"
-    )
-    app.config["MAINSAIL_URL"] = mainsail_url
-
-    octoprint_domain = os.environ.get("OCTOPRINT_DOMAIN")
-    octoprint_port = os.environ.get("OCTOPRINT_PORT")
-    octoprint_url = (
-        f"http://{octoprint_domain}"
-        if not octoprint_port
-        else f"http://{octoprint_domain}:{octoprint_port}"
-    )
-    app.config["OCTOPRINT_URL"] = octoprint_url
-
-    # Configure development settings
-    if app.config["DEBUG"]:
-        app.config["TEMPLATES_AUTO_RELOAD"] = True
-        app.config["SQLALCHEMY_ECHO"] = False
-
     # Fetching individual components from environment variables
     if "SQLALCHEMY_DATABASE_URI" not in os.environ:
         db_user = os.environ.get("POSTGRES_USER", "pgadm")
@@ -153,5 +128,11 @@ def create_app():
 
     # Register custom services with Flask context
     app.docker_manager = DockerServiceManager()
+
+    # Spawn services
+    service_check_thread = threading.Thread(
+        target=Service.schedule_service_checks, args=(app,), daemon=True)
+    service_check_thread.start()
+    app.service_check_thread = service_check_thread
 
     return app

@@ -1,6 +1,7 @@
 """Module to manage docker containers."""
-import docker
 import os
+import logging
+import docker
 
 class DockerServiceManager:
     """Class to manage docker containers"""
@@ -8,12 +9,25 @@ class DockerServiceManager:
     def __init__(self):
         self.client = docker.from_env()
 
-    def get_container(self, container_id):
-        """Get a container by ID."""
+    def get_container(self, container_id) -> (docker.models.containers.Container, str):
+        """Get a container by ID.
+        
+        Args:
+            container_id (str): ID of the container to get.
+            
+        Returns:
+            docker.models.containers.Container: The container object.
+            str: An error message if the container was not found.
+        """
         try:
-            return self.client.containers.get(container_id)
-        except docker.errors.NotFound:
-            return None
+            container = self.client.containers.get(container_id)
+            return container, None
+        except docker.errors.NotFound as e:
+            logging.error("Container not found: %s", e)
+            return None, "Container not found"
+        except docker.errors.APIError as e:
+            logging.error("API error occurred: %s", e)
+            return None, "Docker API error"
 
     def start_service(self, service):
         """Start a container from a service definition."""
@@ -36,7 +50,8 @@ class DockerServiceManager:
                 ports={f"{port.container_port}/tcp": port.host_port
                        for port in service.docker_ports},
                 healthcheck=healthcheck,
-                devices=[f"{device.host_path}:{device.container_path}:{device.cgroup_permissions}" for device in service.docker_devices],
+                devices=[f"{device.host_path}:{device.container_path}:{device.cgroup_permissions}" 
+                         for device in service.docker_devices],
                 labels={label.key: label.value for label in service.docker_labels},
                 detach=True,
                 restart_policy={"Name": "unless-stopped"}
@@ -46,10 +61,11 @@ class DockerServiceManager:
             print(f"Error: Image {service.docker_image} not found.")
         except docker.errors.APIError as e:
             print(f"API error: {e.explanation}")
+        return None
 
     def stop_service(self, service):
         """Stop a container from a service definition."""
-        container = self.get_container(service.docker_container_id)
+        container, error = self.get_container(service.docker_container_id)
         if container:
             container.stop()
             container.remove()
@@ -62,7 +78,7 @@ class DockerServiceManager:
         if not container_id:
             return self.start_service(service)
 
-        container = self.get_container(container_id)
+        container, error = self.get_container(container_id)
         if container:
             container.restart()
             return container
@@ -71,6 +87,7 @@ class DockerServiceManager:
 ##### Static methods #####
 @staticmethod
 def get_volume_mappings(service):
+    """Get a dictionary of volume mappings from a service definition."""
     volume_mappings = {}
     for volume in service.docker_volumes:
         absolute_host_path = os.path.abspath(volume.host_path)

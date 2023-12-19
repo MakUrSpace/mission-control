@@ -1,4 +1,6 @@
 """models.py"""
+import time
+import logging
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import current_app
@@ -162,7 +164,39 @@ class Service(BaseModel):
 
     def get_container(self):
         if self.docker_container_id:
-            return current_app.docker_manager.get_container(self.docker_container_id)
+            container, error = current_app.docker_manager.get_container(self.docker_container_id)
+            if container:
+                return container
+            logging.error("Error getting container %s: %s", self.docker_container_id, error)
+
+            # If the container is not found, update the database
+            self.docker_container_id = None
+            self.is_running = False
+            db.session.commit()
+        return None
+
+    def check_status(self):
+        container = self.get_container()
+        if container and container.status == 'running':
+            if not self.is_running:
+                self.is_running = True
+        else:
+            if self.is_running:
+                self.is_running = False
+
+    @classmethod
+    def schedule_service_checks(cls, app):
+        with app.app_context():
+            while True:
+                try:
+                    for service in cls.query.all():
+                        db.session.refresh(service)
+                        service.check_status()
+                    db.session.commit()
+                except Exception as e:
+                    logging.error("Error checking service status: %s", e)
+                    db.session.rollback()
+                time.sleep(5)
 
     def start(self):
         """Start the service."""

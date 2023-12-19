@@ -86,11 +86,16 @@ function checkServiceStatusAndUpdateButton(serviceId) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    pollServiceStatus();
+    setInterval(pollServiceStatus, 5000);
+});
+
+function pollServiceStatus() {
     document.querySelectorAll('.card').forEach(function(card) {
         var serviceId = card.dataset.serviceId;
         checkServiceStatusAndUpdateButton(serviceId);
     });
-});
+}
 
 function updateEnvironmentVars(serviceId) {
     const formData = new FormData(document.getElementById('form-' + serviceId));
