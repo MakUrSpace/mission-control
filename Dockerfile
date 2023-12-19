@@ -1,5 +1,5 @@
 # Use an official Python runtime as a base image
-FROM python:bookworm
+FROM python:3.11-slim-bullseye
 
 # Install curl
 RUN apt-get update && apt-get install -y curl libpq-dev gcc && rm -rf /var/lib/apt/lists/*
@@ -34,4 +34,4 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Set the entrypoint to run the script
 ENTRYPOINT ["entrypoint.sh"]
-CMD ["gunicorn", "app:create_app()", "--bind", "0.0.0.0:80"]
+CMD ["gunicorn", "-k", "eventlet", "app:create_app()", "--bind", "0.0.0.0:80"]

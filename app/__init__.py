@@ -9,6 +9,7 @@ from flask_assets import Environment, Bundle
 from app.extensions import db, migrate
 from app.admin import admin
 from app.routes import bp as main_bp
+from app.socket_events import socketio
 from app.docker_service_manager import DockerServiceManager
 from app.models import User, Service
 
@@ -65,6 +66,14 @@ def create_app():
         # Configure SQLAlchemy
         app.config["TEMPLATES_AUTO_RELOAD"] = True
         app.config["SQLALCHEMY_ECHO"] = False
+    else:
+        logging = importlib.import_module("logging")
+        logging.basicConfig(level=logging.INFO)
+        app.logger.setLevel(logging.INFO)
+
+        # Configure SQLAlchemy
+        app.config["TEMPLATES_AUTO_RELOAD"] = False
+        app.config["SQLALCHEMY_ECHO"] = False
 
     print("Registering Flask Assets...")
     assets = Environment(app)
@@ -113,9 +122,10 @@ def create_app():
     # Register app blueprints (routes)
     app.register_blueprint(main_bp)
 
-    # Configure database
+    # Configure database, migrations, and SocketIO
     db.init_app(app)
     migrate.init_app(app, db)
+    socketio.init_app(app, cors_allowed_origins="*")
 
     with app.app_context():
         db.create_all()

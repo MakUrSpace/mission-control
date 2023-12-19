@@ -42,12 +42,9 @@
     {% block content %}
     {% endblock %}
 
-    <!-- Bundled JS and Scripts -->
-    {% assets "js_all" %}
-        <script src="{{ ASSET_URL }}"></script>
-    {% endassets %}
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
     <script>AOS.init()</script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" integrity="sha384-mZLF4UVrpi/QTWPA7BjNPEnkIfRFn4ZEO3Qt/HFklTJBj/gBOV8G3HcKn4NfQblz" crossorigin="anonymous"></script>
     <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
     <script>
         kofiWidgetOverlay.draw('makurspace', {
@@ -57,6 +54,11 @@
             'floating-chat.donateButton.text-color': '#1D3557'
         });
     </script>
+    <!-- Bundled JS and Scripts -->
+    {% assets "js_all" %}
+        <script src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+
     {% block scripts %}{% endblock %}
 </body>
 

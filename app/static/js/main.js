@@ -163,3 +163,26 @@ document.querySelector('#toast-notification .delete').addEventListener('click', 
     toast.classList.remove('is-active');
     toast.classList.add('is-hidden');
 });
+
+// ##########################################
+// #            Websocket Section           #
+// ##########################################
+const socket = io();
+
+socket.on('connect_error', (error) => {
+    console.debug('Error connecting to websocket server:', error);
+});
+
+socket.on('connect', () => {
+    console.debug('Connected to websocket server');
+});
+
+socket.on('disconnect', () => {
+    console.debug('Disconnected from websocket server');
+});
+
+socket.on('message', (data) => {
+    console.debug('Received message from websocket server:', data);
+    showToast(data.message);
+});
+
