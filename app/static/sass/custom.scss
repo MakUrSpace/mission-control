@@ -129,12 +129,11 @@ $navbar-dropdown-item-hover-background-color: $light;
 }
 
 #toast-notification {
-    z-index: 2000; 
-    position: fixed; /* or absolute */
+    z-index: 50;
+    position: fixed;
     top: 10%;
     left: 50%;
     transform: translateX(-50%);
-    background-color: $darker;
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
 }
@@ -147,7 +146,9 @@ $navbar-dropdown-item-hover-background-color: $light;
 // Responsive Adjustments
 // ======================
 @media (max-width: 768px) {
-    .hero-main h1, .hero-main p {
+
+    .hero-main h1,
+    .hero-main p {
         font-size: medium;
     }
 }
@@ -169,8 +170,13 @@ $navbar-dropdown-item-hover-background-color: $light;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 // Hero Styles
@@ -189,7 +195,8 @@ $navbar-dropdown-item-hover-background-color: $light;
     padding: 0 1.5rem;
 }
 
-.hero-main h1, .hero-main p {
+.hero-main h1,
+.hero-main p {
     color: $primary-invert;
 }
 
@@ -203,9 +210,33 @@ $navbar-dropdown-item-hover-background-color: $light;
     }
 }
 
+// Card styles
+// ======================
+.columns .column {
+    display: flex;
+    flex-direction: column;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-content {
+    flex-grow: 1;
+}
+
+.is-disabled {
+    pointer-events: none;
+    color: grey;
+    cursor: default;
+}
+
 // General Styles
 // ======================
-html, body {
+html,
+body {
     height: 100%;
     width: 100%;
     color: $text;
@@ -223,7 +254,8 @@ div {
     color: $text;
 }
 
-.box, .card {
+.box,
+.card {
     background-color: $background;
 }
 

@@ -1,37 +1,34 @@
-<div class="column is-one-third">
-    <div class="card" data-service-id="{{ service.id }}">
-        <div class="card-header">
-            <div class="card-header-title">
-                {{ service.name }}
-            </div>
-            <div class="card-header-icon">
-                <a href="{{ service.documentation_url }}" target="_blank">
-                    <figure class="image is-64x64">
-                        <img src="{{ url_for('static', filename=service.logo) }}" alt="{{ service.name }} Logo">
-                    </figure>
-                </a>
+<div class="card" data-service-id="{{ service.id }}">
+    <div class="card-header">
+        <div class="card-header-title">
+            {{ service.name }}
+        </div>
+        <div class="card-header-icon">
+            <a href="{{ service.documentation_url }}" target="_blank">
+                <figure class="image is-64x64">
+                    <img src="{{ url_for('static', filename=service.logo) }}" alt="{{ service.name }} Logo">
+                </figure>
+            </a>
+        </div>
+    </div>
+    <div class="card-content">
+        <div class="media">
+            <div class="media-content">
+                <p class="subtitle is-6">{{ service.description }}</p>
             </div>
         </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-content">
-                    <p class="title is-4">{{ service.name }}</p>
-                    <p class="subtitle is-6">{{ service.description }}</p>
-                </div>
-            </div>
-            <div class="content">
-                <!-- Launch Button -->
-                <button id="launchButton-{{ service.id }}" class="button is-link" onclick="launchService('{{ service.url }}')" disabled>Launch</button>
-            
-                <!-- Documentation Link -->
-                {% if service.documentation_url %}
-                    <a class="button is-link" href="{{ service.documentation_url }}" target="_blank">Docs</a>
-                {% endif %}
-            
-                <!-- Manage Button (For toggling modal) -->
-                <button class="button is-primary" onclick="document.querySelector('#modal-{{ service.id }}').classList.toggle('is-active');">Manage</button>
-            </div>
-        </div>
+    </div>
+    <div class="card-footer">
+        <!-- Launch Button -->
+        <a id="launchButton-{{ service.id }}" href="#" class="card-footer-item" data-url="{{ service.url }}" onclick="launchService('{{ service.url }}'); return false;">Launch</a>
+        
+        <!-- Documentation Link -->
+        {% if service.documentation_url %}
+            <a href="{{ service.documentation_url }}" class="card-footer-item" target="_blank">Docs</a>
+        {% endif %}
+        
+        <!-- Manage Button (For toggling modal) -->
+        <a href="#" class="card-footer-item" onclick="document.querySelector('#modal-{{ service.id }}').classList.toggle('is-active'); return false;">Manage</a>
     </div>
 </div>
 

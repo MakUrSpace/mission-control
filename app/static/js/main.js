@@ -62,9 +62,15 @@ function restartService(serviceId, btn) {
 function updateButtonState(serviceId, is_running) {
     const launchButton = document.getElementById('launchButton-' + serviceId);
     if (is_running) {
-        launchButton.disabled = false;
+        launchButton.classList.remove('is-disabled');
+        launchButton.href = launchButton.dataset.url;
+        launchButton.onclick = null;
     } else {
-        launchButton.disabled = true;
+        launchButton.classList.add('is-disabled');
+        launchButton.href = 'javascript:void(0);'; // Prevent navigation
+        launchButton.onclick = function(event) {
+            event.preventDefault(); // Further ensure no action on click
+        };
     }
 }
 

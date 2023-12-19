@@ -1,7 +1,9 @@
 <div class="container">
     <div class="columns is-multiline">
         {% for service in site.services|sort(attribute='id') %}
-            {% include 'components/services/service_card.html' with context %}
+            <div class="column is-one-third">
+                {% include 'components/services/service_card.html' with context %}
+            </div>
         {% endfor %}
     </div>
 </div>

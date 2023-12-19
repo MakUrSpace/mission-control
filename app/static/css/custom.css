@@ -7826,13 +7826,11 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
   object-fit: cover; }
 
 #toast-notification {
-  z-index: 2000;
+  z-index: 50;
   position: fixed;
-  /* or absolute */
   top: 10%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #0B0C10;
   opacity: 0;
   transition: opacity 0.5s ease-in-out; }
 
@@ -7840,7 +7838,8 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
   opacity: 1; }
 
 @media (max-width: 768px) {
-  .hero-main h1, .hero-main p {
+  .hero-main h1,
+  .hero-main p {
     font-size: medium; } }
 
 .spinner {
@@ -7873,7 +7872,8 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
   margin: auto;
   padding: 0 1.5rem; }
 
-.hero-main h1, .hero-main p {
+.hero-main h1,
+.hero-main p {
   color: #A8DADC; }
 
 @media (max-width: 768px) {
@@ -7882,7 +7882,25 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
   .hero-main p {
     font-size: medium; } }
 
-html, body {
+.columns .column {
+  display: flex;
+  flex-direction: column; }
+
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%; }
+
+.card-content {
+  flex-grow: 1; }
+
+.is-disabled {
+  pointer-events: none;
+  color: grey;
+  cursor: default; }
+
+html,
+body {
   height: 100%;
   width: 100%;
   color: #F1FAEE; }
@@ -7896,7 +7914,8 @@ div {
 .subtitle {
   color: #F1FAEE; }
 
-.box, .card {
+.box,
+.card {
   background-color: #1D3557; }
 
 .button-upload {
