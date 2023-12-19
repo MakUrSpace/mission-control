@@ -12,8 +12,8 @@ from flask import (
 )
 from flask_login import login_user, logout_user, login_required, current_user
 from app import db
-from .forms import LoginForm
-from .models import User, Site, BaseModel, Service
+from app.forms import LoginForm
+from app.models import User, Site, Service, BaseModel
 
 bp = Blueprint("main", __name__)
 

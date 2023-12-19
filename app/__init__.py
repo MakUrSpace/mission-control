@@ -6,10 +6,11 @@ from dotenv import find_dotenv, load_dotenv
 from flask import Flask
 from flask_login import LoginManager
 from flask_assets import Environment, Bundle
-from .admin import admin
-from .models import Service, db, migrate, User
-from .routes import bp as main_bp
-from .docker_service_manager import DockerServiceManager
+from app.extensions import db, migrate
+from app.admin import admin
+from app.routes import bp as main_bp
+from app.docker_service_manager import DockerServiceManager
+from app.models import User, Service
 
 # Initialize dotenv settings
 if os.environ.get("FLASK_ENV") == "development":
@@ -131,7 +132,8 @@ def create_app():
 
     # Spawn services
     service_check_thread = threading.Thread(
-        target=Service.schedule_service_checks, args=(app,), daemon=True)
+        target=Service.schedule_service_checks, args=(app,), daemon=True
+    )
     service_check_thread.start()
     app.service_check_thread = service_check_thread
 

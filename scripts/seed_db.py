@@ -5,16 +5,19 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from app import db, create_app
 from app.models import (
-    DockerHealthcheck,
-    DockerLabel,
-    DockerPort,
-    DockerVolume,
     Site,
     Contact,
     User,
     About,
     Service,
     EnvironmentVar,
+)
+from app.models.service import (
+    DockerPort,
+    DockerLabel,
+    DockerVolume,
+    # DockerDevice,
+    DockerHealthcheck,
 )
 
 # Create app context

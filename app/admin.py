@@ -3,10 +3,8 @@ from flask_admin import Admin, menu
 from flask_admin.contrib.sqla import ModelView
 from flask import redirect, url_for, request
 from flask_login import current_user
-from .models import (
-    db,
-    BaseModel
-)
+from app.models import BaseModel
+from app.extensions import db
 
 # Initialize Flask-Admin
 admin = Admin(template_mode="bootstrap3")
