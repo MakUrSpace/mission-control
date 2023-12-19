@@ -3,6 +3,7 @@ import os
 import logging
 import docker
 
+
 class DockerServiceManager:
     """Class to manage docker containers"""
 
@@ -11,10 +12,10 @@ class DockerServiceManager:
 
     def get_container(self, container_id) -> (docker.models.containers.Container, str):
         """Get a container by ID.
-        
+
         Args:
             container_id (str): ID of the container to get.
-            
+
         Returns:
             docker.models.containers.Container: The container object.
             str: An error message if the container was not found.
@@ -35,11 +36,12 @@ class DockerServiceManager:
             # Time values are stored in seconds but need to be in nanoseconds for docker-py
             if service.docker_healthcheck:
                 healthcheck = {
-                    'test': service.docker_healthcheck.test,
-                    'interval': service.docker_healthcheck.interval * 1_000_000_000,
-                    'timeout': service.docker_healthcheck.timeout * 1_000_000_000,
-                    'retries': service.docker_healthcheck.retries,
-                    'start_period': service.docker_healthcheck.start_period * 1_000_000_000
+                    "test": service.docker_healthcheck.test,
+                    "interval": service.docker_healthcheck.interval * 1_000_000_000,
+                    "timeout": service.docker_healthcheck.timeout * 1_000_000_000,
+                    "retries": service.docker_healthcheck.retries,
+                    "start_period": service.docker_healthcheck.start_period
+                    * 1_000_000_000,
                 }
             else:
                 healthcheck = None
@@ -47,14 +49,18 @@ class DockerServiceManager:
             container = self.client.containers.run(
                 image=service.docker_image,
                 volumes=get_volume_mappings(service),
-                ports={f"{port.container_port}/tcp": port.host_port
-                       for port in service.docker_ports},
+                ports={
+                    f"{port.container_port}/tcp": port.host_port
+                    for port in service.docker_ports
+                },
                 healthcheck=healthcheck,
-                devices=[f"{device.host_path}:{device.container_path}:{device.cgroup_permissions}" 
-                         for device in service.docker_devices],
+                devices=[
+                    f"{device.host_path}:{device.container_path}:{device.cgroup_permissions}"
+                    for device in service.docker_devices
+                ],
                 labels={label.key: label.value for label in service.docker_labels},
                 detach=True,
-                restart_policy={"Name": "unless-stopped"}
+                restart_policy={"Name": "unless-stopped"},
             )
             return container, None
         except docker.errors.ImageNotFound:
@@ -86,6 +92,7 @@ class DockerServiceManager:
             return container, None
         return None, error
 
+
 ##### Static methods #####
 @staticmethod
 def get_volume_mappings(service):
@@ -93,5 +100,8 @@ def get_volume_mappings(service):
     volume_mappings = {}
     for volume in service.docker_volumes:
         absolute_host_path = os.path.abspath(volume.host_path)
-        volume_mappings[absolute_host_path] = {'bind': volume.container_path, 'mode': 'rw'}
+        volume_mappings[absolute_host_path] = {
+            "bind": volume.container_path,
+            "mode": "rw",
+        }
     return volume_mappings

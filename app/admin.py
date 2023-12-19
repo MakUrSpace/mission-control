@@ -11,12 +11,14 @@ admin = Admin(template_mode="bootstrap3")
 
 admin.add_link(menu.MenuLink(name="Back to Home", category="", url="/"))
 
+
 class SecureModelView(ModelView):
     """Wrapper for ModelView to provide authentication.
 
     Args:
         ModelView : Base class for model based views.
     """
+
     can_export = True
 
     def is_accessible(self):
@@ -31,4 +33,3 @@ class SecureModelView(ModelView):
 # Reflectively add all models to the admin interface
 for model in BaseModel.__subclasses__():
     admin.add_view(SecureModelView(model, db.session, category="Models"))
-    
