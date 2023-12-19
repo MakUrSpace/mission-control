@@ -3,24 +3,72 @@
     <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title has-text-white">{{ service.name }} Control</p>
-            <button class="delete" aria-label="close" onclick="document.querySelector('#modal-{{ service.id }}').classList.toggle('is-active');"></button>
+            <button class="delete" aria-label="close" onclick="toggleModal('{{ service.id }}')"></button>
         </header>
         <section class="modal-card-body">
-            <form id="form-{{ service.id }}" onsubmit="return updateEnvironmentVars('{{ service.id }}')">
-                {% for env_var in service.environment_vars %}
-                    <div class="field">
-                        <label class="label">{{ env_var.key }}</label>
-                        <div class="control">
-                            <input class="input" type="text" name="{{ env_var.key }}" value="{{ env_var.value }}">
+            <!-- Stats and Environment Variables in side-by-side columns -->
+            <div class="columns">
+                <!-- Stats Column -->
+                <div class="column is-half">
+                    <h3 class="title is-5">Stats</h3>
+                    <div id="stats-container-{{ service.id }}">
+                        <!-- Stats will be dynamically filled by JavaScript -->
+                        <div class="field">
+                            <label class="label">CPU:</label>
+                            <div class="control">
+                                <input class="input" type="text" placeholder="CPU usage" disabled>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Memory:</label>
+                            <div class="control">
+                                <input class="input" type="text" placeholder="Memory usage" disabled>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Disk:</label>
+                            <div class="control">
+                                <input class="input" type="text" placeholder="Disk usage" disabled>
+                            </div>
                         </div>
                     </div>
-                {% endfor %}
-                <div class="field">
-                    <div class="control">
-                        <button type="submit" class="button is-light">Save Changes</button>
+                </div>
+
+                <!-- Divider Line -->
+                <div class="vertical-divider"></div>
+
+                <!-- Environment Variables Column -->
+                <div class="column is-half">
+                    <h3 class="title is-5">Environment Variables</h3>
+                    <div class="env-vars-container" style="overflow-y: auto; max-height: 300px;">
+                        <form id="form-{{ service.id }}" onsubmit="return updateEnvironmentVars('{{ service.id }}')">
+                            {% for env_var in service.environment_vars %}
+                                <div class="field">
+                                    <label class="label">{{ env_var.key }}</label>
+                                    <div class="control">
+                                        <input class="input" type="text" name="{{ env_var.key }}" value="{{ env_var.value }}">
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div class="field">
+                                <div class="control">
+                                    <button type="submit" class="button is-primary">Save Changes</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </form>
+            </div>
+
+            <!-- Divider Line -->
+            <hr>
+
+            <!-- Logs Section -->
+            <h3 class="title is-5">Logs</h3>
+            <div class="logs-container" style="background-color: #f5f5f5; padding: 1rem; overflow-y: auto; max-height: 300px;">
+                <!-- Logs will be dynamically filled by JavaScript -->
+                <pre id="logs-{{ service.id }}">No logs to display...</pre>
+            </div>
         </section>
         <footer class="modal-card-foot">
             <button class="button is-success" onclick="startService('{{ service.id }}', this)">Start</button>

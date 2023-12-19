@@ -120,8 +120,6 @@ $link-active-underline-offset: 0;
 $modal-card-head-background-color: darken($primary, 5%);
 $modal-card-body-background-color: lighten($primary, 10%);
 
-
-
 // Import Bulma
 // ======================
 @import "bulma/utilities/_all";
@@ -241,6 +239,7 @@ $modal-card-body-background-color: lighten($primary, 10%);
 .columns .column {
     display: flex;
     flex-direction: column;
+    align-items: normal;
 }
 
 .card {
@@ -257,6 +256,17 @@ $modal-card-body-background-color: lighten($primary, 10%);
     pointer-events: none;
     color: grey;
     cursor: default;
+}
+
+.vertical-divider {
+    height: auto;
+    border-left: 2px solid $info;
+    flex: 0 0 2px
+}
+
+.horizontal-divider {
+    border-top: 2px solid $info;
+    flex: 0 0 2px
 }
 
 // General Styles

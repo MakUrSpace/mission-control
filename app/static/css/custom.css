@@ -7867,7 +7867,8 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
 
 .columns .column {
   display: flex;
-  flex-direction: column; }
+  flex-direction: column;
+  align-items: normal; }
 
 .card {
   display: flex;
@@ -7881,6 +7882,15 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
   pointer-events: none;
   color: grey;
   cursor: default; }
+
+.vertical-divider {
+  height: auto;
+  border-left: 2px solid #f3f4eb;
+  flex: 0 0 2px; }
+
+.horizontal-divider {
+  border-top: 2px solid #f3f4eb;
+  flex: 0 0 2px; }
 
 html,
 body {
