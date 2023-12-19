@@ -10,3 +10,4 @@ wtforms
 psycopg2-binary
 python-dotenv
 jsmin
+docker

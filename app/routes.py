@@ -102,6 +102,7 @@ def upload_file():
 
 
 @bp.route('/update-environment-vars/<int:service_id>', methods=['POST'])
+@login_required
 def update_environment_vars(service_id):
     service = Service.query.get(service_id)
     if service:
@@ -132,6 +133,7 @@ def update_environment_vars(service_id):
 
 
 @bp.route('/service/<int:service_id>/start', methods=['POST'])
+@login_required
 def service_start(service_id):
     service = Service.query.get(service_id)
     if service:
@@ -141,6 +143,7 @@ def service_start(service_id):
 
 
 @bp.route('/service/<int:service_id>/stop', methods=['POST'])
+@login_required
 def service_stop(service_id):
     service = Service.query.get(service_id)
     if service:
@@ -150,6 +153,7 @@ def service_stop(service_id):
 
 
 @bp.route('/service/<int:service_id>/restart', methods=['POST'])
+@login_required
 def service_restart(service_id):
     service = Service.query.get(service_id)
     if service:

@@ -77,6 +77,13 @@ function checkServiceStatusAndUpdateButton(serviceId) {
     .catch(error => console.error('Error:', error));
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.card').forEach(function(card) {
+        var serviceId = card.dataset.serviceId;
+        checkServiceStatusAndUpdateButton(serviceId);
+    });
+});
+
 function updateEnvironmentVars(serviceId) {
     const formData = new FormData(document.getElementById('form-' + serviceId));
     fetch(`/update-environment-vars/${serviceId}`, {

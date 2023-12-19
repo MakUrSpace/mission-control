@@ -1,7 +1,7 @@
 <div class="column is-one-third">
-    <div class="card">
+    <div class="card" data-service-id="{{ service.id }}">
         <div class="card-image">
-            <figure class="image is-4by3">
+            <figure class="image is-3by3">
                 <img src="{{ url_for('static', filename=service.logo) }}" alt="{{ service.name }} Logo">
             </figure>
         </div>
