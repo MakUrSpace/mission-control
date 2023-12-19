@@ -4,15 +4,15 @@
             <h2 class="title is-2">{{ site.contact.title | default('Contact Us!') }}</h2>
             <div class="content">
                 {% if site.contact.email %}
-                    <p>Email: <a href="mailto:{{ site.contact.email }}">{{ site.contact.email }}</a></p>
+                    <p>Email: <a href="mailto:{{ site.contact.email }}" class="has-text-white">{{ site.contact.email }}</a></p>
                 {% endif %}
                 
                 {% if site.contact.linkedin %}
-                    <p>LinkedIn: <a href="{{ site.contact.linkedin }}" target="_blank" rel="noopener noreferrer">LinkedIn Profile</a></p>
+                    <p>LinkedIn: <a href="{{ site.contact.linkedin }}" class="has-text-white" target="_blank" rel="noopener noreferrer">LinkedIn Profile</a></p>
                 {% endif %}
                 
                 {% if site.contact.github %}
-                    <p>GitHub: <a href="{{ site.contact.github }}" target="_blank" rel="noopener noreferrer">GitHub Profile</a></p>
+                    <p>GitHub: <a href="{{ site.contact.github }}" class="has-text-white" target="_blank" rel="noopener noreferrer">GitHub Profile</a></p>
                 {% endif %}
             </div>
         </div>

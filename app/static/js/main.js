@@ -63,10 +63,12 @@ function updateButtonState(serviceId, is_running) {
     const launchButton = document.getElementById('launchButton-' + serviceId);
     if (is_running) {
         launchButton.classList.remove('is-disabled');
+        launchButton.classList.add('has-text-white');
         launchButton.href = launchButton.dataset.url;
         launchButton.onclick = null;
     } else {
         launchButton.classList.add('is-disabled');
+        launchButton.classList.remove('has-text-white');
         launchButton.href = 'javascript:void(0);'; // Prevent navigation
         launchButton.onclick = function(event) {
             event.preventDefault(); // Further ensure no action on click

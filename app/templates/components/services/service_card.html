@@ -12,23 +12,16 @@
         </div>
     </div>
     <div class="card-content">
-        <div class="media">
-            <div class="media-content">
-                <p class="subtitle is-6">{{ service.description }}</p>
-            </div>
+        <div class="content">
+            {{ service.description }}
         </div>
     </div>
     <div class="card-footer">
         <!-- Launch Button -->
-        <a id="launchButton-{{ service.id }}" href="#" class="card-footer-item" data-url="{{ service.url }}" onclick="launchService('{{ service.url }}'); return false;">Launch</a>
-        
-        <!-- Documentation Link -->
-        {% if service.documentation_url %}
-            <a href="{{ service.documentation_url }}" class="card-footer-item" target="_blank">Docs</a>
-        {% endif %}
+        <a id="launchButton-{{ service.id }}" href="#" class="card-footer-item has-text-white" data-url="{{ service.url }}" onclick="launchService('{{ service.url }}'); return false;">Launch</a>
         
         <!-- Manage Button (For toggling modal) -->
-        <a href="#" class="card-footer-item" onclick="document.querySelector('#modal-{{ service.id }}').classList.toggle('is-active'); return false;">Manage</a>
+        <a href="#" class="card-footer-item has-text-white" onclick="document.querySelector('#modal-{{ service.id }}').classList.toggle('is-active'); return false;">Manage</a>
     </div>
 </div>
 
@@ -37,7 +30,7 @@
     <div class="modal-background" onclick="toggleModal('{{ service.id }}')"></div>
     <div class="modal-card">
         <header class="modal-card-head">
-            <p class="modal-card-title">{{ service.name }} Control</p>
+            <p class="modal-card-title has-text-white">{{ service.name }} Control</p>
             <button class="delete" aria-label="close" onclick="document.querySelector('#modal-{{ service.id }}').classList.toggle('is-active');"></button>
         </header>
         <section class="modal-card-body">
