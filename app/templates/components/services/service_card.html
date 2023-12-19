@@ -23,37 +23,7 @@
         <!-- Manage Button (For toggling modal) -->
         <a href="#" class="card-footer-item has-text-white" onclick="document.querySelector('#modal-{{ service.id }}').classList.toggle('is-active'); return false;">Manage</a>
     </div>
-</div>
 
-<!-- Service Control Modal -->
-<div class="modal" id="modal-{{ service.id }}">
-    <div class="modal-background" onclick="toggleModal('{{ service.id }}')"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title has-text-white">{{ service.name }} Control</p>
-            <button class="delete" aria-label="close" onclick="document.querySelector('#modal-{{ service.id }}').classList.toggle('is-active');"></button>
-        </header>
-        <section class="modal-card-body">
-            <form id="form-{{ service.id }}" onsubmit="return updateEnvironmentVars('{{ service.id }}')">
-                {% for env_var in service.environment_vars %}
-                    <div class="field">
-                        <label class="label">{{ env_var.key }}</label>
-                        <div class="control">
-                            <input class="input" type="text" name="{{ env_var.key }}" value="{{ env_var.value }}">
-                        </div>
-                    </div>
-                {% endfor %}
-                <div class="field">
-                    <div class="control">
-                        <button type="submit" class="button is-light">Save Changes</button>
-                    </div>
-                </div>
-            </form>
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" onclick="startService('{{ service.id }}', this)">Start</button>
-            <button class="button is-danger" onclick="stopService('{{ service.id }}', this)">Stop</button>
-            <button class="button is-warning" onclick="restartService('{{ service.id }}', this)">Restart</button>
-        </footer>
-    </div>
+    <!-- Modal -->
+    {% include 'components/services/service_modal.html' %}
 </div>
