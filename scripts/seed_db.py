@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from app import db, create_app
 from app.models import (
     DockerHealthcheck,
+    DockerLabel,
     DockerPort,
     DockerVolume,
     Site,
@@ -52,8 +53,13 @@ with app.app_context():
     user.contact = contact
 
     # Add Octoprint service
+    # Optional device mapping for webcam
+    # devices = [DockerDevice(host_path="/dev/video0", container_path="/dev/video0")]
+    devices = []
+
+    service_name = "Octoprint"
     octoprint = Service(
-        name="Octoprint",
+        name=service_name,
         description="Octoprint is a web interface for managing 3D printers.",
         logo="img/services/octoprint.png",
         documentation_url="https://docs.octoprint.org/en/master/",
@@ -64,8 +70,18 @@ with app.app_context():
             ),
         ],
         docker_volumes=[
-            DockerVolume(volume_mapping="octoprint_volume:/octoprint"),
+            DockerVolume(
+                container_path="/octoprint",
+                host_path="data/octoprint",
+            ),
         ],
+        docker_labels=[
+            DockerLabel(key="traefik.enable", value="true"),
+            DockerLabel(key=f"traefik.http.routers.{service_name}.rule",
+                        value=f"Host(`{os.environ.get('OCTOPRINT_DOMAIN', 'localhost')}`)"),
+            DockerLabel(key=f"traefik.http.routers.{service_name}.entrypoints", value="web"),
+        ],
+        docker_devices=devices,
         docker_healthcheck=DockerHealthcheck(
             test="curl --fail http://localhost:80 || exit 1",
             interval=30,
@@ -78,18 +94,19 @@ with app.app_context():
     octoprint.environment_vars = [
         EnvironmentVar(
             key="OCTOPRINT_DOMAIN",
-            value="localhost",
+            value=os.environ.get("OCTOPRINT_DOMAIN", "localhost"),
         ),
         EnvironmentVar(
             key="OCTOPRINT_PORT",
-            value="5557",
+            value=os.environ.get("OCTOPRINT_PORT", "5557"),
         ),
     ]
     site.services.append(octoprint)
 
     # Add Mainsail service
+    service_name = "Mainsail"
     mainsail = Service(
-        name="Mainsail",
+        name=service_name,
         description="Mainsail is a web interface for managing 3D printers.",
         logo="img/services/mainsail.png",
         documentation_url="https://docs.mainsail.xyz/",
@@ -101,8 +118,15 @@ with app.app_context():
         ],
         docker_volumes=[
             DockerVolume(
-                volume_mapping="data/mainsail/config.json:/usr/share/nginx/html/config.json"
+                container_path="/usr/share/nginx/html/config.json",
+                host_path="data/mainsail/config.json",
             ),
+        ],
+        docker_labels=[
+            DockerLabel(key="traefik.enable", value="true"),
+            DockerLabel(key=f"traefik.http.routers.{service_name}.rule",
+                        value=f"Host(`{os.environ.get('MAINSAIL_DOMAIN', 'localhost')}`)"),
+            DockerLabel(key=f"traefik.http.routers.{service_name}.entrypoints", value="web"),
         ],
         docker_healthcheck=DockerHealthcheck(
             test="curl --fail http://localhost:80 || exit 1",
@@ -115,11 +139,11 @@ with app.app_context():
     mainsail.environment_vars = [
         EnvironmentVar(
             key="MAINSAIL_DOMAIN",
-            value="localhost",
+            value=os.environ.get("MAINSAIL_DOMAIN", "localhost"),
         ),
         EnvironmentVar(
             key="MAINSAIL_PORT",
-            value="5556",
+            value=os.environ.get("MAINSAIL_PORT", "5556"),
         ),
     ]
     site.services.append(mainsail)
@@ -136,11 +160,20 @@ with app.app_context():
         docker_image="cncjs/cncjs:latest",
         docker_ports=[
             DockerPort(
-                container_port=8000, host_port=os.environ.get("CNCJS_PORT", 5555)
+                container_port=8000, host_port=os.environ.get("CNCJS_PORT", 5558)
             ),
         ],
         docker_volumes=[
-            DockerVolume(volume_mapping="cncjs_volume:/cncjs"),
+            DockerVolume(
+                container_path="/cncjs",
+                host_path="data/cncjs",
+            ),
+        ],
+        docker_labels=[
+            DockerLabel(key="traefik.enable", value="true"),
+            DockerLabel(key=f"traefik.http.routers.{service_name}.rule", 
+                        value=f"Host(`{os.environ.get('CNCJS_DOMAIN', 'localhost')}`)"),
+            DockerLabel(key=f"traefik.http.routers.{service_name}.entrypoints", value="web"),
         ],
         docker_healthcheck=DockerHealthcheck(
             test="curl --fail http://localhost:8000 || exit 1",
@@ -153,11 +186,11 @@ with app.app_context():
     cncjs.environment_vars = [
         EnvironmentVar(
             key="CNCJS_DOMAIN",
-            value="localhost",
+            value=os.environ.get("CNCJS_DOMAIN", "localhost"),
         ),
         EnvironmentVar(
             key="CNCJS_PORT",
-            value="5555",
+            value=os.environ.get("CNCJS_PORT", "5558"),
         ),
     ]
     site.services.append(cncjs)

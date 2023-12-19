@@ -36,6 +36,8 @@ class DockerServiceManager:
                 ports={f"{port.container_port}/tcp": port.host_port
                        for port in service.docker_ports},
                 healthcheck=healthcheck,
+                devices=[f"{device.host_path}:{device.container_path}:{device.cgroup_permissions}" for device in service.docker_devices],
+                labels={label.key: label.value for label in service.docker_labels},
                 detach=True,
                 restart_policy={"Name": "unless-stopped"}
             )
@@ -71,7 +73,6 @@ class DockerServiceManager:
 def get_volume_mappings(service):
     volume_mappings = {}
     for volume in service.docker_volumes:
-        host_path, container_path = volume.volume_mapping.split(':')
-        absolute_host_path = os.path.abspath(host_path)
-        volume_mappings[absolute_host_path] = {'bind': container_path, 'mode': 'rw'}
+        absolute_host_path = os.path.abspath(volume.host_path)
+        volume_mappings[absolute_host_path] = {'bind': volume.container_path, 'mode': 'rw'}
     return volume_mappings

@@ -161,5 +161,9 @@ cython_debug/
 
 .webassets-cache/
 
-# Generated file for rraspberry pi setup
+# Generated file for raspberry pi setup
 publish_alias.sh
+
+# Docker container volumes
+data/octoprint/
+data/cncjs/

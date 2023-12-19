@@ -83,18 +83,6 @@ class Contact(BaseModel):
     )
 
 
-class Metadata(BaseModel):
-    """Metadata model.
-
-    Args:
-        BaseModel: Custom base model to provide additional standardized functionality.
-    """
-
-    __tablename__ = "metadata"
-    key = db.Column(db.String(50), nullable=False)
-    value = db.Column(db.String(50), nullable=False)
-
-
 class User(UserMixin, BaseModel):
     """User model.
 
@@ -145,6 +133,8 @@ class Service(BaseModel):
     docker_image = db.Column(db.String(250), nullable=False)
     docker_volumes = db.relationship("DockerVolume", backref="service", lazy=True)
     docker_ports = db.relationship("DockerPort", backref="service", lazy=True)
+    docker_devices = db.relationship("DockerDevice", backref="service", lazy=True)
+    docker_labels = db.relationship("DockerLabel", backref="service", lazy=True)
     docker_healthcheck = db.relationship(
         "DockerHealthcheck", backref="service", lazy=True, uselist=False
     )
@@ -234,7 +224,8 @@ class DockerVolume(BaseModel):
     """
 
     __tablename__ = "docker_volume"
-    volume_mapping = db.Column(db.String(250), nullable=False)
+    container_path = db.Column(db.String(250), nullable=False)
+    host_path = db.Column(db.String(250), nullable=False)
     service_id = db.Column(
         db.Integer, db.ForeignKey("service.id", name="fk_service_id"), nullable=False
     )
@@ -250,6 +241,37 @@ class DockerPort(BaseModel):
     __tablename__ = "docker_port"
     container_port = db.Column(db.Integer, nullable=False)
     host_port = db.Column(db.Integer, nullable=False)
+    service_id = db.Column(
+        db.Integer, db.ForeignKey("service.id", name="fk_service_id"), nullable=False
+    )
+
+
+class DockerDevice(BaseModel):
+    """Device model.
+
+    Args:
+        BaseModel: Custom base model to provide additional standardized functionality.
+    """
+
+    __tablename__ = "docker_device"
+    container_path = db.Column(db.String(250), nullable=False)
+    host_path = db.Column(db.String(250), nullable=False)
+    cgroup_permissions = db.Column(db.String(25), nullable=False, default="r")
+    service_id = db.Column(
+        db.Integer, db.ForeignKey("service.id", name="fk_service_id"), nullable=False
+    )
+
+
+class DockerLabel(BaseModel):
+    """Label model.
+
+    Args:
+        BaseModel: Custom base model to provide additional standardized functionality.
+    """
+
+    __tablename__ = "docker_label"
+    key = db.Column(db.String(60), nullable=False)
+    value = db.Column(db.String(60), nullable=False)
     service_id = db.Column(
         db.Integer, db.ForeignKey("service.id", name="fk_service_id"), nullable=False
     )
