@@ -56,33 +56,35 @@ class DockerServiceManager:
                 detach=True,
                 restart_policy={"Name": "unless-stopped"}
             )
-            return container
+            return container, None
         except docker.errors.ImageNotFound:
-            print(f"Error: Image {service.docker_image} not found.")
+            err_msg = f"Error: Image {service.docker_image} not found."
+            logging.error(err_msg)
+            return None, err_msg
         except docker.errors.APIError as e:
-            print(f"API error: {e.explanation}")
-        return None
+            logging.error("API error occurred: %s", e)
+            return None, "Docker API error"
 
-    def stop_service(self, service):
+    def stop_service(self, service) -> (bool, str):
         """Stop a container from a service definition."""
         container, error = self.get_container(service.docker_container_id)
         if container:
             container.stop()
             container.remove()
-            return True
-        return False
+            return True, None
+        return False, error
 
-    def restart_service(self, service):
+    def restart_service(self, service) -> (docker.models.containers.Container, str):
         """Restart a container from a service definition."""
         container_id = service.docker_container_id
         if not container_id:
-            return self.start_service(service)
+            return self.start_service(service), None
 
         container, error = self.get_container(container_id)
         if container:
             container.restart()
-            return container
-        return None
+            return container, None
+        return None, error
 
 ##### Static methods #####
 @staticmethod

@@ -18,12 +18,6 @@
         </div>
         <div class="navbar-end">
             {% if current_user.is_authenticated %}
-                {% if mainsail_domain %}
-                    <a class="navbar-item" href="{{ url_for('main.mainsail') }}">Mainsail</a>
-                {% endif %}
-                {% if octoprint_domain %}
-                    <a class="navbar-item" href="{{ url_for('main.octoprint') }}">OctoPrint</a>
-                {% endif %}
                 <!-- Dropdown for Admin Models -->
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link">Admin</a>

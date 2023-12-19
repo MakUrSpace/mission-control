@@ -26,14 +26,6 @@ def inject_admin_models():
     return {'admin_models': []}
 
 
-@bp.context_processor
-def inject_domains():
-    return {
-        'mainsail_domain': os.environ.get('MAINSAIL_DOMAIN'),
-        'octoprint_domain': os.environ.get('OCTOPRINT_DOMAIN')
-    }
-
-
 @bp.route("/", methods=["GET", "POST"])
 @bp.route("/index", methods=["GET", "POST"])
 @bp.route("/home", methods=["GET", "POST"])
@@ -171,7 +163,6 @@ def is_service_running(service_id):
         })
     else:
         return jsonify({'error': 'Service not found'}), 404
-
 
 
 # Catch all other routes and redirect to the index

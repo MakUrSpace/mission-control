@@ -204,13 +204,13 @@ class Service(BaseModel):
             print("Service is already running.")
             return True
 
-        container = current_app.docker_manager.start_service(self)
+        container, error = current_app.docker_manager.start_service(self)
         if container:
             self.docker_container_id = container.id
             self.is_running = True
             db.session.commit()
-            return True
-        return False
+            return True, None
+        return False, error
 
     def stop(self):
         """Stop the service."""
@@ -218,22 +218,23 @@ class Service(BaseModel):
             print("Service is not running.")
             return False
 
-        if current_app.docker_manager.stop_service(self):
+        result, error = current_app.docker_manager.stop_service(self)
+        if result:
             self.docker_container_id = None
             self.is_running = False
             db.session.commit()
-            return True
-        return False
+            return True, None
+        return False, error
 
     def restart(self):
         """Restart the service."""
-        container = current_app.docker_manager.restart_service(self)
+        container, error = current_app.docker_manager.restart_service(self)
         if container:
             self.docker_container_id = container.id
             self.is_running = True
             db.session.commit()
-            return True
-        return False
+            return True, None
+        return False, error
 
 class EnvironmentVar(BaseModel):
     """EnvironmentVar model.
