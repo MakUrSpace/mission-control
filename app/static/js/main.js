@@ -13,7 +13,7 @@ function launchService(url) {
 
 function startService(serviceId, btn) {
     toggleButtonsDisabled(serviceId, true);
-    btn.querySelector('.spinner').classList.remove('hidden');
+    btn.classList.add('is-loading');
     fetch(`/service/${serviceId}/start`, { method: 'POST' })
         .then(response => response.json())
         .then(data => 
@@ -21,7 +21,7 @@ function startService(serviceId, btn) {
         )
         .catch(error => console.error('Error:', error))
         .finally(() => {
-            btn.querySelector('.spinner').classList.add('hidden');
+            btn.classList.remove('is-loading');
             toggleButtonsDisabled(serviceId, false);
             checkServiceStatusAndUpdateButton(serviceId);
         });
@@ -29,7 +29,7 @@ function startService(serviceId, btn) {
 
 function stopService(serviceId, btn) {
     toggleButtonsDisabled(serviceId, true);
-    btn.querySelector('.spinner').classList.remove('hidden');
+    btn.classList.add('is-loading');
     fetch(`/service/${serviceId}/stop`, { method: 'POST' })
         .then(response => response.json())
         .then(data => 
@@ -37,7 +37,7 @@ function stopService(serviceId, btn) {
         )
         .catch(error => console.error('Error:', error))
         .finally(() => {
-            btn.querySelector('.spinner').classList.add('hidden');
+            btn.classList.remove('is-loading');
             toggleButtonsDisabled(serviceId, false);
             checkServiceStatusAndUpdateButton(serviceId);
         });
@@ -45,7 +45,7 @@ function stopService(serviceId, btn) {
 
 function restartService(serviceId, btn) {
     toggleButtonsDisabled(serviceId, true);
-    btn.querySelector('.spinner').classList.remove('hidden');
+    btn.classList.add('is-loading');
     fetch(`/service/${serviceId}/restart`, { method: 'POST' })
         .then(response => response.json())
         .then(data => 
@@ -53,7 +53,7 @@ function restartService(serviceId, btn) {
         )
         .catch(error => console.error('Error:', error))
         .finally(() => {
-            btn.querySelector('.spinner').classList.add('hidden');
+            btn.classList.remove('is-loading');
             toggleButtonsDisabled(serviceId, false);
             checkServiceStatusAndUpdateButton(serviceId);
         });
