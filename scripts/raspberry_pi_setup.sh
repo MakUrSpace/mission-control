@@ -57,6 +57,7 @@ if ! dpkg -s docker-ce docker-ce-cli containerd.io >/dev/null 2>&1 || [ $force_m
     }
 else
     info "Docker already installed."
+    export DOCKER_GID=$(stat -c '%g' /var/run/docker.sock)
 fi
 
 # Check if required python packages are installed

@@ -5,6 +5,9 @@ COMPOSE_DIR="docker_compose"
 COMPOSE_FILES="-f $COMPOSE_DIR/docker-compose.yml -f $COMPOSE_DIR/docker-compose.embed.yml"
 ENV_FILE=".env"
 
+# 'docker' GID must match the host's GID for the socket
+export DOCKER_GID=$(stat -c '%g' /var/run/docker.sock)
+
 # Function to start the Docker containers
 start_containers() {
     echo "Starting Docker containers..."
@@ -22,8 +25,15 @@ stop_containers() {
 # Function to destroy the Docker containers
 destroy_containers() {
     echo "Destroying Docker containers..."
-    docker compose --env-file $ENV_FILE $COMPOSE_FILES down --rmi all --volumes
+    docker compose --env-file $ENV_FILE $COMPOSE_FILES down --volumes
     echo "Containers destroyed."
+}
+
+# Function to purge the Docker containers and images
+purge_containers() {
+    echo "Purging Docker containers and images..."
+    docker compose --env-file $ENV_FILE $COMPOSE_FILES down --rmi all --volumes
+    echo "Containers and images purged."
 }
 
 # Function to show the status of the Docker containers
@@ -38,26 +48,44 @@ logs_containers() {
 
 # Function to show usage
 usage() {
-    echo "Usage: $0 {start|stop|destroy|status|logs}"
+    echo f"
+Usage: $0 <command>
+
+Commands:
+    start | up      (Re)start (and build) the Docker containers
+    stop | down     Stop the Docker containers
+    status | ps     Show the status of the Docker containers
+    destroy | rm    Destroy the Docker containers
+    purge | clean   Purge the Docker containers and images
+    logs | log      Show docker logs
+    help            Show this help message
+    "
+
     exit 1
 }
 
 # Main script
 case "$1" in
-    start)
+    start | up)
         start_containers
         ;;
-    stop)
+    stop | down)
         stop_containers
         ;;
-    status)
+    status | ps)
         status_containers
         ;;
-    destroy)
+    destroy | rm)
         destroy_containers
         ;;
-    logs)
+    purge | clean)
+        purge_containers
+        ;;
+    logs | log)
         logs_containers
+        ;;
+    help)
+        usage
         ;;
     *)
         usage

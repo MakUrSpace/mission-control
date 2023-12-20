@@ -149,6 +149,10 @@ following environment variables.
 
    # Admin password for the web app
    ADMIN_PASSWORD=admin
+
+   # Docker Compose file(s) to use when running locally
+   COMPOSE_FILE=docker_compose/docker-compose.yml:docker_compose/docker-compose.override.yml
+
    ```
 
    > **Additional Notes:**
@@ -165,59 +169,37 @@ following environment variables.
    > **cncjs.local** name when running with docker-compose.embed.yml.
    >- The `*_PORT` values are the ports that the containers will be exposed on.
    > **These ports are only used when running locally.**
+   >- The `TRAEFIK_DOMAIN` is not used when running locally. It is used to route traffic to the appropriate container when running with docker-compose.embed.yml.
+   >- The `ADMIN_PASSWORD` value is the password for the admin user. 
+   >- The `COMPOSE_FILE` value is a colon-separated list of docker-compose files. _If on Windows, use semicolons instead of colons_.
 
 ### 1.2.3. Running the Project
 
 To run the project on your local development machine, you will use a mix
 of Flask and Docker Compose.
 
-First, you will need to start the database and Mainsail containers:
+First, you will need to start the database and other services:
 
 ```sh
 docker compose up --build -d
 ```
 
->_Some useful docker compose commands:_
->
-   >    ```sh
-   >    docker compose build # to build the containers
-   >    docker compose up -d # to run the built containers in detached mode
-   >    docker compose down # to stop the containers
-   >    docker compose down -v # to stop the containers and remove volumes
-   >
-   >    docker compose logs -f # to follow the logs
-   >    docker compose up --build -d # to rebuild and run in detached mode
-   >    ```
-   >
-   > **Note:** Docker compose automatically applies the
-   > docker-compose.override.yml file if it exists. This is equivalent to
-   > running `docker compose -f docker-compose.yml
-   > -f docker-compose.override.yml up -d`.
-
-Then, you will need to set the Flask environment variables and run the Flask application:
-
-Mac/Linux:
+Then, you will need to apply the database migrations:
 
 ```sh
-export FLASK_ENV=development
-flask run
-flask run --reload # to reload on file changes
+flask db upgrade
 ```
 
-Windows(PowerShell):
+Then, you will need to seed the database:
 
-```powershell
-$env:FLASK_ENV="development"
-flask run
-flask run --reload # to reload on file changes
+```sh
+python3 scripts/seed_db.py
 ```
 
-Windows(cmd):
+Then, simply run the Flask application with the provided development wrapper:
 
-```cmd
-set FLASK_ENV=development
-flask run
-flask run --reload # to reload on file changes
+```sh
+python3 run.py
 ```
 
 Your app should now be running on [http://localhost:5000](http://localhost:5000).
@@ -261,8 +243,7 @@ To upgrade the project to the latest version:
 7. Run the Flask application:
 
    ```sh
-   export FLASK_ENV=development
-   flask run
+   python3 run.py
    ```
 
 You should now be able to access the application at

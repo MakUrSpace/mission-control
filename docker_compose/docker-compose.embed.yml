@@ -14,7 +14,11 @@ services:
   web:
     networks:
       - mus-net
-    build: ..
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        - DOCKER_GID=${DOCKER_GID}
     environment:
       - DATABASE_DOMAIN=${DATABASE_DOMAIN}
       - POSTGRES_USER=${POSTGRES_USER}
