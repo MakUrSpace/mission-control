@@ -150,6 +150,6 @@ def is_service_running(service_id):
 
 # Catch all other routes and redirect to the index
 # NOTE: Must be last!
-@bp.route("/<path:unused_path>")
-def catch_all(unused_path):
-    return redirect(url_for("main.index"))
+# @bp.route("/<path:unused_path>")
+# def catch_all(unused_path):
+#     return redirect(url_for("main.index"))

@@ -59,8 +59,8 @@ class DockerServiceManager:
                     for device in service.docker_devices
                 ],
                 labels={label.key: label.value for label in service.docker_labels},
-                detach=True,
                 restart_policy={"Name": "unless-stopped"},
+                detach=True,
             )
             return container, None
         except docker.errors.ImageNotFound:
@@ -91,6 +91,19 @@ class DockerServiceManager:
             container.restart()
             return container, None
         return None, error
+
+    def stream_container_logs(self, service):
+        """Stream logs from a container."""
+        container, error = self.get_container(service.docker_container_id)
+        try:
+            if container:
+                for line in container.logs(stream=True, follow=True):
+                    yield line.decode("utf-8")
+            else:
+                yield error
+        except docker.errors.APIError as e:
+            logging.error("API error occurred: %s", e)
+            yield "Docker API error"
 
 
 ##### Static methods #####

@@ -119,6 +119,7 @@ $link-active-underline-offset: 0;
 // ======================
 $modal-card-head-background-color: darken($primary, 5%);
 $modal-card-body-background-color: lighten($primary, 10%);
+$modal-content-width: 80vw;
 
 // Import Bulma
 // ======================
@@ -267,6 +268,26 @@ $modal-card-body-background-color: lighten($primary, 10%);
 .horizontal-divider {
     border-top: 2px solid $info;
     flex: 0 0 2px
+}
+
+.logs-container {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.logs-container pre {
+    white-space: pre-wrap;
+    background-color: $grey-darker;
+    color: $info;
+    padding: 1rem;
+    border-radius: $radius;
+    line-height: 1.2;
+}
+
+.logs-container pre .log-line:before {
+    content: '※';
+    margin-right: 5px;
+    color: $success;
 }
 
 // General Styles

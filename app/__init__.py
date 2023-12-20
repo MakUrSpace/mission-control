@@ -10,7 +10,7 @@ from app.extensions import db, migrate
 from app.admin import admin
 from app.routes import bp as main_bp
 from app.socket_events import socketio
-from app.docker_service_manager import DockerServiceManager
+from app.docker_service_manager import DockerServiceManager as dsm
 from app.models import User, Service
 
 # Initialize dotenv settings
@@ -138,7 +138,7 @@ def create_app():
     admin.init_app(app)
 
     # Register custom services with Flask context
-    app.docker_manager = DockerServiceManager()
+    app.docker_manager = dsm()
 
     # Spawn services
     service_check_thread = threading.Thread(

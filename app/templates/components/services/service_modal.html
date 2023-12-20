@@ -1,9 +1,9 @@
 <div class="modal" id="modal-{{ service.id }}">
-    <div class="modal-background" onclick="toggleModal('{{ service.id }}')"></div>
+    <div class="modal-background" onclick="closeModal('{{ service.id }}')"></div>
     <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title has-text-white">{{ service.name }} Control</p>
-            <button class="delete" aria-label="close" onclick="toggleModal('{{ service.id }}')"></button>
+            <button class="delete" aria-label="close" onclick="closeModal('{{ service.id }}')"></button>
         </header>
         <section class="modal-card-body">
             <!-- Stats and Environment Variables in side-by-side columns -->
@@ -64,9 +64,15 @@
             <hr>
 
             <!-- Logs Section -->
-            <h3 class="title is-5">Logs</h3>
-            <div class="logs-container" style="background-color: #f5f5f5; padding: 1rem; overflow-y: auto; max-height: 300px;">
-                <!-- Logs will be dynamically filled by JavaScript -->
+            <div class="logs-title-container" style="display: flex; align-items: center; justify-content: space-between;">
+                <h3 class="title is-5">Logs</h3>
+                <button class="button is-small" onclick="clearLogs('{{ service.id }}')">
+                    <span class="icon is-small">
+                        <i class="fas fa-trash"></i>
+                    </span>
+                </button>
+            </div>
+            <div class="logs-container">
                 <pre id="logs-{{ service.id }}">No logs to display...</pre>
             </div>
         </section>

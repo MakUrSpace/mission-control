@@ -113,7 +113,7 @@ with app.app_context():
         description="Mainsail is a web interface for managing 3D printers.",
         logo="img/services/mainsail.png",
         documentation_url="https://docs.mainsail.xyz/",
-        docker_image="ghcr.io/mainsail-crew/mainsail:latest",
+        docker_image="ghcr.io/mainsail-crew/mainsail",
         docker_ports=[
             DockerPort(
                 container_port=80, host_port=os.environ.get("MAINSAIL_PORT", 5556)

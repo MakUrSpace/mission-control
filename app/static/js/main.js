@@ -122,18 +122,35 @@ function toggleButtonsDisabled(serviceId, disabled) {
     });
 }
 
-function toggleModal(serviceId) {
-    var modal = document.querySelector('#modal-' + serviceId);
-    if (modal) {
-        modal.classList.toggle('is-active');
-    }
-}
-
 document.querySelectorAll('.modal-card').forEach(function(modalCard) {
     modalCard.addEventListener('click', function(event) {
         event.stopPropagation();  // Prevents the modal background click handler from being called
     });
 });
+
+function openModal(serviceId) {
+    var modal = document.querySelector('#modal-' + serviceId);
+    if (modal) {
+        modal.classList.add('is-active');
+    }
+
+    // Request the logs
+    service_socket.emit('get_logs', serviceId);
+}
+
+function closeModal(serviceId) {
+    var modal = document.querySelector('#modal-' + serviceId);
+    if (modal) {
+        modal.classList.remove('is-active');
+    }
+}
+
+function clearLogs(serviceId) {
+    var logElement = document.querySelector('#logs-' + serviceId);
+    if (logElement) {
+        logElement.innerHTML = '';
+    }
+}
 
 // ##########################################
 // #             Toast Section              #
@@ -168,6 +185,7 @@ document.querySelector('#toast-notification .delete').addEventListener('click', 
 // #            Websocket Section           #
 // ##########################################
 const socket = io();
+const service_socket = io('/service');
 
 socket.on('connect_error', (error) => {
     console.debug('Error connecting to websocket server:', error);
@@ -181,8 +199,17 @@ socket.on('disconnect', () => {
     console.debug('Disconnected from websocket server');
 });
 
-socket.on('message', (data) => {
-    console.debug('Received message from websocket server:', data);
-    showToast(data.message);
-});
+service_socket.on('log_message', function(data) {
+    console.log('Received log message:', data);
+    var logElement = document.querySelector('#logs-' + data.service_id);
+    if (logElement) {
+        var logLine = document.createElement('div');
+        logLine.className = 'log-line';
+        logLine.textContent = data.log;
 
+        logElement.appendChild(logLine);
+
+        // Scroll to the bottom of the logs
+        logElement.scrollTop = logElement.scrollHeight;
+    }
+});

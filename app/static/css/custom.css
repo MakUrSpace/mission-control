@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* custom.scss */
 /* Bulma Utilities */
 .pagination-previous,
@@ -3415,7 +3416,7 @@ button.dropdown-item {
     .modal-card {
       margin: 0 auto;
       max-height: calc(100vh - 40px);
-      width: 640px; } }
+      width: 80vw; } }
 .modal-close {
   background: none;
   height: 40px;
@@ -7891,6 +7892,23 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
 .horizontal-divider {
   border-top: 2px solid #f3f4eb;
   flex: 0 0 2px; }
+
+.logs-container {
+  max-height: 300px;
+  overflow-y: auto; }
+
+.logs-container pre {
+  white-space: pre-wrap;
+  background-color: #363636;
+  color: #f3f4eb;
+  padding: 1rem;
+  border-radius: 4px;
+  line-height: 1.2; }
+
+.logs-container pre .log-line:before {
+  content: '※';
+  margin-right: 5px;
+  color: #a9dc87; }
 
 html,
 body {
