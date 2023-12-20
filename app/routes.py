@@ -109,34 +109,34 @@ def update_environment_vars(service_id):
     return jsonify({"message": f"Service not found for service_id={service_id}"}), 404
 
 
-@bp.route("/service/<int:service_id>/start", methods=["POST"])
-@login_required
-def service_start(service_id):
-    service = Service.query.get(service_id)
-    if service:
-        service.start()
-        return jsonify({"message": f"{service.name} started successfully"})
-    return jsonify({"message": f"Service not found for service_id={service_id}"}), 404
+# @bp.route("/service/<int:service_id>/start", methods=["POST"])
+# @login_required
+# def service_start(service_id):
+#     service = Service.query.get(service_id)
+#     if service:
+#         service.start()
+#         return jsonify({"message": f"{service.name} started successfully"})
+#     return jsonify({"message": f"Service not found for service_id={service_id}"}), 404
 
 
-@bp.route("/service/<int:service_id>/stop", methods=["POST"])
-@login_required
-def service_stop(service_id):
-    service = Service.query.get(service_id)
-    if service:
-        service.stop()
-        return jsonify({"message": f"{service.name} stopped successfully"})
-    return jsonify({"message": f"Service not found for service_id={service_id}"}), 404
+# @bp.route("/service/<int:service_id>/stop", methods=["POST"])
+# @login_required
+# def service_stop(service_id):
+#     service = Service.query.get(service_id)
+#     if service:
+#         service.stop()
+#         return jsonify({"message": f"{service.name} stopped successfully"})
+#     return jsonify({"message": f"Service not found for service_id={service_id}"}), 404
 
 
-@bp.route("/service/<int:service_id>/restart", methods=["POST"])
-@login_required
-def service_restart(service_id):
-    service = Service.query.get(service_id)
-    if service:
-        service.restart()
-        return jsonify({"message": f"{service.name} restarted successfully"})
-    return jsonify({"message": f"Service not found for service_id={service_id}"}), 404
+# @bp.route("/service/<int:service_id>/restart", methods=["POST"])
+# @login_required
+# def service_restart(service_id):
+#     service = Service.query.get(service_id)
+#     if service:
+#         service.restart()
+#         return jsonify({"message": f"{service.name} restarted successfully"})
+#     return jsonify({"message": f"Service not found for service_id={service_id}"}), 404
 
 
 @bp.route("/service/<int:service_id>/is_running", methods=["GET"])

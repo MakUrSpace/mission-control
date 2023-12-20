@@ -1,4 +1,5 @@
 """__init__.py"""
+import logging
 import importlib
 import os
 import threading
@@ -54,26 +55,30 @@ def create_app():
     # Configure app settings
     app.config["DEBUG"] = os.environ.get("FLASK_ENV") == "development"
 
+    # Configure logging
+    log_level = logging.DEBUG if app.config["DEBUG"] else logging.INFO
+    logging.basicConfig(level=log_level, 
+                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
     if app.config["DEBUG"]:
+        # Custom logging overrides
+        logging.info("Setting logging levels for development...")
+        logging.getLogger("urllib3").setLevel(logging.WARNING)
+        logging.getLogger("werkzeug").setLevel(logging.WARNING)
+        logging.getLogger("socketio").setLevel(logging.WARNING)
+        logging.getLogger("engineio").setLevel(logging.WARNING)
+        logging.getLogger("docker").setLevel(logging.WARNING)
+
         # Configure Flask Debugging
         os.environ["FLASK_DEBUG"] = "True"
-
-        # Configure debug logging
-        logging = importlib.import_module("logging")
-        logging.basicConfig(level=logging.DEBUG)
-        app.logger.setLevel(logging.DEBUG)
 
         # Configure SQLAlchemy
         app.config["TEMPLATES_AUTO_RELOAD"] = True
         app.config["SQLALCHEMY_ECHO"] = False
-    else:
-        logging = importlib.import_module("logging")
-        logging.basicConfig(level=logging.INFO)
-        app.logger.setLevel(logging.INFO)
 
-        # Configure SQLAlchemy
-        app.config["TEMPLATES_AUTO_RELOAD"] = False
-        app.config["SQLALCHEMY_ECHO"] = False
+    # Configure SQLAlchemy
+    app.config["TEMPLATES_AUTO_RELOAD"] = app.config["DEBUG"]
+    app.config["SQLALCHEMY_ECHO"] = False
 
     print("Registering Flask Assets...")
     assets = Environment(app)

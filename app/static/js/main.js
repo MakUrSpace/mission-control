@@ -14,52 +14,84 @@ function launchService(url) {
 function startService(serviceId, btn) {
     toggleButtonsDisabled(serviceId, true);
     btn.classList.add('is-loading');
-    fetch(`/service/${serviceId}/start`, { method: 'POST' })
-        .then(response => response.json())
-        .then(data => 
-            showToast(data.message)
-        )
-        .catch(error => console.error('Error:', error))
-        .finally(() => {
-            btn.classList.remove('is-loading');
+    
+    service_socket.emit('start_service', serviceId);
+
+    service_socket.on('service_started', function(data) {
+        if (data.service_id === serviceId) {
+            showToast(data.message);
+            updateLaunchButtonState(serviceId, true);
             toggleButtonsDisabled(serviceId, false);
-            checkServiceStatusAndUpdateButton(serviceId);
-        });
+            btn.classList.remove('is-loading');
+            service_socket.off('service_started');
+        }
+    });
+
+    service_socket.on('service_start_error', function(data) {
+        if (data.service_id === serviceId) {
+            showToast(data.message);
+            console.error(data.error)
+            toggleButtonsDisabled(serviceId, false);
+            btn.classList.remove('is-loading');
+            service_socket.off('service_start_error');
+        }
+    });
 }
 
 function stopService(serviceId, btn) {
     toggleButtonsDisabled(serviceId, true);
     btn.classList.add('is-loading');
-    fetch(`/service/${serviceId}/stop`, { method: 'POST' })
-        .then(response => response.json())
-        .then(data => 
-            showToast(data.message)
-        )
-        .catch(error => console.error('Error:', error))
-        .finally(() => {
-            btn.classList.remove('is-loading');
+
+    service_socket.emit('stop_service', serviceId);
+
+    service_socket.on('service_stopped', function(data) {
+        if (data.service_id === serviceId) {
+            showToast(data.message);
+            updateLaunchButtonState(serviceId, false);
             toggleButtonsDisabled(serviceId, false);
-            checkServiceStatusAndUpdateButton(serviceId);
-        });
+            btn.classList.remove('is-loading');
+            service_socket.off('service_stopped');
+        }
+    });
+
+    service_socket.on('service_stop_error', function(data) {
+        if (data.service_id === serviceId) {
+            showToast(data.message);
+            console.error(data.error)
+            toggleButtonsDisabled(serviceId, false);
+            btn.classList.remove('is-loading');
+            service_socket.off('service_stop_error');
+        }
+    });
 }
 
 function restartService(serviceId, btn) {
     toggleButtonsDisabled(serviceId, true);
     btn.classList.add('is-loading');
-    fetch(`/service/${serviceId}/restart`, { method: 'POST' })
-        .then(response => response.json())
-        .then(data => 
-            showToast(data.message)
-        )
-        .catch(error => console.error('Error:', error))
-        .finally(() => {
-            btn.classList.remove('is-loading');
+
+    service_socket.emit('restart_service', serviceId);
+
+    service_socket.on('service_restarted', function(data) {
+        if (data.service_id === serviceId) {
+            showToast(data.message);
             toggleButtonsDisabled(serviceId, false);
-            checkServiceStatusAndUpdateButton(serviceId);
-        });
+            btn.classList.remove('is-loading');
+            service_socket.off('service_restarted');
+        }
+    });
+
+    service_socket.on('service_restart_error', function(data) {
+        if (data.service_id === serviceId) {
+            showToast(data.message);
+            console.error(data.error)
+            toggleButtonsDisabled(serviceId, false);
+            btn.classList.remove('is-loading');
+            service_socket.off('service_restart_error');
+        }
+    });
 }
 
-function updateButtonState(serviceId, is_running) {
+function updateLaunchButtonState(serviceId, is_running) {
     const launchButton = document.getElementById('launchButton-' + serviceId);
     if (is_running) {
         launchButton.classList.remove('is-disabled');
@@ -74,27 +106,6 @@ function updateButtonState(serviceId, is_running) {
             event.preventDefault(); // Further ensure no action on click
         };
     }
-}
-
-function checkServiceStatusAndUpdateButton(serviceId) {
-    fetch(`/service/${serviceId}/is_running`, { method: 'GET' })
-    .then(response => response.json())
-    .then(data => {
-        updateButtonState(serviceId, data.is_running);
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    pollServiceStatus();
-    setInterval(pollServiceStatus, 5000);
-});
-
-function pollServiceStatus() {
-    document.querySelectorAll('.card').forEach(function(card) {
-        var serviceId = card.dataset.serviceId;
-        checkServiceStatusAndUpdateButton(serviceId);
-    });
 }
 
 function updateEnvironmentVars(serviceId) {
@@ -136,6 +147,14 @@ function openModal(serviceId) {
 
     // Request the logs
     service_socket.emit('get_logs', serviceId);
+
+    service_socket.on('get_logs_failed', function(data) {
+        if (data.service_id === serviceId) {
+            showToast(data.message);
+            console.error(data.error);
+            service_socket.off('get_logs_failed');
+        }
+    });
 }
 
 function closeModal(serviceId) {
@@ -200,7 +219,6 @@ socket.on('disconnect', () => {
 });
 
 service_socket.on('log_message', function(data) {
-    console.log('Received log message:', data);
     var logElement = document.querySelector('#logs-' + data.service_id);
     if (logElement) {
         var logLine = document.createElement('div');
@@ -208,8 +226,5 @@ service_socket.on('log_message', function(data) {
         logLine.textContent = data.log;
 
         logElement.appendChild(logLine);
-
-        // Scroll to the bottom of the logs
-        logElement.scrollTop = logElement.scrollHeight;
     }
 });

@@ -1,7 +1,7 @@
 """Service component model."""
 import time
 import logging
-from flask import current_app
+from flask import current_app as app
 from app.extensions import db
 from app.models.base_model import BaseModel
 
@@ -51,7 +51,7 @@ class Service(BaseModel):
 
     def get_container(self):
         if self.docker_container_id:
-            container, error = current_app.docker_manager.get_container(self.docker_container_id)
+            container, error = app.docker_manager.get_container(self.docker_container_id)
             if container:
                 return container
             logging.error("Error getting container %s: %s", self.docker_container_id, error)
@@ -91,7 +91,7 @@ class Service(BaseModel):
             print("Service is already running.")
             return True
 
-        container, error = current_app.docker_manager.start_service(self)
+        container, error = app.docker_manager.start_service(self)
         if container:
             self.docker_container_id = container.id
             self.is_running = True
@@ -105,7 +105,7 @@ class Service(BaseModel):
             print("Service is not running.")
             return False
 
-        result, error = current_app.docker_manager.stop_service(self)
+        result, error = app.docker_manager.stop_service(self)
         if result:
             self.docker_container_id = None
             self.is_running = False
@@ -115,7 +115,7 @@ class Service(BaseModel):
 
     def restart(self):
         """Restart the service."""
-        container, error = current_app.docker_manager.restart_service(self)
+        container, error = app.docker_manager.restart_service(self)
         if container:
             self.docker_container_id = container.id
             self.is_running = True

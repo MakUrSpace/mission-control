@@ -3,6 +3,7 @@ import os
 import logging
 import docker
 
+logger = logging.getLogger(__name__)
 
 class DockerServiceManager:
     """Class to manage docker containers"""
@@ -24,10 +25,10 @@ class DockerServiceManager:
             container = self.client.containers.get(container_id)
             return container, None
         except docker.errors.NotFound as e:
-            logging.error("Container not found: %s", e)
+            logger.error("Container not found: %s", e)
             return None, "Container not found"
         except docker.errors.APIError as e:
-            logging.error("API error occurred: %s", e)
+            logger.error("API error occurred: %s", e)
             return None, "Docker API error"
 
     def start_service(self, service):
@@ -65,10 +66,10 @@ class DockerServiceManager:
             return container, None
         except docker.errors.ImageNotFound:
             err_msg = f"Error: Image {service.docker_image} not found."
-            logging.error(err_msg)
+            logger.error(err_msg)
             return None, err_msg
         except docker.errors.APIError as e:
-            logging.error("API error occurred: %s", e)
+            logger.error("API error occurred: %s", e)
             return None, "Docker API error"
 
     def stop_service(self, service) -> (bool, str):
@@ -102,7 +103,7 @@ class DockerServiceManager:
             else:
                 yield error
         except docker.errors.APIError as e:
-            logging.error("API error occurred: %s", e)
+            logger.error("API error occurred: %s", e)
             yield "Docker API error"
 
 
