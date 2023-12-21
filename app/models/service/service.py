@@ -1,5 +1,5 @@
 """Service component model."""
-import time
+import importlib
 import logging
 from flask import current_app as app
 from app.extensions import db
@@ -64,28 +64,21 @@ class Service(BaseModel):
             db.session.commit()
         return None
 
-    def check_status(self):
-        container = self.get_container()
-        if container and container.status == 'running':
-            if not self.is_running:
-                self.is_running = True
-        else:
-            if self.is_running:
-                self.is_running = False
-
     @classmethod
-    def schedule_service_checks(cls, app):
-        with app.app_context():
-            while True:
-                try:
-                    for service in cls.query.all():
-                        db.session.refresh(service)
-                        service.check_status()
-                    db.session.commit()
-                except Exception as e:
-                    logger.error("Error checking service status: %s", e)
-                    db.session.rollback()
-                time.sleep(5)
+    def handle_docker_event(cls, this_app, container_id, event):
+        """Handle a Docker event."""
+        with this_app.app_context():
+            service = cls.query.filter_by(docker_container_id=container_id).first()
+            if service:
+                if event == "start":
+                    service.is_running = True
+                elif event in ("die", "destroy"):
+                    service.is_running = False
+                db.session.commit()
+
+                # Emit a socketio event to notify clients
+                socket_events = importlib.import_module("app.socket_events")
+                socket_events.emit_service_status(service, event)
 
     def start(self):
         """Start the service."""

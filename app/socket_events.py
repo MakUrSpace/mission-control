@@ -255,6 +255,20 @@ def handle_restart_service(service_id):
             },
         )
 
+def emit_service_status(service, event):
+    """Emit a service status event."""
+    emit(
+        "service_status",
+        {
+            "service_id": service.id,
+            "service_name": service.name,
+            "is_running": service.is_running,
+            "event": event,
+        },
+        namespace="/service",
+        broadcast=True,
+    )
+
 ##### SocketIO test events #####
 @socketio.on("message", namespace="/test")
 def handle_message(message):

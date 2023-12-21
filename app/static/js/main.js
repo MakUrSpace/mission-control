@@ -29,6 +29,16 @@ function launchService(url) {
     window.open(url, '_blank');
 }
 
+service_socket.on('service_status', function(data) {
+    var serviceId = data.service_id;
+    var serviceName = data.service_name;
+    var isRunning = data.is_running;
+    console.log('Service status update received for service ID ' + serviceId + ': ' + isRunning);
+    updateLaunchButtonState(serviceId, isRunning);
+    refreshSocketConnection(serviceId, isRunning);
+    showToast('Service status changed- ' + serviceName + ': ' + isRunning);
+});
+
 function startService(serviceId, btn) {
     toggleButtonsDisabled(serviceId, true);
     btn.classList.add('is-loading');
@@ -112,6 +122,15 @@ function restartService(serviceId, btn) {
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const launchButtons = document.querySelectorAll('[id^="launchButton-"]');
+    launchButtons.forEach(btn => {
+        const serviceId = btn.id.split('-')[1];
+        const isRunning = btn.getAttribute('data-is-running') === 'true';
+        updateLaunchButtonState(serviceId, isRunning);
+    });
+});
 
 function updateLaunchButtonState(serviceId, is_running) {
     const launchButton = document.getElementById('launchButton-' + serviceId);

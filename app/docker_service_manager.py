@@ -3,6 +3,8 @@ import os
 import logging
 import docker
 
+from app.models.service.service import Service
+
 logger = logging.getLogger(__name__)
 
 class DockerServiceManager:
@@ -30,6 +32,24 @@ class DockerServiceManager:
         except docker.errors.APIError as e:
             logger.error("API error occurred: %s", e)
             return None, "Docker API error"
+
+    def listen_for_events(self, app):
+        """Listen for Docker events."""
+        event_filters = {
+            "type": ["container"],
+            "event": ["start", "stop", "die", "destroy"],
+        }
+
+        for event in self.client.events(filters=event_filters, decode=True):
+            logger.debug("Docker event: %s for container %s", event.get("status"), event.get("id"))
+            # Extract the container id and event info
+            container_id = event["id"]
+            status = event["status"]
+
+            # Handle the event
+            with app.app_context():
+                Service.handle_docker_event(app, container_id, status)
+
 
     def start_service(self, service):
         """Start a container from a service definition."""

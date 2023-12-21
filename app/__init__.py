@@ -145,11 +145,13 @@ def create_app():
     # Register custom services with Flask context
     app.docker_manager = dsm()
 
-    # Spawn services
-    service_check_thread = threading.Thread(
-        target=Service.schedule_service_checks, args=(app,), daemon=True
+    # Start docker event listener
+    docker_event_listener = threading.Thread(
+        target=app.docker_manager.listen_for_events, 
+        args=(app,),
+        daemon=True
     )
-    service_check_thread.start()
-    app.service_check_thread = service_check_thread
+    docker_event_listener.start()
+    app.docker_event_listener = docker_event_listener
 
     return app
