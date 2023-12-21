@@ -5,6 +5,8 @@ from flask import current_app as app
 from app.extensions import db
 from app.models.base_model import BaseModel
 
+logger = logging.getLogger(__name__)
+
 class Service(BaseModel):
     """Service model.
 
@@ -54,7 +56,7 @@ class Service(BaseModel):
             container, error = app.docker_manager.get_container(self.docker_container_id)
             if container:
                 return container
-            logging.error("Error getting container %s: %s", self.docker_container_id, error)
+            logger.error("Error getting container %s: %s", self.docker_container_id, error)
 
             # If the container is not found, update the database
             self.docker_container_id = None
@@ -81,15 +83,15 @@ class Service(BaseModel):
                         service.check_status()
                     db.session.commit()
                 except Exception as e:
-                    logging.error("Error checking service status: %s", e)
+                    logger.error("Error checking service status: %s", e)
                     db.session.rollback()
                 time.sleep(5)
 
     def start(self):
         """Start the service."""
         if self.is_running:
-            print("Service is already running.")
-            return True
+            logger.info("Service %s is already running", self.id)
+            return True, None
 
         container, error = app.docker_manager.start_service(self)
         if container:

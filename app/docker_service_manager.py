@@ -106,6 +106,27 @@ class DockerServiceManager:
             logger.error("API error occurred: %s", e)
             yield "Docker API error"
 
+    def stream_container_stats(self, service):
+        """Get container stats from a container."""
+        container, error = self.get_container(service.docker_container_id)
+        try:
+            if container:
+                for stats in container.stats(stream=True, decode=True):
+                    cpu_usage = calculate_cpu_percent(stats)
+                    memory_usage = stats["memory_stats"]["usage"]
+                    disk_usage_list = stats["blkio_stats"]["io_service_bytes_recursive"]
+                    disk_usage = disk_usage_list[0]["value"] if disk_usage_list else 0
+
+                    yield {
+                        "cpu_usage": cpu_usage,
+                        "memory_usage": memory_usage,
+                        "disk_usage": disk_usage,
+                    }
+            else:
+                yield {"error": error}
+        except docker.errors.APIError as e:
+            logger.error("API error occurred: %s", e)
+            yield {"error": "Docker API error"}
 
 ##### Static methods #####
 @staticmethod
@@ -119,3 +140,24 @@ def get_volume_mappings(service):
             "mode": "rw",
         }
     return volume_mappings
+
+@staticmethod
+def calculate_cpu_percent(stat):
+    """Calculate the CPU percentage from a container stat object."""
+    try:
+        cpu_delta = stat["cpu_stats"]["cpu_usage"]["total_usage"]
+        if "precpu_stats" in stat and "cpu_usage" in stat["precpu_stats"] and "total_usage" in stat["precpu_stats"]["cpu_usage"]:
+            cpu_delta -= stat["precpu_stats"]["cpu_usage"]["total_usage"]
+
+        system_cpu_usage = stat["cpu_stats"].get("system_cpu_usage")
+        online_cpus = stat["cpu_stats"].get("online_cpus", len(stat["cpu_stats"]["cpu_usage"]["percpu_usage"]))
+
+        # Ensure we have all needed data to calculate CPU usage
+        if system_cpu_usage and cpu_delta is not None and online_cpus:
+            return round((cpu_delta / system_cpu_usage) * online_cpus * 100.0, 2)
+        else:
+            logger.warning("Unable to calculate CPU usage: Missing data.")
+            return None
+    except KeyError as e:
+        logger.error("KeyError in calculate_cpu_percent %s", e)
+        return None

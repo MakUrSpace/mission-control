@@ -1,5 +1,6 @@
 """routes.py - Main routes for the application."""
 import os
+import logging
 from flask import (
     Blueprint,
     render_template,
@@ -15,7 +16,7 @@ from app.forms import LoginForm
 from app.models import User, Site, Service, BaseModel
 
 bp = Blueprint("main", __name__)
-
+logger = logging.getLogger(__name__)
 
 @bp.context_processor
 def inject_admin_models():
@@ -108,37 +109,6 @@ def update_environment_vars(service_id):
         return jsonify({"message": "Environment variables updated successfully"})
     return jsonify({"message": f"Service not found for service_id={service_id}"}), 404
 
-
-# @bp.route("/service/<int:service_id>/start", methods=["POST"])
-# @login_required
-# def service_start(service_id):
-#     service = Service.query.get(service_id)
-#     if service:
-#         service.start()
-#         return jsonify({"message": f"{service.name} started successfully"})
-#     return jsonify({"message": f"Service not found for service_id={service_id}"}), 404
-
-
-# @bp.route("/service/<int:service_id>/stop", methods=["POST"])
-# @login_required
-# def service_stop(service_id):
-#     service = Service.query.get(service_id)
-#     if service:
-#         service.stop()
-#         return jsonify({"message": f"{service.name} stopped successfully"})
-#     return jsonify({"message": f"Service not found for service_id={service_id}"}), 404
-
-
-# @bp.route("/service/<int:service_id>/restart", methods=["POST"])
-# @login_required
-# def service_restart(service_id):
-#     service = Service.query.get(service_id)
-#     if service:
-#         service.restart()
-#         return jsonify({"message": f"{service.name} restarted successfully"})
-#     return jsonify({"message": f"Service not found for service_id={service_id}"}), 404
-
-
 @bp.route("/service/<int:service_id>/is_running", methods=["GET"])
 def is_service_running(service_id):
     service = Service.query.get(service_id)
@@ -150,6 +120,7 @@ def is_service_running(service_id):
 
 # Catch all other routes and redirect to the index
 # NOTE: Must be last!
-# @bp.route("/<path:unused_path>")
-# def catch_all(unused_path):
-#     return redirect(url_for("main.index"))
+@bp.route("/<path:unused_path>")
+def catch_all(unused_path):
+    logger.info("User requested invalid path: %s; Redirecting to index.", unused_path)
+    return redirect(url_for("main.index"))
