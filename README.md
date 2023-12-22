@@ -285,6 +285,10 @@ You should now be able to access the application at
    ```
 
    >**It is safe to run the setup script multiple times**
+   >The script will attempt to install the Python packages defined in
+   >`requirements.txt`. The dev packages are not installed, see
+   >[Installing Dev Dependencies on Raspberry Pi](#installing-dev-dependencies-on-raspberry-pi)
+   for details.
 
 3. Reboot the Raspberry Pi(optional, but recommended):
 
