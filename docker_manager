@@ -56,7 +56,7 @@ Commands:
     stop | down     Stop the Docker containers
     status | ps     Show the status of the Docker containers
     destroy | rm    Destroy the Docker containers
-    purge | clean   Purge the Docker containers and images
+    purge | bye     Purge the Docker containers and images
     logs | log      Show docker logs
     help            Show this help message
     "
@@ -78,14 +78,11 @@ case "$1" in
     destroy | rm)
         destroy_containers
         ;;
-    purge | clean)
+    purge | bye)
         purge_containers
         ;;
     logs | log)
         logs_containers
-        ;;
-    help)
-        usage
         ;;
     *)
         usage

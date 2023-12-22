@@ -3,9 +3,13 @@
 
 Mission Control is the gateway to YOUR makerspace.
 
-It provides a single point of access to all of your makerspace tools and services. It is intended to be run on a Raspberry Pi and is designed to be easy to set up and use. Developers can also run it locally on their development machine and take advantage of `flask run --reload` to automatically reload the application on file changes.
+It provides a single point of access to all of your makerspace tools and services.
+It is intended to be run on a Raspberry Pi and is designed to be easy to set up
+and use. Mission Control puts you in control of YOUR makerspace by providing an
+out-of-the-box experience for accessing your makerspace tools and services.
 
-Mission Control is built with Flask and Docker Compose. It is designed to be modular and extensible. It is currently configured to work with the following services:
+Mission Control is built with Flask and Docker Compose. It is designed to be
+modular and extensible. It is currently configured to work with the following services:
 
 - [Mainsail](https://docs.mainsail.xyz/)
 - [Octoprint](https://octoprint.org/)
@@ -38,7 +42,6 @@ Mission Control is built with Flask and Docker Compose. It is designed to be mod
     - [1.5.1. Updating Database Migrations](#151-updating-database-migrations)
     - [1.5.2. Using Migrations](#152-using-migrations)
   - [1.6. License](#16-license)
-
 
 ## 1.2. Getting Started
 
@@ -169,9 +172,11 @@ following environment variables.
    > **cncjs.local** name when running with docker-compose.embed.yml.
    >- The `*_PORT` values are the ports that the containers will be exposed on.
    > **These ports are only used when running locally.**
-   >- The `TRAEFIK_DOMAIN` is not used when running locally. It is used to route traffic to the appropriate container when running with docker-compose.embed.yml.
-   >- The `ADMIN_PASSWORD` value is the password for the admin user. 
-   >- The `COMPOSE_FILE` value is a colon-separated list of docker-compose files. _If on Windows, use semicolons instead of colons_.
+   >- The `TRAEFIK_DOMAIN` is not used when running locally. It is used to route
+   >traffic to the appropriate container when running with docker-compose.embed.yml.
+   >- The `ADMIN_PASSWORD` value is the password for the admin user.
+   >- The `COMPOSE_FILE` value is a colon-separated list of docker-compose files.
+   > _If on Windows, use semicolons instead of colons._
 
 ### 1.2.3. Running the Project
 
@@ -219,6 +224,7 @@ To upgrade the project to the latest version:
    ```sh
    docker compose down -v
    ```
+
    >**Note:** This will destroy the database and all data stored in it.
 
 3. Check the `.env` file for any new environment variables and add them.
@@ -291,7 +297,16 @@ You should now be able to access the application at
 A convenience script is provided to build and run the project:
 
 ```sh
-Usage: ./docker_manager {start|stop|destroy|status|logs} 
+./docker_manager <command>
+
+Commands:
+    start | up      (Re)start (and build) the Docker containers
+    stop | down     Stop the Docker containers
+    status | ps     Show the status of the Docker containers
+    destroy | rm    Destroy the Docker containers
+    purge | bye     Purge the Docker containers and images
+    logs | log      Show docker logs
+    help            Show this help message
 ```
 
 ### 1.3.4. Accessing Your MissionControl Toolkit
@@ -334,6 +349,7 @@ To upgrade the project to the latest version:
    ```sh
    ./docker_manager destroy
    ```
+
    >**Note:** This will destroy the database and all data stored in it.
 
 3. Re-run the setup script with headless+force mode:
@@ -350,7 +366,6 @@ To upgrade the project to the latest version:
 
 You should now be able to access the application at
 [http://missioncontrol.local](http://missioncontrol.local).
-
 
 ## 1.4. CI/CD Process
 

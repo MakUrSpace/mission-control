@@ -31,11 +31,12 @@ services:
       - data:/data
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - "5000:80"
+      - "5000:8000"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.mus-m-c-web.rule=Host(`${WEB_DOMAIN}`)"
       - "traefik.http.routers.mus-m-c-web.entrypoints=web"
+      - "traefik.http.services.mus-m-c-web.loadbalancer.server.port=8000"
 
   traefik:
     image: traefik:latest

@@ -1,4 +1,6 @@
 """__init__.py"""
+#pylint: disable=wrong-import-position ungrouped-imports wrong-import-order
+from app.extensions import db, migrate # Must be imported before anything else
 import logging
 import importlib
 import os
@@ -7,12 +9,12 @@ from dotenv import find_dotenv, load_dotenv
 from flask import Flask
 from flask_login import LoginManager
 from flask_assets import Environment, Bundle
-from app.extensions import db, migrate
 from app.admin import admin
 from app.routes import bp as main_bp
 from app.socket_events import socketio
 from app.docker_service_manager import DockerServiceManager as dsm
 from app.models import User, Service
+#pylint: enable=wrong-import-position ungrouped-imports wrong-import-order
 
 # Initialize dotenv settings
 if os.environ.get("FLASK_ENV") == "development":

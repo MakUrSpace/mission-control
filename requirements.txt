@@ -1,5 +1,5 @@
 flask
-gunicorn
+gunicorn[eventlet]
 eventlet
 flask-sqlalchemy
 flask-migrate
