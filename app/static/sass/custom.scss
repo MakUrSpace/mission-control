@@ -273,13 +273,14 @@ $modal-content-width: 80vw;
 }
 
 .logs-container {
-    max-height: 300px;
-    overflow-y: auto;
+    height: 300px;
+    overflow-y: scroll;
 }
 
 .logs-container pre {
     white-space: pre-wrap;
     background-color: $grey-darker;
+    width: 100%;
     color: $info;
     padding: 1rem;
     border-radius: $radius;

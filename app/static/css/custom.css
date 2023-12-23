@@ -7894,12 +7894,13 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
   flex: 0 0 2px; }
 
 .logs-container {
-  max-height: 300px;
-  overflow-y: auto; }
+  height: 300px;
+  overflow-y: scroll; }
 
 .logs-container pre {
   white-space: pre-wrap;
   background-color: #363636;
+  width: 100%;
   color: #f3f4eb;
   padding: 1rem;
   border-radius: 4px;

@@ -189,6 +189,9 @@ function refreshSocketConnection(serviceId, is_opening_modal) {
                 logLine.textContent = data.log;
         
                 logElement.appendChild(logLine);
+
+                // Scroll log container to the bottom
+                scrollLogsToBottom(data.service_id);
             }
         });
 
@@ -236,6 +239,7 @@ function refreshSocketConnection(serviceId, is_opening_modal) {
 // ##########################################
 // #             Modal Section              #
 // ##########################################
+
 function toggleButtonsDisabled(serviceId, disabled) {
     const modal = document.querySelector('#modal-' + serviceId);
     const buttons = modal.querySelectorAll('button');
@@ -253,13 +257,27 @@ document.querySelectorAll('.modal-card').forEach(function(modalCard) {
 function openModal(serviceId) {
     var modal = document.querySelector('#modal-' + serviceId);
     if (modal) {
+        // Prevent scrolling of the background page
         scrollPosition = window.scrollY;
         document.body.style.position = 'fixed';
         document.body.style.top = `-${scrollPosition}px`;
 
+        // Scroll log container to the bottom
+        setTimeout(scrollLogsToBottom(serviceId, true), 1000);
+
         modal.classList.add('is-active');
     }
     refreshSocketConnection(serviceId, true);
+}
+
+function scrollLogsToBottom(serviceId, force_scroll = false) {
+    var logsContainer = document.querySelector('#logs-container-' + serviceId);
+    if (logsContainer) {
+        var isScrolledToBottom = logsContainer.scrollHeight - logsContainer.clientHeight <= logsContainer.scrollTop + 50;
+        if (isScrolledToBottom || force_scroll) {
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+    }
 }
 
 function closeModal(serviceId) {
