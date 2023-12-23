@@ -86,7 +86,7 @@ def handle_get_logs(data):
                     "get_logs_failed",
                     {
                         "service_id": service_id,
-                        "error": "Error streaming logs",
+                        "error": e,
                         "message": "Error streaming logs; is the service running?",
                     },
                 )
@@ -128,7 +128,7 @@ def handle_get_stats(data):
                     "get_stats_failed",
                     {
                         "service_id": service_id,
-                        "error": "Error streaming stats",
+                        "error": e,
                         "message": "Error streaming stats; is the service running?",
                     },
                 )

@@ -33,7 +33,7 @@ class DockerServiceManager:
             logger.error("API error occurred: %s", e)
             return None, "Docker API error"
 
-    def listen_for_events(self, app):
+    def listen_for_events(self, app) -> None:
         """Listen for Docker events."""
         event_filters = {
             "type": ["container"],
@@ -51,7 +51,7 @@ class DockerServiceManager:
                 Service.handle_docker_event(app, container_id, status)
 
 
-    def start_service(self, service):
+    def start_service(self, service) -> (docker.models.containers.Container, str):
         """Start a container from a service definition."""
         try:
             # Time values are stored in seconds but need to be in nanoseconds for docker-py
@@ -113,7 +113,7 @@ class DockerServiceManager:
             return container, None
         return None, error
 
-    def stream_container_logs(self, service):
+    def stream_container_logs(self, service) -> str:
         """Stream logs from a container."""
         container, error = self.get_container(service.docker_container_id)
         try:
@@ -126,7 +126,7 @@ class DockerServiceManager:
             logger.error("API error occurred: %s", e)
             yield "Docker API error"
 
-    def stream_container_stats(self, service):
+    def stream_container_stats(self, service) -> dict:
         """Get container stats from a container."""
         container, error = self.get_container(service.docker_container_id)
         try:
@@ -150,7 +150,7 @@ class DockerServiceManager:
 
 ##### Static methods #####
 @staticmethod
-def get_volume_mappings(service):
+def get_volume_mappings(service) -> dict:
     """Get a dictionary of volume mappings from a service definition."""
     volume_mappings = {}
     for volume in service.docker_volumes:
@@ -162,7 +162,7 @@ def get_volume_mappings(service):
     return volume_mappings
 
 @staticmethod
-def calculate_cpu_percent(stat):
+def calculate_cpu_percent(stat) -> float:
     """Calculate the CPU percentage from a container stat object."""
     try:
         cpu_delta = stat["cpu_stats"]["cpu_usage"]["total_usage"]
