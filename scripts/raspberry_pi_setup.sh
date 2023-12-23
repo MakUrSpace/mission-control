@@ -176,8 +176,8 @@ create_systemd_service() {
     tee "${service_path}" >/dev/null <<EOF
 [Unit]
 Description=Publish Alias Hostnames
-After=avahi-daemon.service
-Wants=avahi-daemon.service
+After=network-online.target avahi-daemon.service
+Wants=network-online.target avahi-daemon.service
 
 [Service]
 Type=oneshot
