@@ -253,6 +253,10 @@ document.querySelectorAll('.modal-card').forEach(function(modalCard) {
 function openModal(serviceId) {
     var modal = document.querySelector('#modal-' + serviceId);
     if (modal) {
+        scrollPosition = window.scrollY;
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollPosition}px`;
+
         modal.classList.add('is-active');
     }
     refreshSocketConnection(serviceId, true);
@@ -262,6 +266,10 @@ function closeModal(serviceId) {
     var modal = document.querySelector('#modal-' + serviceId);
     if (modal) {
         modal.classList.remove('is-active');
+
+        document.body.style.position = '';
+        document.body.style.top = '';
+        window.scrollTo(0, scrollPosition);
     }
     refreshSocketConnection(serviceId, false);
 }
