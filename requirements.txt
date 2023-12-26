@@ -1,12 +1,15 @@
 flask
-gunicorn
+gunicorn[eventlet]
+eventlet
 flask-sqlalchemy
 flask-migrate
 flask-admin
 flask-login
 flask-wtf
 flask-assets
+flask-socketio
 wtforms
 psycopg2-binary
 python-dotenv
 jsmin
+docker

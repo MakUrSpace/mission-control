@@ -4,6 +4,8 @@ services:
   db:
     networks:
       - mus-net
+    ports:
+      - "5432:5432"
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -12,11 +14,13 @@ services:
   web:
     networks:
       - mus-net
-    build: ..
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        - DOCKER_GID=${DOCKER_GID}
     environment:
       - DATABASE_DOMAIN=${DATABASE_DOMAIN}
-      - MAINSAIL_DOMAIN=${MAINSAIL_DOMAIN}
-      - OCTOPRINT_DOMAIN=${OCTOPRINT_DOMAIN}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
@@ -25,53 +29,14 @@ services:
       - SECRET_KEY=${SECRET_KEY}
     volumes:
       - data:/data
-    depends_on:
-      mainsail:
-        condition: service_healthy
-      octoprint:
-        condition: service_healthy
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "5000:8000"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.mus-m-c-web.rule=Host(`${WEB_DOMAIN}`)"
       - "traefik.http.routers.mus-m-c-web.entrypoints=web"
-
-  mainsail:
-    image: ghcr.io/mainsail-crew/mainsail
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    restart: unless-stopped
-    networks:
-      - mus-net
-    environment:
-      - MAINSAIL_DOMAIN=${MAINSAIL_DOMAIN}
-    volumes:
-      - ${PWD}/data/mainsail-config.json:/usr/share/nginx/html/config.json
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mus-m-c-mainsail.rule=Host(`${MAINSAIL_DOMAIN}`)"
-      - "traefik.http.routers.mus-m-c-mainsail.entrypoints=web"
-
-  octoprint:
-    image: octoprint/octoprint
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
-      interval: 10s
-      timeout: 5s
-      retries: 6
-    volumes:
-      - octoprint_data:/octoprint
-    restart: unless-stopped
-    networks:
-      - mus-net
-    environment:
-      - OCTOPRINT_DOMAIN=${OCTOPRINT_DOMAIN}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mus-m-c-octoprint.rule=Host(`${OCTOPRINT_DOMAIN}`)"
-      - "traefik.http.routers.mus-m-c-octoprint.entrypoints=web"
+      - "traefik.http.services.mus-m-c-web.loadbalancer.server.port=8000"
 
   traefik:
     image: traefik:latest
@@ -106,7 +71,6 @@ services:
 volumes:
   letsencrypt: null
   config: null
-  octoprint_data: null
   data:
     driver: local
     driver_opts:

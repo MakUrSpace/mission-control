@@ -3,25 +3,13 @@
 
 // Variables
 // ======================
-$primary: #7b380b;
-$primary-invert: #A8DADC;
-$info: #F1FAEE;
-$success: #A8DADC;
-$warning: #F4A261;
-$danger: #E76F51;
-
-$light: #A8DADC;
-$dark: #1D3557;
-$black: $dark;
-
-$text: #F1FAEE;
-$text-strong: #E63946;
-
-// Custom colors for UI elements
-$background: $dark;
-$link: $info;
-$button-color: $dark;
-$button-background: $info;
+$primary: #005a7a;
+$secondary: #8e4216;
+$info: #f3f4eb;
+$success: #a9dc87;
+$warning: #ebd087;
+$danger: #fa7777;
+$text: $info;
 
 // Typography
 // ======================
@@ -62,13 +50,76 @@ $radius-rounded: 9999px;
 // Navbar
 // ======================
 $navbar-height: 3rem;
-$navbar-background-color: $background;
-$navbar-item-color: $primary-invert;
-$navbar-item-hover-color: $primary;
-$navbar-item-hover-background-color: $light;
-$navbar-dropdown-background-color: $background;
-$navbar-dropdown-item-hover-color: $primary;
-$navbar-dropdown-item-hover-background-color: $light;
+$navbar-background-color: $primary;
+$navbar-item-color: $info;
+$navbar-item-hover-color: darken($info, 30%);
+$navbar-item-hover-background-color: darken($primary, 5%);
+$navbar-item-active-color: $success;
+$navbar-item-active-background-color: lighten($primary, 5%);
+$navbar-dropdown-background-color: lighten($primary, 15%);
+$navbar-dropdown-item-hover-color: $navbar-item-hover-color;
+$navbar-dropdown-item-hover-background-color: lighten($primary, 25%);
+
+// Card
+// ======================
+$card-background-color: lighten($primary, 10%);
+$card-color: $info;
+$card-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.1);
+$card-header-background-color: darken($primary, 5%);
+$card-header-color: $info;
+$card-footer-background-color: darken($primary, 5%);
+$card-footer-color: $info;
+
+// Box
+// ======================
+$box-background-color: lighten($primary, 10%);
+$box-color: $info;
+$box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.1);
+
+// Button
+// ======================
+$button-background-color: $primary;
+$button-color: $info;
+$button-hover-color: darken($info, 30%);
+$button-hover-background-color: darken($primary, 25%);
+$button-active-color: $success;
+$button-active-background-color: lighten($primary, 25%);
+$button-border-width: 1px;
+$button-border-radius: $radius;
+$button-border-color: transparent;
+$button-border-color-hover: transparent;
+$button-border-color-focus: transparent;
+$button-border-color-active: transparent;
+$button-border-color-disabled: transparent;
+$button-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.1);
+
+// Title and Subtitle
+// ======================
+$title-color: $info;
+$subtitle-color: $info;
+
+// Notification
+// ======================
+$notification-background-color: lighten($primary, 10%);
+$notification-color: $info;
+$notification-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.1);
+
+// Links
+// ======================
+$link-color: $info;
+$link-underline-offset: 0;
+$link-hover-color: darken($info, 30%);
+$link-hover-underline-offset: 0;
+$link-focus-color: $warning;
+$link-focus-underline-offset: 0;
+$link-active-color: $success;
+$link-active-underline-offset: 0;
+
+// Modal
+// ======================
+$modal-card-head-background-color: darken($primary, 5%);
+$modal-card-body-background-color: lighten($primary, 10%);
+$modal-content-width: 80vw;
 
 // Import Bulma
 // ======================
@@ -85,7 +136,6 @@ $navbar-dropdown-item-hover-background-color: $light;
 // ======================
 #main-header {
     z-index: 10;
-    background: $background;
 }
 
 #animated-bg {
@@ -94,7 +144,7 @@ $navbar-dropdown-item-hover-background-color: $light;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(45deg, $background, darken($primary, 25%));
+    background: linear-gradient(420deg, $secondary, lighten($primary, 15%));
     animation: GradientAnimate 15s ease infinite;
     z-index: -1;
 }
@@ -124,93 +174,38 @@ $navbar-dropdown-item-hover-background-color: $light;
     object-fit: cover;
 }
 
-// Timeline Styles
-// ======================
-.timeline {
-    position: relative;
-    padding: 0;
-    list-style: none;
-    width: 100%;
+#toast-notification {
+    z-index: 50;
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
 }
 
-.timeline:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 40px;
-    width: 2px;
-    background: $dark-invert;
+#toast-notification.is-active {
+    opacity: 1;
 }
 
-.timeline-header, .timeline-item {
-    position: relative;
-    margin: 10px 0;
-}
-
-.timeline-marker {
-    position: absolute;
-    top: 0;
-    left: 40px;
-    transform: translate(-50%);
-    height: 15px;
-    width: 15px;
-    border: 3px solid $border;
-    border-radius: 50%;
-    background: $primary-dark;
-}
-
-.timeline-content {
-    padding: 10px 25px;
-    background: $background;
-    border-radius: 4px;
-    word-wrap: break-word;
-    margin-left: 80px;
-
-    ul {
-        list-style: none; // Remove default list styling
-        padding-left: 0; // Remove default padding
-
-        li {
-            position: relative;
-            padding-left: 20px; // Space for custom bullet
-            margin-bottom: 10px; // Space between items
-
-            &:before {
-                content: '•'; // Custom bullet
-                position: absolute;
-                left: 0;
-                color: $primary;
-                font-size: 1em;
-                top: 0.75em;
-                transform: translateY(-50%);
-            }
-        }
-    }
-}
 
 // Responsive Adjustments
 // ======================
 @media (max-width: 768px) {
-    .timeline:before {
-        left: 20px;
-    }
 
-    .timeline-marker {
-        left: 20px;
-    }
-
-    .timeline-content {
-        margin-left: 60px;
-        padding: 0 15px;
-    }
-
-    .timeline-content ul li {
-        padding-left: 15px;
-    }
-
-    .hero-main h1, .hero-main p {
+    .hero-main h1,
+    .hero-main p {
         font-size: medium;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
     }
 }
 
@@ -230,46 +225,78 @@ $navbar-dropdown-item-hover-background-color: $light;
     padding: 0 1.5rem;
 }
 
-.hero-main h1, .hero-main p {
-    color: $primary-invert;
-}
-
 @media (max-width: 768px) {
     .hero-main h1 {
-        font-size: large; // Smaller font size for mobile
+        font-size: large;
     }
 
     .hero-main p {
-        font-size: medium; // Adjust paragraph font size
+        font-size: medium;
     }
+}
+
+// Card styles
+// ======================
+.columns .column {
+    display: flex;
+    flex-direction: column;
+    align-items: normal;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-content {
+    flex-grow: 1;
+}
+
+.is-disabled {
+    pointer-events: none;
+    color: grey;
+    cursor: default;
+}
+
+// Modal styles
+// ======================
+.vertical-divider {
+    height: auto;
+    border-left: 2px solid $info;
+    flex: 0 0 2px
+}
+
+.horizontal-divider {
+    border-top: 2px solid $info;
+    flex: 0 0 2px
+}
+
+.logs-container {
+    height: 300px;
+    overflow-y: scroll;
+}
+
+.logs-container pre {
+    white-space: pre-wrap;
+    background-color: $grey-darker;
+    width: 100%;
+    color: $info;
+    padding: 1rem;
+    border-radius: $radius;
+    line-height: 1.2;
+}
+
+.logs-container pre .log-line:before {
+    content: '※';
+    margin-right: 5px;
+    color: $success;
 }
 
 // General Styles
 // ======================
-html, body {
+html,
+body {
     height: 100%;
     width: 100%;
-    color: $text;
-}
-
-div {
-    color: $text;
-}
-
-.title {
-    color: $text;
-}
-
-.subtitle {
-    color: $text;
-}
-
-.box, .card {
-    background-color: $background;
-}
-
-.button-upload {
-    background-color: $light;
-    color: $dark;
-    text-align: center;
 }

@@ -1,0 +1,28 @@
+<div class="card" data-service-id="{{ service.id }}">
+    <div class="card-header">
+        <div class="card-header-title">
+            {{ service.name }}
+        </div>
+        <div class="card-header-icon">
+            <a href="{{ service.documentation_url }}" target="_blank">
+                <figure class="image is-64x64">
+                    <img src="{{ url_for('static', filename=service.logo) }}" alt="{{ service.name }} Logo">
+                </figure>
+            </a>
+        </div>
+    </div>
+    <div class="card-content">
+        <div class="content">
+            {{ service.description }}
+        </div>
+    </div>
+    <div class="card-footer">
+        <!-- Launch Button -->
+        <a id="launchButton-{{ service.id }}" href="#" class="card-footer-item is-disabled" data-is-running="{{ service.is_running|lower }}" data-url="{{ service.url }}" onclick="launchService('{{ service.url }}'); return false;">Launch</a>
+        <!-- Manage Button (For toggling modal) -->
+        <a href="#" class="card-footer-item has-text-white" onclick="openModal('{{ service.id }}')">Manage</a>
+    </div>
+
+    <!-- Modal -->
+    {% include 'components/services/service_modal.html' %}
+</div>

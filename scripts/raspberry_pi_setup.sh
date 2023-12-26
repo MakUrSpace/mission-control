@@ -57,6 +57,7 @@ if ! dpkg -s docker-ce docker-ce-cli containerd.io >/dev/null 2>&1 || [ $force_m
     }
 else
     info "Docker already installed."
+    export DOCKER_GID=$(stat -c '%g' /var/run/docker.sock)
 fi
 
 # Check if required python packages are installed
@@ -137,6 +138,7 @@ avahi-publish -a mainsail.local -R $IP_ADDRESS >/dev/null 2>&1 &
 avahi-publish -a missioncontrol.local -R $IP_ADDRESS >/dev/null 2>&1 &
 avahi-publish -a octoprint.local -R $IP_ADDRESS >/dev/null 2>&1 &
 avahi-publish -a traefik.local -R $IP_ADDRESS >/dev/null 2>&1 &
+avahi-publish -a cncjs.local -R $IP_ADDRESS >/dev/null 2>&1 &
 EOF
 
     chmod +x "${ALIAS_SCRIPT_PATH}"
@@ -174,8 +176,8 @@ create_systemd_service() {
     tee "${service_path}" >/dev/null <<EOF
 [Unit]
 Description=Publish Alias Hostnames
-After=avahi-daemon.service
-Wants=avahi-daemon.service
+After=network-online.target avahi-daemon.service
+Wants=network-online.target avahi-daemon.service
 
 [Service]
 Type=oneshot

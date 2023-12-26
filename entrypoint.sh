@@ -1,6 +1,4 @@
 #!/bin/sh
-
-# Exit script in case of error
 set -e
 
 echo "Setting environment variables"

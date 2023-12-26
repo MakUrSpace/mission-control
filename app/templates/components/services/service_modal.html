@@ -1,0 +1,92 @@
+<div class="modal" id="modal-{{ service.id }}">
+    <div class="modal-background" onclick="closeModal('{{ service.id }}')"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title has-text-white">{{ service.name }} Control</p>
+            <button class="delete" aria-label="close" onclick="closeModal('{{ service.id }}')"></button>
+        </header>
+        <section class="modal-card-body">
+            <!-- Stats and Environment Variables in side-by-side columns -->
+            <div class="columns">
+                <!-- Stats Column -->
+                <div class="column is-half">
+                    <h3 class="title is-5">Stats</h3>
+                    <div id="stats-container-{{ service.id }}">
+                        <!-- Stats will be dynamically filled by JavaScript -->
+                        <div class="field">
+                            <label class="label">CPU:</label>
+                            <div class="control">
+                                <input class="input" id="cpu-usage-{{ service.id }}" type="text" placeholder="CPU usage" disabled>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Memory:</label>
+                            <div class="control">
+                                <input class="input" id="mem-usage-{{ service.id }}" type="text" placeholder="Memory usage" disabled>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Disk:</label>
+                            <div class="control">
+                                <input class="input" id="disk-usage-{{ service.id }}" type="text" placeholder="Disk usage" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Divider Line -->
+                <div class="vertical-divider"></div>
+
+                <!-- Environment Variables Column -->
+                <div class="column is-half">
+                    <h3 class="title is-5">Environment Variables</h3>
+                    <div class="env-vars-container" style="overflow-y: auto; max-height: 300px;">
+                        <form id="form-{{ service.id }}" onsubmit="return updateEnvironmentVars('{{ service.id }}')">
+                            {% for env_var in service.environment_vars %}
+                                <div class="field">
+                                    <label class="label">{{ env_var.key }}</label>
+                                    <div class="control">
+                                        <input class="input" type="text" name="{{ env_var.key }}" value="{{ env_var.value }}">
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div class="field">
+                                <div class="control">
+                                    <button type="submit" class="button is-primary">Save Changes</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Divider Line -->
+            <hr>
+
+            <!-- Logs Section -->
+            <div class="logs-title-container" style="display: flex; align-items: center; justify-content: flex-start;">
+                <h3 class="title is-5">Logs</h3>
+                <div style="margin-left: auto;">
+                    <button class="button is-small" onclick="clearLogs('{{ service.id }}')">
+                        <span class="icon is-small">
+                            <i class="fas fa-trash"></i>
+                        </span>
+                    </button>
+                    <button class="button is-small" onclick="scrollLogsToBottom('{{ service.id }}', true)">
+                        <span class="icon is-small">
+                            <i class="fas fa-arrow-down"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <div class="logs-container" id="logs-container-{{ service.id }}">
+                <pre id="logs-{{ service.id }}">No logs to display...</pre>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-success" onclick="startService('{{ service.id }}', this)">Start</button>
+            <button class="button is-danger" onclick="stopService('{{ service.id }}', this)">Stop</button>
+            <button class="button is-warning" onclick="restartService('{{ service.id }}', this)">Restart</button>
+        </footer>
+    </div>
+</div>

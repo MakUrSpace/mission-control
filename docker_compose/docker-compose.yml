@@ -15,7 +15,7 @@ services:
   web:
     build: ..
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
       interval: 10s
       timeout: 5s
       retries: 3

@@ -1,13 +1,20 @@
 """__init__.py"""
+#pylint: disable=wrong-import-position ungrouped-imports wrong-import-order
+from app.extensions import db, migrate # Must be imported before anything else
+import logging
 import importlib
 import os
+import threading
 from dotenv import find_dotenv, load_dotenv
 from flask import Flask
 from flask_login import LoginManager
 from flask_assets import Environment, Bundle
-from .admin import admin
-from .models import db, migrate, User
-from .routes import bp as main_bp
+from app.admin import admin
+from app.routes import bp as main_bp
+from app.socket_events import socketio
+from app.docker_service_manager import DockerServiceManager as dsm
+from app.models import User, Service
+#pylint: enable=wrong-import-position ungrouped-imports wrong-import-order
 
 # Initialize dotenv settings
 if os.environ.get("FLASK_ENV") == "development":
@@ -50,18 +57,30 @@ def create_app():
     # Configure app settings
     app.config["DEBUG"] = os.environ.get("FLASK_ENV") == "development"
 
+    # Configure logging
+    log_level = logging.DEBUG if app.config["DEBUG"] else logging.INFO
+    logging.basicConfig(level=log_level, 
+                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
     if app.config["DEBUG"]:
+        # Custom logging overrides
+        logging.info("Setting logging levels for development...")
+        logging.getLogger("urllib3").setLevel(logging.WARNING)
+        logging.getLogger("werkzeug").setLevel(logging.WARNING)
+        logging.getLogger("socketio").setLevel(logging.WARNING)
+        logging.getLogger("engineio").setLevel(logging.WARNING)
+        logging.getLogger("docker").setLevel(logging.WARNING)
+
         # Configure Flask Debugging
         os.environ["FLASK_DEBUG"] = "True"
-
-        # Configure debug logging
-        logging = importlib.import_module("logging")
-        logging.basicConfig(level=logging.DEBUG)
-        app.logger.setLevel(logging.DEBUG)
 
         # Configure SQLAlchemy
         app.config["TEMPLATES_AUTO_RELOAD"] = True
         app.config["SQLALCHEMY_ECHO"] = False
+
+    # Configure SQLAlchemy
+    app.config["TEMPLATES_AUTO_RELOAD"] = app.config["DEBUG"]
+    app.config["SQLALCHEMY_ECHO"] = False
 
     print("Registering Flask Assets...")
     assets = Environment(app)
@@ -91,32 +110,6 @@ def create_app():
     assets.init_app(app)
     print("Registered Flask Assets.")
 
-    print("Setting up 3rd party services...")
-    # Configure 3rd party services
-    # Configure domains with ports if the ports are provided
-    mainsail_domain = os.environ.get("MAINSAIL_DOMAIN")
-    mainsail_port = os.environ.get("MAINSAIL_PORT")
-    mainsail_url = (
-        f"http://{mainsail_domain}"
-        if not mainsail_port
-        else f"http://{mainsail_domain}:{mainsail_port}"
-    )
-    app.config["MAINSAIL_URL"] = mainsail_url
-
-    octoprint_domain = os.environ.get("OCTOPRINT_DOMAIN")
-    octoprint_port = os.environ.get("OCTOPRINT_PORT")
-    octoprint_url = (
-        f"http://{octoprint_domain}"
-        if not octoprint_port
-        else f"http://{octoprint_domain}:{octoprint_port}"
-    )
-    app.config["OCTOPRINT_URL"] = octoprint_url
-
-    # Configure development settings
-    if app.config["DEBUG"]:
-        app.config["TEMPLATES_AUTO_RELOAD"] = True
-        app.config["SQLALCHEMY_ECHO"] = False
-
     # Fetching individual components from environment variables
     if "SQLALCHEMY_DATABASE_URI" not in os.environ:
         db_user = os.environ.get("POSTGRES_USER", "pgadm")
@@ -136,9 +129,10 @@ def create_app():
     # Register app blueprints (routes)
     app.register_blueprint(main_bp)
 
-    # Configure database
+    # Configure database, migrations, and SocketIO
     db.init_app(app)
     migrate.init_app(app, db)
+    socketio.init_app(app, cors_allowed_origins="*")
 
     with app.app_context():
         db.create_all()
@@ -149,5 +143,17 @@ def create_app():
     # Initialize Flask-Login
     login_manager.init_app(app)
     admin.init_app(app)
+
+    # Register custom services with Flask context
+    app.docker_manager = dsm()
+
+    # Start docker event listener
+    docker_event_listener = threading.Thread(
+        target=app.docker_manager.listen_for_events, 
+        args=(app,),
+        daemon=True
+    )
+    docker_event_listener.start()
+    app.docker_event_listener = docker_event_listener
 
     return app
