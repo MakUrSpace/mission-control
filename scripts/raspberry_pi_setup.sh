@@ -360,8 +360,28 @@ uninstall() {
     warn "$ sudo apt-get remove -y <package_name>"
 }
 
+# Fix for Docker credsStore misconfiguration (rename "credsStore" to "credStore")
+fix_docker_credstore() {
+    CONFIG_FILE=$(eval echo ~$CURRENT_USER/.docker/config.json)
+
+    if [ -f "$CONFIG_FILE" ]; then
+        if grep -q '"credsStore"' "$CONFIG_FILE"; then
+            info "Fixing Docker credsStore misconfiguration..."
+            sed -i 's/credsStore/credStore/g' "$CONFIG_FILE"
+        else
+            info "Docker credsStore misconfiguration not found."
+        fi
+    else
+        warn "Docker config file not found."
+    fi
+}
+
+
 # Add the current user to the docker group
 add_user_to_docker_group
+
+# Fix for Docker credsStore misconfiguration
+fix_docker_credstore
 
 # Setup venv and install required python packages
 setup_venv
