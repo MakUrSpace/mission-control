@@ -13,6 +13,7 @@ from app.models import (
     EnvironmentVar,
 )
 from app.models.service import (
+    ServiceType,
     DockerPort,
     DockerLabel,
     DockerVolume,
@@ -60,13 +61,16 @@ with app.app_context():
     # devices = [DockerDevice(host_path="/dev/video0", container_path="/dev/video0")]
     devices = []
 
-    service_name = "Octoprint"
+    SERVICE_NAME = "Octoprint"
     octoprint = Service(
-        name=service_name,
+        name=SERVICE_NAME,
+        type=ServiceType.DOCKER,
+        is_daemon=False,
         description="Octoprint is a web interface for managing 3D printers.",
         logo="img/services/octoprint.png",
         documentation_url="https://docs.octoprint.org/en/master/",
-        docker_image="octoprint/octoprint:latest",
+        docker_image="octoprint/octoprint",
+        docker_image_tag="latest",
         docker_ports=[
             DockerPort(
                 container_port=5000, host_port=os.environ.get("OCTOPRINT_PORT", 5557)
@@ -80,9 +84,9 @@ with app.app_context():
         ],
         docker_labels=[
             DockerLabel(key="traefik.enable", value="true"),
-            DockerLabel(key=f"traefik.http.routers.{service_name}.rule",
+            DockerLabel(key=f"traefik.http.routers.{SERVICE_NAME}.rule",
                         value=f"Host(`{os.environ.get('OCTOPRINT_DOMAIN', 'localhost')}`)"),
-            DockerLabel(key=f"traefik.http.routers.{service_name}.entrypoints", value="web"),
+            DockerLabel(key=f"traefik.http.routers.{SERVICE_NAME}.entrypoints", value="web"),
         ],
         docker_devices=devices,
         docker_healthcheck=DockerHealthcheck(
@@ -107,13 +111,16 @@ with app.app_context():
     site.services.append(octoprint)
 
     # Add Mainsail service
-    service_name = "Mainsail"
+    SERVICE_NAME = "Mainsail"
     mainsail = Service(
-        name=service_name,
+        name=SERVICE_NAME,
+        type=ServiceType.DOCKER,
+        is_daemon=False,
         description="Mainsail is a web interface for managing 3D printers.",
         logo="img/services/mainsail.png",
         documentation_url="https://docs.mainsail.xyz/",
         docker_image="ghcr.io/mainsail-crew/mainsail",
+        docker_image_tag="latest",
         docker_ports=[
             DockerPort(
                 container_port=80, host_port=os.environ.get("MAINSAIL_PORT", 5556)
@@ -127,9 +134,9 @@ with app.app_context():
         ],
         docker_labels=[
             DockerLabel(key="traefik.enable", value="true"),
-            DockerLabel(key=f"traefik.http.routers.{service_name}.rule",
+            DockerLabel(key=f"traefik.http.routers.{SERVICE_NAME}.rule",
                         value=f"Host(`{os.environ.get('MAINSAIL_DOMAIN', 'localhost')}`)"),
-            DockerLabel(key=f"traefik.http.routers.{service_name}.entrypoints", value="web"),
+            DockerLabel(key=f"traefik.http.routers.{SERVICE_NAME}.entrypoints", value="web"),
         ],
         docker_healthcheck=DockerHealthcheck(
             test="curl --fail http://localhost:80 || exit 1",
@@ -152,15 +159,19 @@ with app.app_context():
     site.services.append(mainsail)
 
     # Add CNCJS service
+    SERVICE_NAME = "CNCJS"
     cncjs = Service(
-        name="CNCJS",
+        name=SERVICE_NAME,
+        type=ServiceType.DOCKER,
+        is_daemon=False,
         description=(
             "A full-featured web interface for CNC controllers "
             "running Grbl, Marlin, Smoothieware, or TinyG."
         ),
         logo="img/services/cncjs.png",
         documentation_url="https://github.com/cncjs/cncjs/wiki/",
-        docker_image="cncjs/cncjs:latest",
+        docker_image="cncjs/cncjs",
+        docker_image_tag="latest",
         docker_ports=[
             DockerPort(
                 container_port=8000, host_port=os.environ.get("CNCJS_PORT", 5558)
@@ -174,9 +185,9 @@ with app.app_context():
         ],
         docker_labels=[
             DockerLabel(key="traefik.enable", value="true"),
-            DockerLabel(key=f"traefik.http.routers.{service_name}.rule", 
+            DockerLabel(key=f"traefik.http.routers.{SERVICE_NAME}.rule", 
                         value=f"Host(`{os.environ.get('CNCJS_DOMAIN', 'localhost')}`)"),
-            DockerLabel(key=f"traefik.http.routers.{service_name}.entrypoints", value="web"),
+            DockerLabel(key=f"traefik.http.routers.{SERVICE_NAME}.entrypoints", value="web"),
         ],
         docker_healthcheck=DockerHealthcheck(
             test="curl --fail http://localhost:8000 || exit 1",
@@ -197,6 +208,20 @@ with app.app_context():
         ),
     ]
     site.services.append(cncjs)
+
+    # Add Traefik daemon service
+    SERVICE_NAME = "Traefik"
+    traefik = Service(
+        name=SERVICE_NAME,
+        type=ServiceType.WEB_PROXY,
+        is_daemon=True,
+        description="Traefik is a modern HTTP reverse proxy and load balancer.",
+        logo="img/services/traefik.png",
+        documentation_url="https://doc.traefik.io/traefik/",
+        docker_image="traefik",
+        docker_image_tag="latest",
+    )
+    site.services.append(traefik)
 
     db.session.add(site)
     db.session.add(user)

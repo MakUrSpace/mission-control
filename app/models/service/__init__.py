@@ -1,6 +1,7 @@
 """Service models."""
 
 from .service import Service
+from .service import ServiceType
 from .environment_var import EnvironmentVar
 from .docker_port import DockerPort
 from .docker_label import DockerLabel

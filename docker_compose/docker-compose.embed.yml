@@ -39,7 +39,7 @@ services:
       - "traefik.http.services.mus-m-c-web.loadbalancer.server.port=8000"
 
   traefik:
-    image: traefik:latest
+    image: traefik:v2.10
     restart: always
     networks:
       - mus-net

@@ -12,8 +12,8 @@ from flask_assets import Environment, Bundle
 from app.admin import admin
 from app.routes import bp as main_bp
 from app.socket_events import socketio
-from app.docker_service_manager import DockerServiceManager as dsm
-from app.models import User, Service
+from app.models import User
+from app.docker_service_manager import DockerServiceManager
 #pylint: enable=wrong-import-position ungrouped-imports wrong-import-order
 
 # Initialize dotenv settings
@@ -145,11 +145,15 @@ def create_app():
     admin.init_app(app)
 
     # Register custom services with Flask context
-    app.docker_manager = dsm()
+    dsm = DockerServiceManager()
+    with app.app_context():
+        dsm.cache_images()
+        dsm.handle_daemons()
+    app.docker_manager = dsm
 
     # Start docker event listener
     docker_event_listener = threading.Thread(
-        target=app.docker_manager.listen_for_events, 
+        target=app.docker_manager.listen_for_events,
         args=(app,),
         daemon=True
     )
