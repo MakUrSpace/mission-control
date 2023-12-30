@@ -31,10 +31,8 @@ RUN apt-get update && apt-get install -y \
 # Create new user and docker group
 # Create a non-root user for security and add them to the docker group
 ARG DOCKER_GID=999
-RUN groupadd -r musAdmin && \
-    groupadd -g ${DOCKER_GID} docker && \
-    useradd -m -r -g musAdmin musAdmin && \
-    usermod -aG docker musAdmin
+RUN getent group docker || groupadd -g $DOCKER_GID docker && \
+    useradd -m -G docker musAdmin
 
 # Copy the application files
 COPY --chown=musAdmin:musAdmin ./app app
