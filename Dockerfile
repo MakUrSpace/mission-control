@@ -15,7 +15,7 @@ RUN pip install --upgrade pip wheel
 
 # --- Final Stage ---
 # Use an official Python runtime as a base image
-FROM python:3.11-slim-bullseye as final
+From builder as final
 
 # Set the environment variables
 ENV FLASK_APP=app/__init__.py
