@@ -13,7 +13,11 @@ services:
     restart: unless-stopped
 
   web:
-    build: ..
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        - DOCKER_GID=${DOCKER_GID}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000"]
       interval: 10s

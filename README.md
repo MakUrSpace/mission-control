@@ -156,6 +156,9 @@ following environment variables.
    # Docker Compose file(s) to use when running locally
    COMPOSE_FILE=docker_compose/docker-compose.yml:docker_compose/docker-compose.override.yml
 
+   # Docker group ID (used when running locally)
+   DOCKER_GID=999 # Run `getent group docker` to get the GID value
+
    ```
 
    > **Additional Notes:**
@@ -177,6 +180,7 @@ following environment variables.
    >- The `ADMIN_PASSWORD` value is the password for the admin user.
    >- The `COMPOSE_FILE` value is a colon-separated list of docker-compose files.
    > _If on Windows, use semicolons instead of colons._
+   >- The `DOCKER_GID` value is the group ID of the docker group. This is used to access the docker socket when running locally. This will need to match the group ID of the docker group on your local machine. Run `getent group docker` to get the GID value.
 
 ### 1.2.3. Running the Project
 
