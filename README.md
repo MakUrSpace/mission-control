@@ -101,10 +101,13 @@ What things you need to install the software:
    ```
 
 6. Create a `.env` file in the workspace root directory and add the
-following environment variables.
+following environment variables. (Copy & Paste the following)
 
    > **Note:** The `.env` file is ignored by git and should not be committed.
    > These values are for development purposes only and may be edited freely.
+
+   > **IMPORTANT:** The same variables are used for container creation as well as for access to the same.
+   > If you need to change any after creating the container, simply destroy and re-create the containers after updating .env.
 
    ```sh
    # Flask application entry point

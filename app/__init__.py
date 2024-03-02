@@ -19,7 +19,7 @@ from app.docker_service_manager import DockerServiceManager
 # Initialize dotenv settings
 if os.environ.get("FLASK_ENV") == "development":
     print("Loading environment variables from .env file...")
-    load_dotenv(find_dotenv())
+    load_dotenv(find_dotenv(), override=True)
 
 # Initialize default environment variables
 os.environ.setdefault("FLASK_ENV", "production")
