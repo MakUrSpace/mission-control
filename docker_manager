@@ -4,9 +4,16 @@
 COMPOSE_DIR="docker_compose"
 COMPOSE_FILES="-f $COMPOSE_DIR/docker-compose.yml -f $COMPOSE_DIR/docker-compose.embed.yml"
 ENV_FILE=".env"
+IS_DEVELOP=false
 
 # 'docker' GID must match the host's GID for the socket
 export DOCKER_GID=$(stat -c '%g' /var/run/docker.sock)
+
+if [ "$FLASK_ENV" == "development" ]; then
+    echo "RUNNING IN DEVELOPMENT MODE..."
+    IS_DEVELOP=true
+    COMPOSE_FILES="-f $COMPOSE_DIR/docker-compose.yml -f $COMPOSE_DIR/docker-compose.override.yml"
+fi
 
 # Function to start the Docker containers
 start_containers() {
@@ -50,6 +57,8 @@ logs_containers() {
 usage() {
     echo f"
 Usage: $0 <command>
+
+Note: Set the FLASK_ENV environment variable to 'development' to use the docker-compose.override.yml file.
 
 Commands:
     start | up      (Re)start (and build) the Docker containers
